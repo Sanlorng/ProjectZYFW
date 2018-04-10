@@ -40,7 +40,10 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbar_login)
+        supportActionBar?.title = getString(R.string.action_sign_in)
         UI.statuBarTransucent(window)
+        UI.statusBarIconColor(window,true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // Set up the login form.
         populateAutoComplete()
         password.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->

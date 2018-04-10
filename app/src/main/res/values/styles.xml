@@ -7,5 +7,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
+    <style name="actionbar" parent="Theme.Design.Light">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:titleTextColor">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorAccent</item>
+    </style>
 </resources>
