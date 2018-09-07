@@ -1,15 +1,15 @@
-package com.bigcreate.zyfw
+package com.bigcreate.zyfw.fragments
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.app.Fragment
+import androidx.fragment.app.Fragment
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import kotlinx.android.synthetic.main.fragment_my_page.*
+import com.bigcreate.zyfw.activities.LoginActivity
+import com.bigcreate.zyfw.R
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -39,9 +39,9 @@ class MyPageFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_my_page, container, false)
         val button = view.findViewById<Button>(R.id.button)
-        button.setOnClickListener({
-            startActivity(Intent(context, LoginActivity::class.java))
-        })
+        button.setOnClickListener {
+            startActivity(Intent(activity?.baseContext, LoginActivity::class.java))
+        }
         return view
     }
 
@@ -82,5 +82,6 @@ class MyPageFragment : Fragment() {
                         putString(ARG_PARAM2, param2)
                     }
                 }
+
     }
 }

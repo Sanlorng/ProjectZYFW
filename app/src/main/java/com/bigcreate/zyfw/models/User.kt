@@ -1,4 +1,4 @@
-package com.bigcreate.zyfw.module
+package com.bigcreate.zyfw.models
 
 import org.litepal.crud.DataSupport
 import java.util.*

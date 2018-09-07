@@ -3,7 +3,7 @@
     <dbname value="user"/>
     <version value="1"/>
     <list>
-        <mapping class="com.bigcreate.zyfw.module.User"/>
+        <mapping class="com.bigcreate.zyfw.models.User"/>
     </list>
 
 </litepal>

@@ -1,18 +1,14 @@
-package com.bigcreate.zyfw
+package com.bigcreate.zyfw.activities
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.annotation.TargetApi
 import android.content.pm.PackageManager
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.app.LoaderManager.LoaderCallbacks
-import android.content.CursorLoader
-import android.content.Loader
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+
 import android.database.Cursor
 import android.net.Uri
 import android.os.AsyncTask
-import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.TextUtils
@@ -23,26 +19,55 @@ import android.widget.TextView
 
 import java.util.ArrayList
 import android.Manifest.permission.READ_CONTACTS
-import com.bigcreate.library.UI
+import android.transition.Slide
+import android.util.Log
+import android.view.Gravity
+import android.view.Window
+import com.bigcreate.library.ipAddress
+
+import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.base.MyApplication
+import com.bigcreate.zyfw.models.LoginRequire
+import com.bigcreate.zyfw.models.LoginResponse
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 import kotlinx.android.synthetic.main.activity_login.*
+import okhttp3.*
 
 /**
  * A login screen that offers login via email/password.
  */
-class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
+class LoginActivity : AppCompatActivity(){
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private var mAuthTask: UserLoginTask? = null
-
+    private var myApplication : MyApplication?= null
+    private val mGson = Gson()
+    private var mResponseString :String ?= null
+    private var mSinOrSup = true
+    private var registUrl = "ProjectForDaChuang/register"
+    private var loginUrl = "ProjectForDaChuang/login"
+    val JSON = MediaType.parse("application/json; charset=utf-8")
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
         super.onCreate(savedInstanceState)
+        myApplication = application as MyApplication
         setContentView(R.layout.activity_login)
+        window.enterTransition = Slide(Gravity.START)
+        window.enterTransition.duration = 500
+        window.exitTransition = Slide(Gravity.END)
+        window.exitTransition.duration = 500
         setSupportActionBar(toolbar_login)
+        toolbar_login.setNavigationOnClickListener {
+            finish()
+        }
+        val application = application as MyApplication
+        application.loginUser
         supportActionBar?.title = getString(R.string.action_sign_in)
-        UI.statuBarTransucent(window)
-        UI.statusBarIconColor(window,true)
+        window.transucentSystemUI(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // Set up the login form.
         populateAutoComplete()
@@ -54,15 +79,19 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             false
         })
 
-        email_sign_in_button.setOnClickListener { attemptLogin() }
+        email_sign_in_button.setOnClickListener {
+            mSinOrSup = true
+            attemptLogin() }
+        /*button_sign_up.setOnClickListener{
+            mSinOrSup = false
+            attemptLogin()
+        }*/
     }
 
     private fun populateAutoComplete() {
         if (!mayRequestContacts()) {
             return
         }
-
-        loaderManager.initLoader(0, null, this)
     }
 
     private fun mayRequestContacts(): Boolean {
@@ -125,7 +154,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             email.error = getString(R.string.error_field_required)
             focusView = email
             cancel = true
-        } else if (!isEmailValid(emailStr)) {
+        } else if (!isPhoneValid(emailStr)) {
             email.error = getString(R.string.error_invalid_email)
             focusView = email
             cancel = true
@@ -144,9 +173,9 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         }
     }
 
-    private fun isEmailValid(email: String): Boolean {
+    private fun isPhoneValid(email: String): Boolean {
         //TODO: Replace this with your own logic
-        return email.contains("@")
+        return email.length == 11
     }
 
     private fun isPasswordValid(password: String): Boolean {
@@ -184,35 +213,6 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
                     })
     }
 
-    override fun onCreateLoader(i: Int, bundle: Bundle?): Loader<Cursor> {
-        return CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE + " = ?", arrayOf(ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE),
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC")
-    }
-
-    override fun onLoadFinished(cursorLoader: Loader<Cursor>, cursor: Cursor) {
-        val emails = ArrayList<String>()
-        cursor.moveToFirst()
-        while (!cursor.isAfterLast) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS))
-            cursor.moveToNext()
-        }
-
-        addEmailsToAutoComplete(emails)
-    }
-
-    override fun onLoaderReset(cursorLoader: Loader<Cursor>) {
-
-    }
 
     private fun addEmailsToAutoComplete(emailAddressCollection: List<String>) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
@@ -222,13 +222,6 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         email.setAdapter(adapter)
     }
 
-    object ProfileQuery {
-        val PROJECTION = arrayOf(
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY)
-        val ADDRESS = 0
-        val IS_PRIMARY = 1
-    }
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
@@ -240,8 +233,12 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
-                Thread.sleep(2000)
+                tryLoginTask()
+                val response = mGson.fromJson(mResponseString,LoginResponse::class.java)
+                if (response?.token != null)
+                    return true
+                else
+                    return false
             } catch (e: InterruptedException) {
                 return false
             }
@@ -272,6 +269,26 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             mAuthTask = null
             showProgress(false)
         }
+        private fun tryLoginTask(){
+            var temp : String ?= null
+            temp = if (mSinOrSup)
+                loginUrl
+            else
+                registUrl
+            val loginRequest = LoginRequire(ipAddress!!,mEmail,mPassword,null)
+            Log.d("jsonToServer",Gson().toJson(loginRequest))
+            var client = OkHttpClient()
+            var requestBody = RequestBody.create(JSON,mGson.toJson(loginRequest))
+            var request = Request.Builder()
+                    .url(myApplication?.serverUrl + temp)
+                    .post(requestBody)
+                    .build()
+            Log.d("url",request.url().toString())
+                var response = client.newCall(request).execute()
+                Log.d("response", response.body()?.string())
+            mResponseString = response.body()?.string()
+
+        }
     }
 
     companion object {
@@ -287,4 +304,5 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
          */
         private val DUMMY_CREDENTIALS = arrayOf("foo@example.com:hello", "bar@example.com:world")
     }
+
 }

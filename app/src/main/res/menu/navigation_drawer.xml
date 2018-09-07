@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:visible="false" android:title="@string/launch_project"
+        android:icon="@drawable/ic_add_black_24dp" />
+    <item android:title="App" android:visible="false">
+    <menu>
+        <item android:title="Settings"
+            android:icon="@drawable/ic_settings_black_24dp"/>
+    </menu>
+    </item>
+</menu>

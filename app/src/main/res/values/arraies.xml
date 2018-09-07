@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sex_array">
+        <item>@string/male</item>
+        <item>@string/female</item>
+    </string-array>
+    <string-array name="identity_array">
+        <item>志愿者</item>
+        <item>发请人</item>
+    </string-array>
+</resources>
