@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:id="@+id/container_sign_up"
-    tools:context=".activities.SignUpActivity">
+    tools:context=".MyDetailsActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,52 +1,51 @@
 package com.bigcreate.zyfw.activities
 
+import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-
-import android.database.Cursor
-import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.text.TextUtils
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.ArrayAdapter
-import android.widget.TextView
-
-import java.util.ArrayList
-import android.Manifest.permission.READ_CONTACTS
 import android.transition.Slide
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.Window
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.bigcreate.library.ipAddress
-
+import com.bigcreate.library.postRequest
+import com.bigcreate.library.startActivity
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.MyApplication
+import com.bigcreate.zyfw.base.WebInterface
+import com.bigcreate.zyfw.base.defaultSharedPreferences
+import com.bigcreate.zyfw.base.myApplication
 import com.bigcreate.zyfw.models.LoginRequire
 import com.bigcreate.zyfw.models.LoginResponse
+import com.bigcreate.zyfw.models.User
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-
 import kotlinx.android.synthetic.main.activity_login.*
-import okhttp3.*
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 
 /**
  * A login screen that offers login via email/password.
  */
-class LoginActivity : AppCompatActivity(){
+class LoginActivity : AppCompatActivity() {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private var mAuthTask: UserLoginTask? = null
-    private var myApplication : MyApplication?= null
     private val mGson = Gson()
-    private var mResponseString :String ?= null
+    private var mResponseString: String? = null
     private var mSinOrSup = true
     private var registUrl = "ProjectForDaChuang/register"
     private var loginUrl = "ProjectForDaChuang/login"
@@ -54,7 +53,6 @@ class LoginActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
         super.onCreate(savedInstanceState)
-        myApplication = application as MyApplication
         setContentView(R.layout.activity_login)
         window.enterTransition = Slide(Gravity.START)
         window.enterTransition.duration = 500
@@ -81,11 +79,21 @@ class LoginActivity : AppCompatActivity(){
 
         email_sign_in_button.setOnClickListener {
             mSinOrSup = true
-            attemptLogin() }
+            attemptLogin()
+        }
+        sign_up.setOnClickListener {
+            startActivity(SignUpActivity::class.java)
+        }
         /*button_sign_up.setOnClickListener{
             mSinOrSup = false
             attemptLogin()
         }*/
+    }
+
+    override fun onResume() {
+        if (myApplication?.loginToken != null)
+            finish()
+        super.onResume()
     }
 
     private fun populateAutoComplete() {
@@ -100,8 +108,8 @@ class LoginActivity : AppCompatActivity(){
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
             Snackbar.make(email, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok,
-                            { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) })
+                    .setAction(android.R.string.ok
+                    ) { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) }
         } else {
             requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS)
         }
@@ -130,7 +138,7 @@ class LoginActivity : AppCompatActivity(){
         if (mAuthTask != null) {
             return
         }
-
+        email_sign_in_button.isEnabled = false
         // Reset errors.
         email.error = null
         password.error = null
@@ -171,6 +179,7 @@ class LoginActivity : AppCompatActivity(){
             mAuthTask = UserLoginTask(emailStr, passwordStr)
             mAuthTask!!.execute(null as Void?)
         }
+        email_sign_in_button.isEnabled = true
     }
 
     private fun isPhoneValid(email: String): Boolean {
@@ -190,36 +199,27 @@ class LoginActivity : AppCompatActivity(){
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-            val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+        val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
-            login_form.visibility = if (show) View.GONE else View.VISIBLE
-            login_form.animate()
-                    .setDuration(shortAnimTime)
-                    .alpha((if (show) 0 else 1).toFloat())
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            login_form.visibility = if (show) View.GONE else View.VISIBLE
-                        }
-                    })
+        login_form.visibility = if (show) View.GONE else View.VISIBLE
+        login_form.animate()
+                .setDuration(shortAnimTime)
+                .alpha((if (show) 0 else 1).toFloat())
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        login_form.visibility = if (show) View.GONE else View.VISIBLE
+                    }
+                })
 
-            login_progress.visibility = if (show) View.VISIBLE else View.GONE
-            login_progress.animate()
-                    .setDuration(shortAnimTime)
-                    .alpha((if (show) 1 else 0).toFloat())
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            login_progress.visibility = if (show) View.VISIBLE else View.GONE
-                        }
-                    })
-    }
-
-
-    private fun addEmailsToAutoComplete(emailAddressCollection: List<String>) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        val adapter = ArrayAdapter(this@LoginActivity,
-                android.R.layout.simple_dropdown_item_1line, emailAddressCollection)
-
-        email.setAdapter(adapter)
+        login_progress.visibility = if (show) View.VISIBLE else View.GONE
+        login_progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((if (show) 1 else 0).toFloat())
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        login_progress.visibility = if (show) View.VISIBLE else View.GONE
+                    }
+                })
     }
 
 
@@ -227,30 +227,20 @@ class LoginActivity : AppCompatActivity(){
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+    @SuppressLint("StaticFieldLeak")
     inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
 
         override fun doInBackground(vararg params: Void): Boolean? {
             // TODO: attempt authentication against a network service.
 
-            try {
+            return try {
                 tryLoginTask()
-                val response = mGson.fromJson(mResponseString,LoginResponse::class.java)
-                if (response?.token != null)
-                    return true
-                else
-                    return false
+                val response = mGson.fromJson(mResponseString, LoginResponse::class.java)
+                response?.token != null
             } catch (e: InterruptedException) {
-                return false
+                false
             }
 
-            return DUMMY_CREDENTIALS
-                    .map { it.split(":") }
-                    .firstOrNull { it[0] == mEmail }
-                    ?.let {
-                        // Account exists, return true if the password matches.
-                        it[1] == mPassword
-                    }
-                    ?: true
         }
 
         override fun onPostExecute(success: Boolean?) {
@@ -258,6 +248,12 @@ class LoginActivity : AppCompatActivity(){
             showProgress(false)
 
             if (success!!) {
+                myApplication?.loginUser = User(mEmail,mPassword,myApplication?.loginToken!!)
+                defaultSharedPreferences.edit()
+                        .putString("user_name",mEmail)
+                        .putString("user_pass",mPassword)
+                        .putString("user_token",myApplication?.loginToken)
+                        .apply()
                 finish()
             } else {
                 password.error = getString(R.string.error_incorrect_password)
@@ -269,24 +265,27 @@ class LoginActivity : AppCompatActivity(){
             mAuthTask = null
             showProgress(false)
         }
-        private fun tryLoginTask(){
-            var temp : String ?= null
+
+        private fun tryLoginTask() {
+            var temp: String? = null
             temp = if (mSinOrSup)
                 loginUrl
             else
                 registUrl
-            val loginRequest = LoginRequire(ipAddress!!,mEmail,mPassword,null)
-            Log.d("jsonToServer",Gson().toJson(loginRequest))
-            var client = OkHttpClient()
-            var requestBody = RequestBody.create(JSON,mGson.toJson(loginRequest))
-            var request = Request.Builder()
-                    .url(myApplication?.serverUrl + temp)
-                    .post(requestBody)
-                    .build()
-            Log.d("url",request.url().toString())
-                var response = client.newCall(request).execute()
-                Log.d("response", response.body()?.string())
-            mResponseString = response.body()?.string()
+            val loginRequest = LoginRequire(ipAddress!!, mEmail, mPassword, null)
+            Log.d("jsonToServer", Gson().toJson(loginRequest))
+            myApplication?.run {
+                val response = okHttpClient.postRequest(WebInterface.LOGIN_URL,WebInterface.TYPE_JSON,gson.toJson(loginRequest))
+                mResponseString = response?.string()
+                Log.d("response", mResponseString)
+                loginToken = try {
+                    gson.fromJson<LoginResponse>(mResponseString,LoginResponse::class.java).token
+                }catch (e:Exception){
+                    Log.d("loginToken ", "null")
+                    null
+                }
+            }
+            Log.d("response", mResponseString)
 
         }
     }
@@ -296,13 +295,12 @@ class LoginActivity : AppCompatActivity(){
         /**
          * Id to identity READ_CONTACTS permission request.
          */
-        private val REQUEST_READ_CONTACTS = 0
+        private const val REQUEST_READ_CONTACTS = 0
 
         /**
          * A dummy authentication store containing known user names and passwords.
          * TODO: remove after connecting to a real authentication system.
          */
-        private val DUMMY_CREDENTIALS = arrayOf("foo@example.com:hello", "bar@example.com:world")
     }
 
 }

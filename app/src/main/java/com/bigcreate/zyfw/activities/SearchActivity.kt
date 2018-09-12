@@ -2,6 +2,7 @@ package com.bigcreate.zyfw.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import kotlinx.android.synthetic.main.activity_search.*
 
@@ -15,5 +16,6 @@ class SearchActivity : AppCompatActivity() {
         toolbar_search.setNavigationOnClickListener {
             finish()
         }
+        window.transucentSystemUI(true)
     }
 }

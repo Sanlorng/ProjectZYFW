@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:visible="false" android:title="@string/launch_project"
+
+    <item android:title="@string/launch_project"
+        android:id="@+id/launch_project_menu"
         android:icon="@drawable/ic_add_black_24dp" />
-    <item android:title="App" android:visible="false">
+    <item android:id="@+id/account_setting_menu"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="@string/account_settings"/>
+    <item android:title="@string/app" android:visible="true">
     <menu>
-        <item android:title="Settings"
+        <item android:title="@string/settings"
+            android:id="@+id/setting_menu"
             android:icon="@drawable/ic_settings_black_24dp"/>
     </menu>
     </item>

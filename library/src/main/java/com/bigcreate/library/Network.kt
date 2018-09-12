@@ -10,8 +10,7 @@ import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import androidx.core.content.ContextCompat.getSystemService
 import com.google.gson.Gson
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import java.net.Inet4Address
 import java.net.NetworkInterface
 
@@ -56,4 +55,27 @@ get() {
     if (hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
         return NetworkCapabilities.TRANSPORT_CELLULAR
     return null
+}
+fun OkHttpClient.getRequest(url:String):ResponseBody?{
+    return try {
+        val request = Request.Builder()
+                .get()
+                .url(url)
+                .build()
+        newCall(request).execute().body()
+    }catch (e: Exception){
+        null
+    }
+}
+fun OkHttpClient.postRequest(url:String,mediaType:MediaType?,data:String): ResponseBody?{
+    return try {
+        val requestBody = RequestBody.create(mediaType,data)
+        val request = Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build()
+        newCall(request).execute().body()
+    }catch (e:Exception){
+        null
+    }
 }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.SignUpFragment">
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_login"
+        android:id="@+id/toolbar_sign_up"
         android:theme="@style/actionbar"
         android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" >
 
         <ProgressBar
-            android:id="@+id/login_progress"
+            android:id="@+id/sign_up_progress"
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -31,7 +31,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
-        android:id="@+id/login_form"
+        android:id="@+id/sign_up_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
@@ -42,17 +42,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_login"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_sign_up"
         app:layout_constraintVertical_bias="0.157">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/email_login_form"
+            android:id="@+id/phone_sign_up_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ImageView
                 android:contentDescription="@string/action_sign_in"
-                android:id="@+id/user_icon"
+                android:id="@+id/user_icon_sign_up"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_marginStart="8dp"
@@ -73,10 +73,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/user_icon">
+                app:layout_constraintTop_toBottomOf="@+id/user_icon_sign_up">
 
                 <AutoCompleteTextView
-                    android:id="@+id/email"
+                    android:id="@+id/phone_sign_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/phone"
@@ -96,7 +96,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/sign_up_phone">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/password"
+                    android:id="@+id/password_sign_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
@@ -105,12 +105,12 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:textSize="20sp"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textSize="20sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/phone_sign_up_button"
                 style="@style/Base.Widget.AppCompat.Button.Colored"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

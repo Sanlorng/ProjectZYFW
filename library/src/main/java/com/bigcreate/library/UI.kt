@@ -1,5 +1,6 @@
 package com.bigcreate.library
 
+import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -17,10 +18,10 @@ fun Window.statusBarTransucent(){
 
 fun Window.statusBarLight(light: Boolean){
     var ui = this.decorView.systemUiVisibility
-    if (light)
-        ui = ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    ui = if (light)
+        ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     else
-        ui = ui and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        ui and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
     this.decorView.systemUiVisibility = ui
 }
 
@@ -28,7 +29,7 @@ fun Window.navigationBarTransucent(){
     this.navigationBarColor = this.context.getColor(R.color.navigationColor)
     this.fitSystemLayout()
 }
-
+@TargetApi(26)
 fun Window.navigationBarLight(light: Boolean){
     var ui = this.decorView.systemUiVisibility
     if (light)
@@ -42,17 +43,8 @@ fun Window.navigationBarLight(light: Boolean){
 
 fun Window.systemLight(light: Boolean){
     var ui = this.decorView.systemUiVisibility
-    if (light) {
-        ui = ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        if (Build.VERSION.SDK_INT >= 26)
-            ui = ui or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-    }
-    else {
-        ui = ui and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        if (Build.VERSION.SDK_INT >= 26)
-            ui = ui and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
-    }
-    this.decorView.systemUiVisibility = ui
+    statusBarLight(light)
+    navigationBarLight(light)
 }
 
 fun Window.fitSystemLayout(){
