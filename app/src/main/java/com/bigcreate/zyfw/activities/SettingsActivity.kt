@@ -3,6 +3,7 @@ package com.bigcreate.zyfw.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.base.myApplication
@@ -13,6 +14,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        window.transucentSystemUI(true)
         if (myApplication?.loginToken == null)
             account_exit_button.visibility = View.GONE
         else

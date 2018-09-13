@@ -51,13 +51,8 @@ class LoginActivity : AppCompatActivity() {
     private var loginUrl = "ProjectForDaChuang/login"
     val JSON = MediaType.parse("application/json; charset=utf-8")
     override fun onCreate(savedInstanceState: Bundle?) {
-        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        window.enterTransition = Slide(Gravity.START)
-        window.enterTransition.duration = 500
-        window.exitTransition = Slide(Gravity.END)
-        window.exitTransition.duration = 500
         setSupportActionBar(toolbar_login)
         toolbar_login.setNavigationOnClickListener {
             finish()

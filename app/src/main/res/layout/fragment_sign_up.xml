@@ -7,14 +7,14 @@
     tools:context=".fragments.SignUpFragment">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_sign_up"
-        android:theme="@style/actionbar"
+        android:theme="?attr/actionBarTheme"
         android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
         android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
         app:title="@string/sign_up"
-        android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
+        android:maxHeight="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

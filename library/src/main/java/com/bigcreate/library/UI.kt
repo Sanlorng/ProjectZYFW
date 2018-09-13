@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.preference.PreferenceManager
+import android.util.Log
 import android.view.*
 import java.lang.Exception
 
@@ -58,7 +60,11 @@ fun Window.transucentSystemUI(){
     this.transucentSystemUI(false)
 }
 fun Window.transucentSystemUI(light: Boolean){
-    this.statusBarColor = this.context.getColor(R.color.statusbarColor)
+    val enable = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("status_bar_mask",false)
+    this.statusBarColor = if (enable)
+        context.getColor(R.color.statusbarColor)
+    else
+        context.getColor(R.color.zeroColor)
     this.navigationBarColor = this.context.getColor(R.color.navigationColor)
     this.systemLight(light)
     this.fitSystemLayout()
@@ -93,4 +99,18 @@ fun Intent.startBy(context:Context?){
 }
 fun Context.startActivity(cls:Class<*>){
     startActivity(Intent(this,cls))
+}
+
+fun Window.openStatusBarMask(enable:Boolean){
+    val isOpen = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("status_bar_mask",false)
+    Log.d("window pacakge",context.packageName)
+    if (isOpen != enable) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putBoolean("status_bar_mask", enable)
+                .apply()
+        statusBarColor = if (enable)
+            context.getColor(R.color.statusbarColor)
+        else
+            context.getColor(R.color.zeroColor)
+    }
 }
