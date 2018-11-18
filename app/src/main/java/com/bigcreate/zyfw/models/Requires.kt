@@ -1,11 +1,12 @@
 package com.bigcreate.zyfw.models
 
-data class LoginRequire(var ip_address: String?, var username: String?, var password: String?, var token: String?)
-data class RegisterRequire(var ip_address: String?, var username: String?, var password: String?)
-data class InfoRequire(var username: String, var user_nick: String, var user_sex: String,
-                       var user_identity: String, var user_address: String, var user_phone: String)
-data class UpdateInfoRequire(var username: String, var user_address: String, var user_phone: String)
-data class SearchRequire(var project_region: String?, var project_topic: String?)
-data class ReleaseProjectRequire(var project_topic: String, var project_content: String, var project_region: String,
-                          var project_address: String, var procject_principal_name: String, var project_people_numbers : String,
-                          var username: String, var videoBase64: String, var pictureBase64: String)
+data class LoginRequire(var ipAddress: String?, var username: String?, var password: String?, var token: String?)
+data class RegisterRequire(var ipAddress: String?, var username: String?, var password: String?)
+data class InfoRequire(var username: String, var userNick: String, var userSex: String,
+                       var userIdentify: String, var userAddress: String, var userPhone: String)
+data class UpdateInfoRequire(var username: String, var userAddress: String, var userPhone: String)
+data class SearchRequire(var projectId: String?, var projectRegion: String?, var projectTopic: String?)
+data class ReleaseProjectRequire(var projectTopic: String, var projectContent: String, var projectRegion: String,
+                          var projectAddress: String,var latitude: Double, var longitude: Double, var projectPrincipalName: String,var projectPrincipalPhone: String, var projectPeopleNumbers : String,
+                          var username: String, var videoBase64: String, var pictureBase64: String, var projectUserId: String, var projectTypeId: String)
+data class GetInfoRequire(var username: String)

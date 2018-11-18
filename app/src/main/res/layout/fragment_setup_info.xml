@@ -16,12 +16,24 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+        <ProgressBar
+            android:visibility="gone"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
+    </androidx.appcompat.widget.Toolbar>
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -32,6 +44,7 @@
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -119,14 +132,14 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/address_input_setup_info"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         app:layout_constraintStart_toStartOf="@+id/textView7"
                         app:layout_constraintTop_toBottomOf="@id/textView7">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:autofillHints="@string/address"
                             android:ems="10"
@@ -161,6 +174,20 @@
                         android:text="@string/ok"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/phone_input_setup_info" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="快速定位"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Chip"
+                        app:chipIcon="@drawable/ic_place_black_24dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/address_input_setup_info"
+                        app:layout_constraintStart_toEndOf="@+id/address_input_setup_info"
+                        app:layout_constraintTop_toTopOf="@+id/address_input_setup_info" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>

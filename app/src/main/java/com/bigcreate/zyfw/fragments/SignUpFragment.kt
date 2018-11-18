@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.fragment.app.FragmentTransaction
+import com.bigcreate.library.WebKit
 import com.bigcreate.library.ipAddress
 import com.bigcreate.library.postRequest
 import com.bigcreate.library.transucentSystemUI
@@ -23,10 +24,7 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.appCompactActivity
 import com.bigcreate.zyfw.base.myApplication
-import com.bigcreate.zyfw.models.LoginRequire
-import com.bigcreate.zyfw.models.LoginResponse
-import com.bigcreate.zyfw.models.RegisterRequire
-import com.bigcreate.zyfw.models.RegisterResponse
+import com.bigcreate.zyfw.models.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.fragment_sign_up.*
@@ -70,9 +68,6 @@ class SignUpFragment : Fragment() {
         appCompactActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar_sign_up.setNavigationOnClickListener {
             activity?.finish()
-        }
-        activity?.window?.run {
-            transucentSystemUI(true)
         }
         phone_sign_up_button.setOnClickListener {
             attemptLogin()
@@ -118,6 +113,14 @@ class SignUpFragment : Fragment() {
             showProgress(false)
 
             if (success!!) {
+                activity?.myApplication?.run {
+                    loginUser = User(phone_sign_up.text.toString(), password_sign_up.text.toString(),loginToken!!,"12")
+                    loginUser?.run {
+                        Log.d("name",name)
+                        Log.d("pass",password)
+                    }
+
+                }
                 val transaction = activity?.supportFragmentManager?.beginTransaction()
                 transaction?.run {
                     replace(R.id.container_sign_up,SetupInfoFragment())
@@ -140,10 +143,11 @@ class SignUpFragment : Fragment() {
             var temp: String? = null
             activity?.myApplication?.run {
                 val registerRequire = RegisterRequire(ipAddress, phone_sign_up.text.toString(), password_sign_up.text.toString())
-                val data = gson.toJson(registerRequire)
-                mResponseString = okHttpClient.postRequest(WebInterface.REGISTER_URL, WebInterface.TYPE_JSON, data!!)?.string()
+                val data = WebKit.gson.toJson(registerRequire)
+                Log.d("lisss",data)
+                mResponseString = WebKit.okClient.postRequest(WebInterface.REGISTER_URL, WebInterface.TYPE_JSON, data!!)?.string()
                 Log.d("responseString",mResponseString)
-                loginToken = gson.fromJson(mResponseString,RegisterResponse::class.java).token
+                loginToken = WebKit.gson.fromJson(mResponseString,RegisterResponse::class.java).token
 
             }
 
@@ -271,5 +275,12 @@ class SignUpFragment : Fragment() {
                         putString(ARG_PARAM2, param2)
                     }
                 }
+    }
+
+    override fun onResume() {
+        activity?.window?.run {
+            transucentSystemUI(true)
+        }
+        super.onResume()
     }
 }

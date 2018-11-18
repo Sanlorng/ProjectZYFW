@@ -1,12 +1,18 @@
 package com.bigcreate.zyfw.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.activities.ProjectDetailsActivity
+import com.google.gson.Gson
 
 class ProjectListAdapter(val listProject: List<Project>) : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>() {
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view){
@@ -18,9 +24,21 @@ class ProjectListAdapter(val listProject: List<Project>) : RecyclerView.Adapter<
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemView.findViewById<TextView>(R.id.title_project_item).text = listProject[position].project_topic
-        holder.itemView.findViewById<TextView>(R.id.address_project_item).text = listProject[position].project_address
-        holder.itemView.findViewById<TextView>(R.id.number_project_item).text = listProject[position].project_people_numbers
+
+        holder.itemView.run {
+            findViewById<TextView>(R.id.title_project_item).text = listProject[position].projectTopic
+            findViewById<TextView>(R.id.address_project_item).text = listProject[position].projectAddress
+            findViewById<TextView>(R.id.number_project_item).text = listProject[position].projectPeopleNumbers
+            if (position == 0){
+                val mLayoutParams = layoutParams as RecyclerView.LayoutParams
+                mLayoutParams.topMargin = 20
+            }
+            setOnClickListener {
+                val intent = Intent(context,ProjectDetailsActivity::class.java)
+                intent.putExtra("project_id",listProject[position].projectId)
+                context.startActivity(intent)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

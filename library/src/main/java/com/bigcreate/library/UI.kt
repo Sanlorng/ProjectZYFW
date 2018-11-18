@@ -3,11 +3,14 @@ package com.bigcreate.library
 import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.preference.PreferenceManager
+import android.text.TextUtils
 import android.util.Log
 import android.view.*
+import android.widget.EditText
 import java.lang.Exception
 
 /**
@@ -113,4 +116,35 @@ fun Window.openStatusBarMask(enable:Boolean){
         else
             context.getColor(R.color.zeroColor)
     }
+}
+
+fun Context.dialog(title:String, content:String,posButton:String,posListener:DialogInterface.OnClickListener){
+    val dialog = AlertDialog.Builder(this)
+    dialog.setTitle(title)
+    dialog.setMessage(content)
+    dialog.setCancelable(true)
+    dialog.setPositiveButton(posButton,posListener)
+    dialog.show()
+}
+
+fun Context.dialog(title:String, content:String,posButton:String,posListener:DialogInterface.OnClickListener,negButton:String, negListener:DialogInterface.OnClickListener){
+    val dialog = AlertDialog.Builder(this)
+    dialog.setTitle(title)
+    dialog.setMessage(content)
+    dialog.setCancelable(true)
+    dialog.setPositiveButton(posButton,posListener)
+    dialog.setNegativeButton(negButton,negListener)
+    dialog.show()
+}
+
+fun String.isEmpty():Boolean{
+    return TextUtils.isEmpty(this)
+}
+
+fun EditText.string():String{
+    return this.text.toString()
+}
+
+fun EditText.isEmpty():Boolean{
+    return text.isEmpty()
 }

@@ -3,6 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/release_project_menu"
-        android:title="Launcher"
+        android:title="发布"
         app:showAsAction="always"/>
 </menu>

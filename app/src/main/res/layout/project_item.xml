@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:id="@+id/layout_project_item"
+    android:background="?attr/selectableItemBackground"
     android:orientation="vertical">
 
     <TextView
@@ -23,7 +24,6 @@
         android:id="@+id/address_project_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"

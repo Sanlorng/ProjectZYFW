@@ -16,10 +16,7 @@ import android.view.Window
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.bigcreate.library.ipAddress
-import com.bigcreate.library.postRequest
-import com.bigcreate.library.startActivity
-import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.MyApplication
 import com.bigcreate.zyfw.base.WebInterface
@@ -47,6 +44,7 @@ class LoginActivity : AppCompatActivity() {
     private val mGson = Gson()
     private var mResponseString: String? = null
     private var mSinOrSup = true
+    private var userId:String? = null
     private var registUrl = "ProjectForDaChuang/register"
     private var loginUrl = "ProjectForDaChuang/login"
     val JSON = MediaType.parse("application/json; charset=utf-8")
@@ -60,7 +58,6 @@ class LoginActivity : AppCompatActivity() {
         val application = application as MyApplication
         application.loginUser
         supportActionBar?.title = getString(R.string.action_sign_in)
-        window.transucentSystemUI(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // Set up the login form.
         populateAutoComplete()
@@ -86,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+        window.transucentSystemUI(true)
         if (myApplication?.loginToken != null)
             finish()
         super.onResume()
@@ -231,8 +229,11 @@ class LoginActivity : AppCompatActivity() {
             return try {
                 tryLoginTask()
                 val response = mGson.fromJson(mResponseString, LoginResponse::class.java)
+                response?.run {
+                    userId = content
+                }
                 response?.token != null
-            } catch (e: InterruptedException) {
+            } catch (e: Exception) {
                 false
             }
 
@@ -243,12 +244,14 @@ class LoginActivity : AppCompatActivity() {
             showProgress(false)
 
             if (success!!) {
-                myApplication?.loginUser = User(mEmail,mPassword,myApplication?.loginToken!!)
+                //myApplication?.loginUser = User(mEmail,mPassword,myApplication?.loginToken!!,userId!!)
                 defaultSharedPreferences.edit()
                         .putString("user_name",mEmail)
                         .putString("user_pass",mPassword)
+                        .putString("user_id",userId)
                         .putString("user_token",myApplication?.loginToken)
                         .apply()
+                myApplication?.loginUser = null
                 finish()
             } else {
                 password.error = getString(R.string.error_incorrect_password)
@@ -270,11 +273,11 @@ class LoginActivity : AppCompatActivity() {
             val loginRequest = LoginRequire(ipAddress!!, mEmail, mPassword, null)
             Log.d("jsonToServer", Gson().toJson(loginRequest))
             myApplication?.run {
-                val response = okHttpClient.postRequest(WebInterface.LOGIN_URL,WebInterface.TYPE_JSON,gson.toJson(loginRequest))
+                val response = WebKit.okClient.postRequest(WebInterface.LOGIN_URL,WebInterface.TYPE_JSON,WebKit.gson.toJson(loginRequest))
                 mResponseString = response?.string()
                 Log.d("response", mResponseString)
                 loginToken = try {
-                    gson.fromJson<LoginResponse>(mResponseString,LoginResponse::class.java).token
+                    WebKit.gson.fromJson<LoginResponse>(mResponseString,LoginResponse::class.java).token
                 }catch (e:Exception){
                     Log.d("loginToken ", "null")
                     null

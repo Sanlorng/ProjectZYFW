@@ -5,8 +5,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="preferenceTheme">@style/preference</item>
     </style>
     <style name="baseStyle.Light" parent="Theme.Design.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <style name="AppTheme.Light" parent="baseStyle.Light">
@@ -15,6 +17,7 @@
         <item name="actionBarTheme">@style/actionbar</item>
     </style>
     <style name="actionbar" parent="baseStyle.Light">
+        <item name="android:contentInsetStart">0dp</item>
         <item name="android:textColorPrimary">?attr/colorAccent</item>
         <item name="android:colorControlNormal">?attr/colorAccent</item>
         <item name="android:elevation">4dp</item>
@@ -25,5 +28,11 @@
     </style>
     <style name="titleText" parent="TextAppearance.AppCompat.Title">
         <item name="android:titleTextColor">?attr/colorAccent</item>
+    </style>
+    <style name="preference" parent="Preference.Material">
+
+    </style>
+    <style name="preference.Light" parent="Preference">
+
     </style>
 </resources>

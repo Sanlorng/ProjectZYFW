@@ -1,7 +1,9 @@
 package com.bigcreate.zyfw.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
@@ -14,6 +16,11 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        setSupportActionBar(toolbar_settings)
+        toolbar_settings.setNavigationOnClickListener {
+            finish()
+        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         window.transucentSystemUI(true)
         if (myApplication?.loginToken == null)
             account_exit_button.visibility = View.GONE
@@ -28,5 +35,6 @@ class SettingsActivity : AppCompatActivity() {
                     .apply()
             finish()
         }
+
     }
 }

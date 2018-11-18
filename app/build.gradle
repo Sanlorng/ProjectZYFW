@@ -62,8 +62,8 @@ android {
         }
     }
 }
-final String ANDROID_X_VERSION = "1.0.0-rc02"
-final String MATERIAL_VERSION = "1.0.0-rc02"
+final String ANDROID_X_VERSION = "1.0.0"
+final String MATERIAL_VERSION = "1.0.0"
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -71,21 +71,21 @@ dependencies {
     implementation "com.google.android.material:material:$MATERIAL_VERSION"
     implementation 'org.litepal.android:core:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation "androidx.preference:preference:$ANDROID_X_VERSION"
     implementation 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation "androidx.annotation:annotation:$ANDROID_X_VERSION"
-    implementation "androidx.appcompat:appcompat:$ANDROID_X_VERSION"
-    implementation 'androidx.appcompat:appcompat:1.0.0-rc02'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
-    implementation 'androidx.annotation:annotation:1.0.0-rc02'
-    implementation 'com.android.support:appcompat-v7:28.0.0-rc02'
+    implementation "androidx.annotation:annotation:$ANDROID_X_VERSION"
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     implementation project(':library')
     implementation "androidx.cardview:cardview:$ANDROID_X_VERSION"
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.truizlop.sectionedrecyclerview:library:1.2.0'
+    implementation files('libs/TencentLocationSdk_v7.1.4.3_r4aa8ac63_20180911_165428.jar')
+    implementation files('libs/TencentMapSDK_Raster_v_1.3.2.jar')
 }

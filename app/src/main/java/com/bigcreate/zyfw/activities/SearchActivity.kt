@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bigcreate.library.WebKit
 import com.bigcreate.library.postRequest
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
@@ -27,7 +29,6 @@ class SearchActivity : AppCompatActivity() {
         toolbar_search.setNavigationOnClickListener {
             finish()
         }
-        window.transucentSystemUI(true)
         keyword_search.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL)
                 attemptSearch()
@@ -46,12 +47,17 @@ class SearchActivity : AppCompatActivity() {
         override fun doInBackground(vararg params: Void?): Boolean {
            return try {
                myApplication?.run {
-                   val response = okHttpClient.postRequest(WebInterface.SEARCH_URL, WebInterface.TYPE_JSON, gson.toJson(SearchRequire("桂林", string)))
+                   val response = WebKit.okClient.postRequest(WebInterface.SEARCH_URL, WebInterface.TYPE_JSON, WebKit.gson.toJson(SearchRequire(null, string,"桂林")))
                    val responseString = response?.string()
-                   searchResponse = gson.fromJson<SearchResponse>(responseString, SearchResponse::class.java)
+                   Log.d("is client","yes")
+                   responseString?.run {
+                       Log.d("response",this)
+                   }
+                   searchResponse = WebKit.gson.fromJson<SearchResponse>(responseString, SearchResponse::class.java)
                }
                searchResponse != null && searchResponse?.stateCode?.compareTo("200") == 0
            }catch (e:Exception){
+               Log.d("error","when search request")
                false
            }
         }
@@ -63,5 +69,10 @@ class SearchActivity : AppCompatActivity() {
             }
             super.onPostExecute(result)
         }
+    }
+
+    override fun onResume() {
+        window.transucentSystemUI(true)
+        super.onResume()
     }
 }

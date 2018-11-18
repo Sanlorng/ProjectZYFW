@@ -5,7 +5,15 @@
         <item>@string/female</item>
     </string-array>
     <string-array name="identity_array">
-        <item>志愿者</item>
-        <item>发请人</item>
+        <item>学生</item>
+    </string-array>
+    <string-array name="project_type_id">
+        <item>环境清洁</item>
+        <item>宣传教育</item>
+        <item>社区关爱</item>
+        <item>助农增收</item>
+        <item>心理咨询</item>
+        <item>设备维修</item>
+        <item>绿化种植</item>
     </string-array>
 </resources>
