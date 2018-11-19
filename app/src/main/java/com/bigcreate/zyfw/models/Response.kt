@@ -7,4 +7,5 @@ data class SearchResponse(var data: String,var stateCode: String, var content:Li
 data class ProjectResponse(var data: String,var stateCode: String, var content:Project)
 data class CommentResponse(var data: String, var stateCode: String,val content: List<Comment>)
 data class BaseResponse(var data: String, var stateCode: String)
-data class ReleaseResponce(var data: String,var stateCode: String, var projectId: Int)
+data class ReleaseResponse(var data: String,var stateCode: String, var projectId: Int)
+data class UserInfoResponse(var data: String, var stateCode: String, var content: UserInfo)

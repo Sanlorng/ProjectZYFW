@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/selectableItemBackground"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="80dp"
+    android:orientation="vertical">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_icon_header"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/login_or_sign_up_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_icon_header"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:text="@string/login_or_register"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/user_icon_header"
+        app:layout_constraintStart_toEndOf="@+id/user_icon_header"
+        app:layout_constraintTop_toTopOf="@+id/user_icon_header" />
+
+    <TextView
+        android:id="@+id/user_name_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="0dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/user_icon_header"
+        app:layout_constraintTop_toTopOf="@+id/user_icon_header" />
+
+    <TextView
+        android:id="@+id/user_phone_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintStart_toStartOf="@+id/user_name_header"
+        app:layout_constraintTop_toBottomOf="@+id/user_name_header" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

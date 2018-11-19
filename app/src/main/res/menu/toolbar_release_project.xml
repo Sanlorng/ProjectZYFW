@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/release_project_menu"
+        android:icon="@drawable/ic_send_black_24dp"
         android:title="发布"
+        android:iconTint="@color/colorAccent"
         app:showAsAction="always"/>
 </menu>

@@ -69,7 +69,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.appcompat:appcompat:$ANDROID_X_VERSION"
     implementation "com.google.android.material:material:$MATERIAL_VERSION"
-    implementation 'org.litepal.android:core:1.6.1'
+    implementation 'org.litepal.android:kotlin:3.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     implementation "androidx.preference:preference:$ANDROID_X_VERSION"
     implementation 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'

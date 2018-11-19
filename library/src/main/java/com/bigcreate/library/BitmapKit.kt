@@ -30,7 +30,7 @@ fun Bitmap.toBase64():String? {
         }
 
         val bitmapBytes = baos.toByteArray()
-            result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
+            result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT)
 
     } catch (e: IOException) {
         e.printStackTrace()
@@ -74,7 +74,7 @@ fun Context.getRealPathFromURI_API19(uri: Uri): String {
     // where id is equal to
     val sel = MediaStore.Images.Media._ID + "=?"
 
-    val cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+    val cursor = this.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             column, sel, arrayOf(id), null)
     val columnIndex = cursor.getColumnIndex(column[0])
 

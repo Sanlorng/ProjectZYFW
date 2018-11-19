@@ -1,6 +1,7 @@
 package com.bigcreate.zyfw.activities
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +21,9 @@ import com.tencent.map.geolocation.TencentLocation
 import com.tencent.map.geolocation.TencentLocationListener
 import com.tencent.map.geolocation.TencentLocationManager
 import com.tencent.map.geolocation.TencentLocationRequest
+import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory
 import com.tencent.mapsdk.raster.model.LatLng
+import com.tencent.mapsdk.raster.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_project_details.*
 import kotlinx.android.synthetic.main.activity_search.*
 
@@ -83,6 +86,17 @@ class ProjectDetailsActivity : AppCompatActivity() {
         }
     }
     fun updateInfo(){
+        searchResponse?.content?.run {
+            app_bar_map.map.setCenter(LatLng(latitude,longitude))
+            app_bar_map.map.setZoom(20)
+            val marker = app_bar_map.map.addMarker(
+                    MarkerOptions()
+                            .position(LatLng(latitude,longitude))
+                            .title(projectAddress.split(projectRegion).last())
+                            .anchor(0.5f, 0.5f)
+                            .icon(BitmapDescriptorFactory.defaultMarker()))
+            marker.showInfoWindow()
+        }
     }
     inner class GetLocationListenner: TencentLocationListener {
         override fun onStatusUpdate(p0: String?, p1: Int, p2: String?) {
@@ -91,8 +105,7 @@ class ProjectDetailsActivity : AppCompatActivity() {
 
         override fun onLocationChanged(p0: TencentLocation?, p1: Int, p2: String?) {
             p0?.run {
-                app_bar_map.map.setCenter(LatLng(p0.latitude, p0.longitude))
-                app_bar_map.map.setZoom(20)
+
             }
         }
     }

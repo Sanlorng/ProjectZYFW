@@ -21,7 +21,7 @@ import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.base.myApplication
 import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.models.ReleaseProjectRequire
-import com.bigcreate.zyfw.models.ReleaseResponce
+import com.bigcreate.zyfw.models.ReleaseResponse
 import com.tencent.map.geolocation.TencentLocation
 import com.tencent.map.geolocation.TencentLocationListener
 import com.tencent.map.geolocation.TencentLocationManager
@@ -82,83 +82,92 @@ class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
         item?.run {
             when(itemId){
                 R.id.release_project_menu -> {
-                    if (edit_topic.text.toString().isEmpty()){
+                    when {
+                        edit_topic.text.toString().isEmpty() -> {
 
-                    }else if (edit_content.text.toString().isEmpty()){
-
-                    }else if (edit_contact.text.toString().isEmpty()){
-
-                    }else if (edit_contact_phone.text.toString().isEmpty()){
-
-                    }else if (edit_people.text.toString().isEmpty()){
-
-                    }else if (textView_add_video.visibility != View.GONE) {
-
-                    }else if (textView_add_photo.visibility != View.GONE) {
-
-                    }else if (tencentLocation == null){
-
-                    }
-                    else {
-                    dialog = AlertDialog.Builder(this@ReleaseProjectActivity)
-                            .setView(R.layout.process_wait)
-                            .create()
-                    dialog?.show()
-                    Thread{
-                        try {
-
-
-                            val data = ReleaseProjectRequire(edit_topic.string(), edit_content.string(),
-                                    tencentLocation!!.city, tencentLocation!!.address, tencentLocation!!.latitude, tencentLocation!!.longitude,
-                                    edit_contact.string(), edit_contact_phone.string(), edit_people.string(), myApplication!!.loginUser!!.name,
-                                    "", imageString,
-                                    myApplication!!.loginUser!!.userId, (spinner_type_project.selectedItemPosition + 1).toString())
-                            try {
-                                val dataString = WebKit.gson.toJson(data)
-                                dataString.replace("deoBase64\":\"\"", "deoBase64\":\"${file?.toBase64()}\"")
-
-                            val response = WebKit.okClient.postRequest(WebInterface.PROJECTISSUE_URL, WebKit.mediaJson, dataString)?.string()
-                            response?.run {
-                                Log.d("response", this)
-                                val responseModel = WebKit.gson.fromJson(this, ReleaseResponce::class.java)
-                                runOnUiThread {
-                                    dialog?.cancel()
-                                }
-                                responseModel?.run {
-                                    when (stateCode) {
-                                        "200" -> runOnUiThread {
-                                            Toast.makeText(this@ReleaseProjectActivity, "项目已发布,两秒后进入项目详情页", Toast.LENGTH_SHORT).show()
-                                            Thread {
-                                                Thread.sleep(2000)
-                                                runOnUiThread {
-                                                    val intent = Intent(this@ReleaseProjectActivity, ProjectDetailsActivity::class.java)
-                                                    intent.putExtra("project_id", responseModel.projectId.toString())
-                                                    startActivity(intent)
-                                                    finish()
-                                                }
-                                            }.start()
-                                        }
-                                    }
-                                }
-                            }
-                            }catch (e: Exception){
-                                when(e){
-                                    is OutOfMemoryError -> {
-                                        runOnUiThread {
-                                            Toast.makeText(this@ReleaseProjectActivity,"你选择的视频或图片文件过大，请重新选择",Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                                    else -> {
-                                        e.printStackTrace()
-                                    }
-                                }
-                                return@Thread
-                            }
-                        }catch (e: Exception) {
-                            if (dialog?.isShowing != null && dialog?.isShowing == true)
-                                runOnUiThread { dialog?.cancel() }
                         }
-                    }.start()
+                        edit_content.text.toString().isEmpty() -> {
+
+                        }
+                        edit_contact.text.toString().isEmpty() -> {
+
+                        }
+                        edit_contact_phone.text.toString().isEmpty() -> {
+
+                        }
+                        edit_people.text.toString().isEmpty() -> {
+
+                        }
+                        textView_add_video.visibility != View.GONE -> {
+
+                        }
+                        textView_add_photo.visibility != View.GONE -> {
+
+                        }
+                        tencentLocation == null -> {
+
+                        }
+                        else -> {
+                            dialog = AlertDialog.Builder(this@ReleaseProjectActivity)
+                                    .setView(R.layout.process_wait)
+                                    .create()
+                            dialog?.show()
+                            Thread{
+                                try {
+
+
+                                    val data = ReleaseProjectRequire(edit_topic.string(), edit_content.string(),
+                                            tencentLocation!!.city, tencentLocation!!.address, tencentLocation!!.latitude, tencentLocation!!.longitude,
+                                            edit_contact.string(), edit_contact_phone.string(), edit_people.string(), myApplication!!.loginUser!!.name,
+                                            "", imageString,
+                                            myApplication!!.loginUser!!.userId, (spinner_type_project.selectedItemPosition + 1).toString())
+                                    try {
+                                        val dataString = WebKit.gson.toJson(data)
+                                        dataString.replace("deoBase64\":\"\"", "deoBase64\":\"${file?.toBase64()}\"")
+
+                                        val response = WebKit.okClient.postRequest(WebInterface.PROJECTISSUE_URL, WebKit.mediaJson, dataString)?.string()
+                                        response?.run {
+                                            Log.d("response", this)
+                                            val responseModel = WebKit.gson.fromJson(this, ReleaseResponse::class.java)
+                                            runOnUiThread {
+                                                dialog?.cancel()
+                                            }
+                                            responseModel?.run {
+                                                when (stateCode) {
+                                                    "200" -> runOnUiThread {
+                                                        Toast.makeText(this@ReleaseProjectActivity, "项目已发布,两秒后进入项目详情页", Toast.LENGTH_SHORT).show()
+                                                        Thread {
+                                                            Thread.sleep(2000)
+                                                            runOnUiThread {
+                                                                val intent = Intent(this@ReleaseProjectActivity, ProjectDetailsActivity::class.java)
+                                                                intent.putExtra("project_id", responseModel.projectId.toString())
+                                                                startActivity(intent)
+                                                                finish()
+                                                            }
+                                                        }.start()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }catch (e: Exception){
+                                        when(e){
+                                            is OutOfMemoryError -> {
+                                                runOnUiThread {
+                                                    Toast.makeText(this@ReleaseProjectActivity,"你选择的视频或图片文件过大，请重新选择",Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                            else -> {
+                                                e.printStackTrace()
+                                            }
+                                        }
+                                        return@Thread
+                                    }
+                                }catch (e: Exception) {
+                                    if (dialog?.isShowing != null && dialog?.isShowing == true)
+                                        runOnUiThread { dialog?.cancel() }
+                                }
+                            }.start()
+                        }
                     }
                 }
             }

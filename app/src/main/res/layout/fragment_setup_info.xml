@@ -35,8 +35,10 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -78,16 +80,17 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginEnd="16dp"
 
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toStartOf="@+id/imageView_setup"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/username_setup_info">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/nick_name" />
+                            android:hint="@string/nick_name"
+                            android:maxLength="12" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
@@ -188,6 +191,24 @@
                         app:layout_constraintBottom_toBottomOf="@+id/address_input_setup_info"
                         app:layout_constraintStart_toEndOf="@+id/address_input_setup_info"
                         app:layout_constraintTop_toTopOf="@+id/address_input_setup_info" />
+
+                    <ImageView
+                        android:id="@+id/imageView_setup"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/username_setup_info"
+                        app:srcCompat="@drawable/ic_add_a_photo_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/textView_add_photo_setup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="添加照片"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView_setup" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>

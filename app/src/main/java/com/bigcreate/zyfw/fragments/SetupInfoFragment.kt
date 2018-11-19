@@ -1,13 +1,16 @@
 package com.bigcreate.zyfw.fragments
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
@@ -47,6 +50,9 @@ class SetupInfoFragment : Fragment(),TencentLocationListener {
     private var listener: OnFragmentInteractionListener? = null
     private var tencentLocation: TencentLocation? = null
     private var listAdress = ArrayList<String>()
+    private var imageString = ""
+    val PHOTORESULT = 3
+    val IMAGE_UNSPECIFIED = "image/*"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -73,10 +79,15 @@ class SetupInfoFragment : Fragment(),TencentLocationListener {
                 fragmentManager!!.popBackStack()
             }
         }
+        imageView_setup.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,IMAGE_UNSPECIFIED)
+            startActivityForResult(intent,PHOTORESULT)
+        }
         ok_button_setup_info.setOnClickListener {
             Log.d("click","click ok")
             //val response = WebKit.okClient.postRequest()
-            if (nick_name_setup_info.editText!!.isEmpty()||address_input_setup_info.editText!!.isEmpty()||phone_input_setup_info.editText!!.isEmpty())
+            if (nick_name_setup_info.editText!!.isEmpty()||address_input_setup_info.editText!!.isEmpty()||phone_input_setup_info.editText!!.isEmpty()||imageString =="")
                 Toast.makeText(context!!,"你还有尚未填写的资料，请填好后重试",Toast.LENGTH_SHORT).show()
             else {
                 activity?.myApplication?.loginUser?.run {
@@ -92,7 +103,7 @@ class SetupInfoFragment : Fragment(),TencentLocationListener {
                     chip.isEnabled = false
                     Thread {
                         val setupInfoRequire = InfoRequire(name, nick_name_setup_info.editText!!.string(), gender_spinner_setup_info.selectedItem as String,
-                                identity_spinner_setup_info.selectedItem as String, address_input_setup_info.editText!!.string(), phone_input_setup_info.editText!!.string())
+                                identity_spinner_setup_info.selectedItem as String, address_input_setup_info.editText!!.string(), phone_input_setup_info.editText!!.string(),imageString)
                         val data = WebKit.gson.toJson(setupInfoRequire)
                         Log.d("json", data)
                         val response = WebKit.okClient.postRequest(WebInterface.SETUPINFO_URL, WebKit.mediaJson, data)?.string()
@@ -249,5 +260,26 @@ class SetupInfoFragment : Fragment(),TencentLocationListener {
             transucentSystemUI(true)
         }
         super.onResume()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        data?.run {
+            data.data?.run {
+                Log.d("url", this.path)
+                when (requestCode) {
+                    PHOTORESULT -> {
+                        imageView_setup.setImageBitmap(context!!.getBitmapFromUri(this))
+                        context!!.getBitmapFromUri(this).toBase64()?.run {
+                            imageString = this
+                            Log.d("bitMap", this)
+                        }
+                        imageView_setup.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                        textView_add_photo_setup.visibility = View.GONE
+                    }
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+
     }
 }
