@@ -24,18 +24,19 @@ class ProjectListAdapter(val listProject: List<Project>) : RecyclerView.Adapter<
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        val item = listProject[position]
         holder.itemView.run {
-            findViewById<TextView>(R.id.title_project_item).text = listProject[position].projectTopic
-            findViewById<TextView>(R.id.address_project_item).text = listProject[position].projectAddress
-            findViewById<TextView>(R.id.number_project_item).text = listProject[position].projectPeopleNumbers
+            findViewById<TextView>(R.id.title_project_item).text = item.projectTopic
+            findViewById<TextView>(R.id.address_project_item).text = item.projectAddress
+            findViewById<TextView>(R.id.number_project_item).text = item.projectPeopleNumbers
             if (position == 0){
                 val mLayoutParams = layoutParams as RecyclerView.LayoutParams
                 mLayoutParams.topMargin = 20
             }
             setOnClickListener {
                 val intent = Intent(context,ProjectDetailsActivity::class.java)
-                intent.putExtra("project_id",listProject[position].projectId)
+                intent.putExtra("project_id",item.projectId)
+                intent.putExtra("project_topic",item.projectTopic)
                 context.startActivity(intent)
             }
         }

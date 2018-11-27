@@ -11,6 +11,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.widget.EditText
+import android.widget.Toast
 import java.lang.Exception
 
 /**
@@ -47,7 +48,6 @@ fun Window.navigationBarLight(light: Boolean){
 }
 
 fun Window.systemLight(light: Boolean){
-    var ui = this.decorView.systemUiVisibility
     statusBarLight(light)
     navigationBarLight(light)
 }
@@ -147,4 +147,23 @@ fun EditText.string():String{
 
 fun EditText.isEmpty():Boolean{
     return text.isEmpty()
+}
+fun Context.toast(string: String){
+    toast(string,Toast.LENGTH_SHORT)
+}
+fun Context.toast(string: String,length:Int){
+    Toast.makeText(this,string,length).show()
+}
+fun Context.longToast(string: String){
+    toast(string,Toast.LENGTH_LONG)
+}
+var View.isVisible:Boolean
+set(value) {
+    visibility = if (value)
+        View.VISIBLE
+    else
+        View.GONE
+}
+get() {
+    return visibility == View.VISIBLE
 }

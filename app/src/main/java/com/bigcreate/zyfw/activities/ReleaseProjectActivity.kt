@@ -29,6 +29,8 @@ import com.tencent.map.geolocation.TencentLocationRequest
 import java.io.File
 
 
+
+
 class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
     val PHOTORESULT = 3
     val VIDEORESULT = 2
@@ -199,16 +201,15 @@ class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
                         val projection = arrayOf(MediaStore.Video.Media.DATA)
                         val cursorLoader =CursorLoader(this@ReleaseProjectActivity,this,projection,null,null,null)
                         val cursor = cursorLoader.loadInBackground()
-                        val column_index = cursor?.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
                         cursor?.moveToFirst()
                         this@ReleaseProjectActivity.getPath(this).run {
                             Log.d("pathsss",this)
                             val file = File(this)
-                            file?.run {
+                            file.run {
                                 this@ReleaseProjectActivity.file = this
                             }
                         }
-                        val path = cursor?.getString(column_index!!)
+                        //val path = cursor?.getString(column_index!!)
 
                         val mediaData = MediaMetadataRetriever()
                         mediaData.setDataSource(this@ReleaseProjectActivity,this)
@@ -224,12 +225,13 @@ class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
     }
 
         override fun onStatusUpdate(p0: String?, p1: Int, p2: String?) {
+
         }
 
         override fun onLocationChanged(p0: TencentLocation?, p1: Int, p2: String?) {
             p0?.run {
                 if (isGetting.not()) {
-                    val text = city + "·" + name
+                    val text = "$city·$name"
                     if (text.length>12)
                     chip_location.text = text.subSequence(0, 12)
                     else

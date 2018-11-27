@@ -1,8 +1,11 @@
 package com.bigcreate.zyfw.adapter
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.Comment
 
 class CommentAdapter(val CommentList:List<Comment>):RecyclerView.Adapter<CommentAdapter.ViewHolder>(){
@@ -13,14 +16,19 @@ class CommentAdapter(val CommentList:List<Comment>):RecyclerView.Adapter<Comment
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_comment,parent,false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val item = CommentList[position]
+        item.run {
+            holder.itemView.findViewById<TextView>(R.id.textView_nick_comment).text = userNick
+            holder.itemView.findViewById<TextView>(R.id.textView_time_comment).text = commentTime
+            holder.itemView.findViewById<TextView>(R.id.textView_content_comment).text = comment
+        }
     }
 
     override fun getItemCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return CommentList.size
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="账号">
+    <PreferenceCategory android:title="账号" android:key="category_account">
         <Preference android:key="account_settings" android:icon="@drawable/ic_person_outline_black_24dp"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="个性化">

@@ -1,8 +1,7 @@
 package com.bigcreate.library
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.net.Uri
 import android.util.Base64
 import java.io.ByteArrayOutputStream
@@ -74,14 +73,15 @@ fun Context.getRealPathFromURI_API19(uri: Uri): String {
     // where id is equal to
     val sel = MediaStore.Images.Media._ID + "=?"
 
-    val cursor = this.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            column, sel, arrayOf(id), null)
-    val columnIndex = cursor.getColumnIndex(column[0])
+    this.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            column, sel, arrayOf(id), null)?.run {
+    val columnIndex = getColumnIndex(column[0])
 
-    if (cursor.moveToFirst()) {
-        filePath = cursor.getString(columnIndex)
+    if (moveToFirst()) {
+        filePath = getString(columnIndex)
     }
-    cursor.close()
+    close()
+    }
     return filePath
 }
 @Throws(IOException::class)
@@ -91,4 +91,58 @@ fun Context.getBitmapFromUri(uri: Uri): Bitmap {
     val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
     parcelFileDescriptor.close()
     return image
+}
+
+val Bitmap.roundBitmap:Bitmap
+get(){
+    var width = this.width
+    var height = this.height
+    val roundPx: Float
+    val left: Float
+    val top: Float
+    val right: Float
+    val bottom: Float
+    val dst_left: Float
+    val dst_top: Float
+    val dst_right: Float
+    val dst_bottom: Float
+    if (width <= height) {
+        roundPx = (width / 2).toFloat()
+        top = 0f
+        bottom = width.toFloat()
+        left = 0f
+        right = width.toFloat()
+        height = width
+        dst_left = 0f
+        dst_top = 0f
+        dst_right = width.toFloat()
+        dst_bottom = width.toFloat()
+    } else {
+        roundPx = (height / 2).toFloat()
+        val clip = ((width - height) / 2).toFloat()
+        left = clip
+        right = width - clip
+        top = 0f
+        bottom = height.toFloat()
+        width = height
+        dst_left = 0f
+        dst_top = 0f
+        dst_right = height.toFloat()
+        dst_bottom = height.toFloat()
+    }
+    val output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(output)
+    val color = -0xbdbdbe
+    val paint = Paint()
+    val src = Rect(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
+    val dst = Rect(dst_left.toInt(), dst_top.toInt(), dst_right.toInt(), dst_bottom.toInt())
+    val rectF = RectF(dst)
+    paint.isAntiAlias = true
+    canvas.drawARGB(0, 0, 0, 0)
+    paint.color =color
+    canvas.drawRoundRect(rectF, roundPx, roundPx, paint)
+    paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+    canvas.drawBitmap(this, src, dst, paint)
+    return output
+
 }
