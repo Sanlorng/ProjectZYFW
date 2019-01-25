@@ -8,11 +8,8 @@ import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
 import android.text.TextUtils
-import android.transition.Slide
 import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.view.Window
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -22,16 +19,12 @@ import com.bigcreate.zyfw.base.MyApplication
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.base.myApplication
-import com.bigcreate.zyfw.models.LoginRequire
-import com.bigcreate.zyfw.models.LoginResponse
-import com.bigcreate.zyfw.models.User
+import com.bigcreate.zyfw.models.LoginRequest
+import com.bigcreate.zyfw.models.LoginByPassResponse
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.MediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 
 /**
  * A login screen that offers login via email/password.
@@ -228,7 +221,7 @@ class LoginActivity : AppCompatActivity() {
 
             return try {
                 tryLoginTask()
-                val response = mGson.fromJson(mResponseString, LoginResponse::class.java)
+                val response = mGson.fromJson(mResponseString, LoginByPassResponse::class.java)
                 response?.run {
                     userId = content
                 }
@@ -270,14 +263,16 @@ class LoginActivity : AppCompatActivity() {
                 loginUrl
             else
                 registUrl
-            val loginRequest = LoginRequire(ipAddress!!, mEmail, mPassword, null)
+            //ffff
+//            val loginRequest = LoginRequest(ipAddress!!, mEmail, mPassword, null)
+            val loginRequest = ""
             Log.d("jsonToServer", Gson().toJson(loginRequest))
             myApplication?.run {
                 val response = WebKit.okClient.postRequest(WebInterface.LOGIN_URL,WebInterface.TYPE_JSON,WebKit.gson.toJson(loginRequest))
                 mResponseString = response?.string()
                 Log.d("response", mResponseString)
                 loginToken = try {
-                    WebKit.gson.fromJson<LoginResponse>(mResponseString,LoginResponse::class.java).token
+                    WebKit.gson.fromJson<LoginByPassResponse>(mResponseString,LoginByPassResponse::class.java::class.java).token
                 }catch (e:Exception){
                     Log.d("loginToken ", "null")
                     null

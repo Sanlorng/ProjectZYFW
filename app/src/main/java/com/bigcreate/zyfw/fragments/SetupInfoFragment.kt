@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -19,15 +18,12 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.appCompactActivity
 import com.bigcreate.zyfw.base.myApplication
-import com.bigcreate.zyfw.models.InfoRequire
 import com.bigcreate.zyfw.models.InfoResponse
 import com.tencent.map.geolocation.TencentLocation
 import com.tencent.map.geolocation.TencentLocationListener
 import com.tencent.map.geolocation.TencentLocationManager
 import com.tencent.map.geolocation.TencentLocationRequest
-import kotlinx.android.synthetic.main.activity_release_project.*
 import kotlinx.android.synthetic.main.fragment_setup_info.*
-import kotlin.math.log
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -102,16 +98,18 @@ class SetupInfoFragment : Fragment(),TencentLocationListener {
                     ok_button_setup_info.isEnabled = false
                     chip.isEnabled = false
                     Thread {
-                        val setupInfoRequire = InfoRequire(name, nick_name_setup_info.editText!!.string(), gender_spinner_setup_info.selectedItem as String,
-                                identity_spinner_setup_info.selectedItem as String, address_input_setup_info.editText!!.string(), phone_input_setup_info.editText!!.string(),imageString)
-                        val data = WebKit.gson.toJson(setupInfoRequire)
+                        //ffff
+//                        val setupInfoRequire = InfoRequire(name, nick_name_setup_info.editText!!.string(), gender_spinner_setup_info.selectedItem as String,
+//                                identity_spinner_setup_info.selectedItem as String, address_input_setup_info.editText!!.string(), phone_input_setup_info.editText!!.string(),imageString)
+//                        val data = WebKit.gson.toJson(setupInfoRequire)
+                        val data = ""
                         Log.d("json", data)
                         val response = WebKit.okClient.postRequest(WebInterface.SETUPINFO_URL, WebKit.mediaJson, data)?.string()
                         response?.run {
                             Log.d("this",this)
                             val model = WebKit.gson.fromJson(this, InfoResponse::class.java)
                             when (model.stateCode) {
-                                "200" -> {
+                                200 -> {
                                     activity?.runOnUiThread {
                                         Toast.makeText(context!!,"信息设置成功！",Toast.LENGTH_SHORT).show()
                                         activity!!.finish()

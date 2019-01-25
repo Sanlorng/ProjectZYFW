@@ -1,17 +1,15 @@
 package com.bigcreate.zyfw.fragments
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.bigcreate.library.WebKit
 import com.bigcreate.library.getRequest
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.WebInterface
-import kotlinx.android.synthetic.main.activity_project_details.*
 
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

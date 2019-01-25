@@ -2,10 +2,11 @@ package com.bigcreate.zyfw.activities
 
 import android.annotation.SuppressLint
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.library.WebKit
 import com.bigcreate.library.postRequest
@@ -34,6 +35,8 @@ class SearchActivity : AppCompatActivity() {
                 attemptSearch()
             true
         }
+        keyword_search.requestFocus()
+//        keyword_search.callOnClick()
     }
 
     private fun attemptSearch(){
@@ -55,7 +58,7 @@ class SearchActivity : AppCompatActivity() {
                    }
                    searchResponse = WebKit.gson.fromJson<SearchResponse>(responseString, SearchResponse::class.java)
                }
-               searchResponse != null && searchResponse?.stateCode?.compareTo("200") == 0
+               searchResponse != null && searchResponse?.stateCode?.compareTo(200) == 0
            }catch (e:Exception){
                Log.d("error","when search request")
                false

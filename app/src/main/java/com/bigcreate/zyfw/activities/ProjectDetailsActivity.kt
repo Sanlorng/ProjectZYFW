@@ -1,24 +1,17 @@
 package com.bigcreate.zyfw.activities
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.BitmapFactory
-import android.media.MediaPlayer
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
-import android.view.*
-import android.view.inputmethod.InputMethodManager
-import android.widget.*
-import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bigcreate.library.*
+import com.bigcreate.library.WebKit
+import com.bigcreate.library.getRequest
+import com.bigcreate.library.isVisible
+import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.CommentAdapter
-import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.myApplication
 import com.bigcreate.zyfw.callback.CommentCallBack
@@ -26,8 +19,6 @@ import com.bigcreate.zyfw.fragments.CommentDialogFragment
 import com.bigcreate.zyfw.fragments.FillTextCallBack
 import com.bigcreate.zyfw.models.CommentResponse
 import com.bigcreate.zyfw.models.ProjectResponse
-import com.bigcreate.zyfw.models.SearchRequire
-import com.bigcreate.zyfw.models.SearchResponse
 import com.tencent.map.geolocation.TencentLocation
 import com.tencent.map.geolocation.TencentLocationListener
 import com.tencent.map.geolocation.TencentLocationManager
@@ -36,8 +27,6 @@ import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory
 import com.tencent.mapsdk.raster.model.LatLng
 import com.tencent.mapsdk.raster.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_project_details.*
-import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.android.synthetic.main.comment_pop.*
 
 class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallBack {
     private var task : SearchAsyncTask? = null
@@ -56,6 +45,7 @@ class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallB
             project_id = intent.getStringExtra("project_id")
             project_name = intent.getStringExtra("project_topic")
             textView_project_title.text = project_name
+
             attemptSearch()
         val tencentLocation = TencentLocationManager.getInstance(this)
         val request = TencentLocationRequest.create()
@@ -95,7 +85,7 @@ class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallB
                     searchResponse = WebKit.gson.fromJson<ProjectResponse>(responseString, ProjectResponse::class.java)
                     commentResponse = WebKit.gson.fromJson(responseComment,CommentResponse::class.java)
                 }
-                searchResponse != null && searchResponse?.stateCode?.compareTo("200") == 0
+                searchResponse != null && searchResponse?.stateCode?.compareTo(200) == 0
             }catch (e:Exception){
                 Log.d("error","when search request")
                 false
@@ -110,6 +100,8 @@ class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallB
         }
     }
     fun updateInfo(){
+        progressBar4.isVisible = false
+        app_bar_map.isVisible = true
         searchResponse?.content?.run {
             app_bar_map.map.setCenter(LatLng(latitude,longitude))
             app_bar_map.map.setZoom(20)
@@ -132,10 +124,13 @@ class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallB
                 recycler_comments.layoutManager = LinearLayoutManager(this@ProjectDetailsActivity)
             }
             if (commentResponse== null){
-                textView_Comments.text = "网络出错，无法获得评论"
+                //textView_Comments.text = "网络出错，无法获得评论"
             }else{
-                if (commentResponse!!.content == null)
-                    textView_Comments.text = "此项目没有评论"
+                if (commentResponse!!.content == null){
+                    textView_Comments.text = " "
+                }else
+                    textView_Comments.text = getString(R.string.comment)
+
             }
         }
     }

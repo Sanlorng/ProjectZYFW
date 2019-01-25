@@ -1,13 +1,12 @@
 package com.bigcreate.zyfw.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.fragments.SetupInfoFragment
 import com.bigcreate.zyfw.fragments.SignUpFragment
-import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {
     var fragmentTransaction: FragmentTransaction ?= null

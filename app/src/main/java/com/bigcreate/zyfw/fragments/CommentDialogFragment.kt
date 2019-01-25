@@ -2,8 +2,6 @@ package com.bigcreate.zyfw.fragments
 
 import android.app.Dialog
 import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.ColorFilter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,26 +11,19 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.bigcreate.library.WebKit
 import com.bigcreate.library.postRequest
-import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.callback.CommentCallBack
-import com.bigcreate.zyfw.models.BaseResponse
 import com.bigcreate.zyfw.models.Comment
 import com.bigcreate.zyfw.models.ContentResponse
-import kotlinx.android.synthetic.main.activity_project_details.*
 import kotlinx.android.synthetic.main.comment_pop.*
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CommentDialogFragment: DialogFragment(),View.OnClickListener,TextWatcher {
     var fillTextCallBack:FillTextCallBack? = null
@@ -96,14 +87,15 @@ class CommentDialogFragment: DialogFragment(),View.OnClickListener,TextWatcher {
                             Log.d("commentR",response)
                             val model = WebKit.gson.fromJson(response,ContentResponse::class.java)
                             when(model.stateCode){
-                                "200"->{
+                                200->{
                                     activity?.runOnUiThread {
+                                        editext.text.clear()
                                         Toast.makeText(context,"评论成功",Toast.LENGTH_SHORT).show()
                                         dismiss()
                                         commentCallBack?.commentSuccess()
                                     }
                                 }
-                                "410"->{
+                                410->{
                                     activity?.runOnUiThread {
                                         Toast.makeText(context, "您评论的内容包含敏感词：" + model.content, Toast.LENGTH_SHORT).show()
                                     }
@@ -125,7 +117,7 @@ class CommentDialogFragment: DialogFragment(),View.OnClickListener,TextWatcher {
     }
 
     override fun afterTextChanged(s: Editable?) {
-        if (s== null|| s.isEmpty()) {
+        if (s == null || s.isEmpty()) {
             button.isEnabled = false
             button.setColorFilter(ContextCompat.getColor(context!!,R.color.color737373))
         }else{

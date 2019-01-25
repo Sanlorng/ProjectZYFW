@@ -167,3 +167,7 @@ set(value) {
 get() {
     return visibility == View.VISIBLE
 }
+
+fun Context.notification(){
+
+}

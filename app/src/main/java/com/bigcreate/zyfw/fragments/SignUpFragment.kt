@@ -8,29 +8,24 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.bigcreate.library.WebKit
 import com.bigcreate.library.ipAddress
 import com.bigcreate.library.postRequest
 import com.bigcreate.library.transucentSystemUI
-
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.appCompactActivity
 import com.bigcreate.zyfw.base.myApplication
-import com.bigcreate.zyfw.models.*
-import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_login.*
+import com.bigcreate.zyfw.models.RegisterResponse
+import com.bigcreate.zyfw.models.User
 import kotlinx.android.synthetic.main.fragment_sign_up.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -142,8 +137,10 @@ class SignUpFragment : Fragment() {
         private fun tryLoginTask() {
             var temp: String? = null
             activity?.myApplication?.run {
-                val registerRequire = RegisterRequire(ipAddress, phone_sign_up.text.toString(), password_sign_up.text.toString())
-                val data = WebKit.gson.toJson(registerRequire)
+                //ffff
+//                val registerRequire = RegisterRequire(ipAddress, phone_sign_up.text.toString(), password_sign_up.text.toString())
+//                val data = WebKit.gson.toJson(registerRequire)
+                val data = ""
                 Log.d("lisss",data)
                 mResponseString = WebKit.okClient.postRequest(WebInterface.REGISTER_URL, WebInterface.TYPE_JSON, data!!)?.string()
                 Log.d("responseString",mResponseString)

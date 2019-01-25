@@ -1,34 +1,31 @@
 package com.bigcreate.zyfw.activities
 
-import android.content.*
+import android.content.DialogInterface
+import android.content.Intent
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import com.bigcreate.zyfw.R
-import kotlinx.android.synthetic.main.activity_release_project.*
-import android.media.MediaMetadataRetriever
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.loader.content.CursorLoader
 import com.bigcreate.library.*
+import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.WebInterface
-import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.base.myApplication
-import com.bigcreate.zyfw.models.Project
-import com.bigcreate.zyfw.models.ReleaseProjectRequire
+import com.bigcreate.zyfw.models.CreateProjectRequest
 import com.bigcreate.zyfw.models.ReleaseResponse
 import com.tencent.map.geolocation.TencentLocation
 import com.tencent.map.geolocation.TencentLocationListener
 import com.tencent.map.geolocation.TencentLocationManager
 import com.tencent.map.geolocation.TencentLocationRequest
+import kotlinx.android.synthetic.main.activity_release_project.*
 import java.io.File
-
-
 
 
 class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
@@ -117,12 +114,13 @@ class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
                             Thread{
                                 try {
 
-
-                                    val data = ReleaseProjectRequire(edit_topic.string(), edit_content.string(),
-                                            tencentLocation!!.city, tencentLocation!!.address, tencentLocation!!.latitude, tencentLocation!!.longitude,
-                                            edit_contact.string(), edit_contact_phone.string(), edit_people.string(), myApplication!!.loginUser!!.name,
-                                            "", imageString,
-                                            myApplication!!.loginUser!!.userId, (spinner_type_project.selectedItemPosition + 1).toString())
+//ffff
+//                                    val data = CreateProjectRequest(edit_topic.string(), edit_content.string(),
+//                                            tencentLocation!!.city, tencentLocation!!.address, tencentLocation!!.latitude, tencentLocation!!.longitude,
+//                                            edit_contact.string(), edit_contact_phone.string(), edit_people.string(), myApplication!!.loginUser!!.name,
+//                                            "", imageString,
+//                                            myApplication!!.loginUser!!.userId, (spinner_type_project.selectedItemPosition + 1).toString())
+                                    val data = ""
                                     try {
                                         val dataString = WebKit.gson.toJson(data)
                                         dataString.replace("deoBase64\":\"\"", "deoBase64\":\"${file?.toBase64()}\"")
@@ -136,7 +134,7 @@ class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
                                             }
                                             responseModel?.run {
                                                 when (stateCode) {
-                                                    "200" -> runOnUiThread {
+                                                    200 -> runOnUiThread {
                                                         Toast.makeText(this@ReleaseProjectActivity, "项目已发布,两秒后进入项目详情页", Toast.LENGTH_SHORT).show()
                                                         Thread {
                                                             Thread.sleep(2000)
