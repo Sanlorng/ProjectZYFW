@@ -24,6 +24,7 @@ import com.tencent.map.geolocation.TencentLocationListener
 import com.tencent.map.geolocation.TencentLocationManager
 import com.tencent.map.geolocation.TencentLocationRequest
 import kotlinx.android.synthetic.main.fragment_setup_info.*
+import retrofit2.Retrofit
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -93,12 +94,14 @@ class SetupInfoFragment : Fragment(),TencentLocationListener {
                     nick_name_setup_info.isEnabled = false
                     phone_input_setup_info.isEnabled = false
                     address_input_setup_info.isEnabled = false
-                    gender_spinner_setup_info.isEnabled = false
-                    identity_spinner_setup_info.isEnabled = false
+//                    gender_spinner_setup_info.isEnabled = false
+//                    identity_spinner_setup_info.isEnabled = false
                     ok_button_setup_info.isEnabled = false
                     chip.isEnabled = false
+                    val client = Retrofit.Builder()
+                            .baseUrl(WebInterface.ROOT_URL)
                     Thread {
-                        //ffff
+                        //TODO
 //                        val setupInfoRequire = InfoRequire(name, nick_name_setup_info.editText!!.string(), gender_spinner_setup_info.selectedItem as String,
 //                                identity_spinner_setup_info.selectedItem as String, address_input_setup_info.editText!!.string(), phone_input_setup_info.editText!!.string(),imageString)
 //                        val data = WebKit.gson.toJson(setupInfoRequire)
@@ -127,8 +130,8 @@ class SetupInfoFragment : Fragment(),TencentLocationListener {
                                 nick_name_setup_info.isEnabled = true
                                 phone_input_setup_info.isEnabled = true
                                 address_input_setup_info.isEnabled = true
-                                gender_spinner_setup_info.isEnabled = true
-                                identity_spinner_setup_info.isEnabled = true
+//                                gender_spinner_setup_info.isEnabled = true
+//                                identity_spinner_setup_info.isEnabled = true
                                 ok_button_setup_info.isEnabled = true
                                 textView7.isEnabled = true
                                 gender_text_setup_info.isEnabled = true
@@ -142,7 +145,7 @@ class SetupInfoFragment : Fragment(),TencentLocationListener {
 
             }
         }
-        username_setup_info.text = activity?.myApplication?.loginUser?.name
+//        username_setup_info.text = activity?.myApplication?.loginUser?.name
         chip.setOnClickListener {
             Log.d("is click","is click")
                 val popupMenu = PopupMenu(context!!,chip)

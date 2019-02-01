@@ -30,7 +30,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -42,10 +42,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -63,28 +63,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/username_setup_info"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/male"
-                        android:textSize="30sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/nick_name_setup_info"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
 
-                        android:layout_marginEnd="8dp"
-                        app:layout_constraintEnd_toStartOf="@+id/imageView_setup"
+                        android:layout_marginEnd="16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/username_setup_info">
+                        app:layout_constraintTop_toBottomOf="@+id/textView_add_photo_setup">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
@@ -94,73 +83,124 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
+                        android:gravity="center_vertical"
                         android:id="@+id/gender_text_setup_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:text="@string/gender"
                         android:textSize="18sp"
                         app:layout_constraintStart_toStartOf="@+id/nick_name_setup_info"
-                        app:layout_constraintTop_toBottomOf="@+id/nick_name_setup_info" />
+                        app:layout_constraintTop_toBottomOf="@+id/phone_input_setup_info" />
 
-                    <Spinner
-                        android:id="@+id/gender_spinner_setup_info"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:entries="@array/sex_array"
-                        app:layout_constraintBottom_toBottomOf="@+id/gender_text_setup_info"
-                        app:layout_constraintStart_toEndOf="@+id/gender_text_setup_info"
-                        app:layout_constraintTop_toTopOf="@+id/gender_text_setup_info" />
+                        android:layout_marginTop="8dp"
+                        app:checkedChip="@id/chipMaleSetupInfo"
+                        app:layout_constraintStart_toStartOf="@+id/gender_text_setup_info"
+                        app:layout_constraintTop_toBottomOf="@+id/gender_text_setup_info"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipMaleSetupInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/male"
+                            android:checkable="true"
+                            app:checkedIconVisible="false" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipFemaleSetupInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/female"
+                            android:checkable="true"
+                            app:checkedIconVisible="false" />
+                    </com.google.android.material.chip.ChipGroup>
 
                     <TextView
                         android:id="@+id/textView7"
+                        android:layout_marginTop="8dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
                         android:text="@string/identity"
                         android:textSize="18sp"
                         app:layout_constraintStart_toStartOf="@+id/gender_text_setup_info"
-                        app:layout_constraintTop_toBottomOf="@+id/gender_text_setup_info" />
+                        app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
 
-                    <Spinner
-                        android:id="@+id/identity_spinner_setup_info"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroup2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:entries="@array/identity_array"
-                        app:layout_constraintStart_toEndOf="@+id/textView7"
-                        app:layout_constraintTop_toTopOf="@+id/textView7" />
+                        android:layout_marginTop="8dp"
+                        app:checkedChip="@id/chipIdStudent"
+                        app:singleSelection="true"
+                        app:layout_constraintStart_toStartOf="@+id/textView7"
+                        app:layout_constraintTop_toBottomOf="@+id/textView7">
+
+                        <com.google.android.material.chip.Chip
+                            app:checkedIconVisible="false"
+                            android:checkable="true"
+                            android:id="@+id/chipIdStudent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Student" />
+                        <com.google.android.material.chip.Chip
+                            app:checkedIconVisible="false"
+                            android:checkable="true"
+                            android:id="@+id/chipIdTeacher"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Teacher" />
+                        <com.google.android.material.chip.Chip
+                            app:checkedIconVisible="false"
+                            android:checkable="true"
+                            android:id="@+id/chipIdOther"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Other" />
+                    </com.google.android.material.chip.ChipGroup>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/address_input_setup_info"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        app:layout_constraintStart_toStartOf="@+id/textView7"
-                        app:layout_constraintTop_toBottomOf="@id/textView7">
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/chipGroup2">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:autofillHints="@string/address"
                             android:ems="10"
+                            android:gravity="top"
                             android:hint="@string/address"
                             android:inputType="textPostalAddress"
+                            android:minHeight="100dp"
                             tools:targetApi="O" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/phone_input_setup_info"
-                        android:layout_width="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:layout_constraintStart_toStartOf="@+id/address_input_setup_info"
-                        app:layout_constraintTop_toBottomOf="@+id/address_input_setup_info">
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="@+id/nick_name_setup_info"
+                        app:layout_constraintStart_toStartOf="@+id/nick_name_setup_info"
+                        app:layout_constraintTop_toBottomOf="@+id/nick_name_setup_info">
 
                         <EditText
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/phone"
@@ -169,49 +209,50 @@
 
                     <Button
                         android:id="@+id/ok_button_setup_info"
-                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
                         android:text="@string/ok"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/phone_input_setup_info" />
+                        app:layout_constraintEnd_toEndOf="@+id/address_input_setup_info"
+                        app:layout_constraintTop_toBottomOf="@+id/address_input_setup_info" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip"
                         style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+
                         android:layout_marginTop="8dp"
                         android:text="快速定位"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Chip"
                         app:chipIcon="@drawable/ic_place_black_24dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/address_input_setup_info"
-                        app:layout_constraintStart_toEndOf="@+id/address_input_setup_info"
-                        app:layout_constraintTop_toTopOf="@+id/address_input_setup_info" />
+                        app:layout_constraintStart_toStartOf="@+id/address_input_setup_info"
+                        app:layout_constraintTop_toBottomOf="@+id/address_input_setup_info" />
 
                     <ImageView
                         android:id="@+id/imageView_setup"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/username_setup_info"
-                        app:srcCompat="@drawable/ic_add_a_photo_black_24dp" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_account_circle_black_24dp" />
 
                     <TextView
+                        style="@style/TextAppearance.MaterialComponents.Headline6"
                         android:id="@+id/textView_add_photo_setup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
                         android:text="添加照片"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/imageView_setup"
+                        app:layout_constraintStart_toStartOf="@+id/imageView_setup"
                         app:layout_constraintTop_toBottomOf="@+id/imageView_setup" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@ package com.bigcreate.zyfw.fragments
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
@@ -15,17 +16,24 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.bigcreate.library.WebKit
-import com.bigcreate.library.ipAddress
-import com.bigcreate.library.postRequest
-import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.appCompactActivity
 import com.bigcreate.zyfw.base.myApplication
+import com.bigcreate.zyfw.models.RegisterRequest
 import com.bigcreate.zyfw.models.RegisterResponse
 import com.bigcreate.zyfw.models.User
+import com.bigcreate.zyfw.mvp.base.LoginModel
+import com.bigcreate.zyfw.mvp.user.RegisterContract
+import com.bigcreate.zyfw.mvp.user.RegisterImpl
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_sign_up.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,14 +49,14 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SignUpFragment : Fragment() {
+class SignUpFragment : Fragment(),RegisterContract.View {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var mAuthTask : UserLoginTask ?= null
     private var mResponseString : String ?= null
     private var listener: OnFragmentInteractionListener? = null
-
+    private val presenter = RegisterImpl(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -74,6 +82,14 @@ class SignUpFragment : Fragment() {
                     }
                     false
                 })
+        buttonSendValidCodeSignUp.setOnClickListener {
+            if (phone_sign_up.text.toString().length!=11) {
+                phone_sign_up.error = "请输入手机号"
+                phone_sign_up.requestFocus()
+            }
+            else
+                presenter.doSendValidCode(phone_sign_up.text.toString())
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -97,7 +113,7 @@ class SignUpFragment : Fragment() {
             return try {
                 tryLoginTask()
                 activity?.myApplication?.loginToken != null
-            } catch (e: InterruptedException) {
+            } catch (e: Throwable) {
                 false
             }
 
@@ -137,7 +153,7 @@ class SignUpFragment : Fragment() {
         private fun tryLoginTask() {
             var temp: String? = null
             activity?.myApplication?.run {
-                //ffff
+                //TODO
 //                val registerRequire = RegisterRequire(ipAddress, phone_sign_up.text.toString(), password_sign_up.text.toString())
 //                val data = WebKit.gson.toJson(registerRequire)
                 val data = ""
@@ -192,9 +208,9 @@ class SignUpFragment : Fragment() {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true)
-            mAuthTask = UserLoginTask(emailStr, passwordStr)
-            mAuthTask!!.execute(null as Void?)
-
+//            mAuthTask = UserLoginTask(emailStr, passwordStr)
+//            mAuthTask!!.execute(null as Void?)
+            presenter.doRegister(RegisterRequest(emailStr,passwordStr,textValidCodeRegister.text.toString()))
         }
         phone_sign_up_button.isEnabled = true
     }
@@ -237,6 +253,60 @@ class SignUpFragment : Fragment() {
                         sign_up_progress?.visibility = if (show) View.VISIBLE else View.GONE
                     }
                 })
+    }
+
+    override fun onRegisterFaild(response: JsonObject) {
+        context?.toast("注册失败")
+    }
+
+    override fun onRegisterSuccess(loginModel: LoginModel) {
+        Attributes.loginUserInfo = loginModel
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        transaction?.run {
+            replace(R.id.container_sign_up,SetupInfoFragment())
+            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            addToBackStack(null)
+            commit()
+        }
+    }
+
+    override fun onValidCodeFail(response: JsonObject) {
+        context?.toast("验证码发送失败")
+    }
+
+    override fun getViewContext(): Context {
+        return context!!
+    }
+
+
+    override fun onValidCodeSend() {
+        buttonSendValidCodeSignUp.isEnabled = false
+        context?.toast("验证码已发送到您的手机，请注意查收")
+        GlobalScope.launch {
+            for (i in 60 downTo 1){
+                launch (Dispatchers.Main) {
+                    buttonSendValidCodeSignUp.text = "重新发送(${i}s)"
+                }
+                delay(1000)
+            }
+            launch(Dispatchers.Main) {
+                buttonSendValidCodeSignUp.text = "重新发送"
+                buttonSendValidCodeSignUp.isEnabled = true
+            }
+        }
+    }
+
+    override fun onRequesting() {
+        showProgress(true)
+    }
+
+    override fun onNetworkFailed() {
+        context?.toast("网络似乎出现了点问题")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.detachView()
     }
     /**
      * This interface must be implemented by activities that contain this

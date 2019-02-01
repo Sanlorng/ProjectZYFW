@@ -67,6 +67,7 @@
                 tools:srcCompat="@tools:sample/avatars" />
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:id="@+id/sign_up_phone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -83,13 +84,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/phone"
-                    android:inputType="textEmailAddress"
+                    android:inputType="numberDecimal"
                     android:maxLines="1"
+                    android:maxLength="11"
                     android:singleLine="true"
                     android:textSize="20sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:id="@+id/sign_up_pass"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

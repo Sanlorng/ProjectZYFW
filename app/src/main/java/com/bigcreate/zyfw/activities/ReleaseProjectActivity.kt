@@ -20,11 +20,13 @@ import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.myApplication
 import com.bigcreate.zyfw.models.CreateProjectRequest
 import com.bigcreate.zyfw.models.ReleaseResponse
+import com.google.android.material.chip.Chip
 import com.tencent.map.geolocation.TencentLocation
 import com.tencent.map.geolocation.TencentLocationListener
 import com.tencent.map.geolocation.TencentLocationManager
 import com.tencent.map.geolocation.TencentLocationRequest
 import kotlinx.android.synthetic.main.activity_release_project.*
+import kotlinx.android.synthetic.main.fragment_setup_info.*
 import java.io.File
 
 
@@ -59,6 +61,20 @@ class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,VIDEO_UNSPECIFIED)
             startActivityForResult(intent,VIDEORESULT)
+        }
+        val string = resources.getStringArray(R.array.project_type_id)
+        for (i in 0 until string.size) {
+            chipGroupProjectType.addView(
+                    Chip(this).apply {
+                        text = string[i]
+                        id = i
+                        isCheckable = true
+                        isCheckedIconVisible = false
+                    }
+            )
+        }
+        chipGroupProjectType.setOnCheckedChangeListener { chipGroup, i ->
+            toast("你点击了$i")
         }
         val tencentLocation = TencentLocationManager.getInstance(this)
         val request = TencentLocationRequest.create()
@@ -114,7 +130,7 @@ class ReleaseProjectActivity : AppCompatActivity(),TencentLocationListener {
                             Thread{
                                 try {
 
-//ffff
+//TODO
 //                                    val data = CreateProjectRequest(edit_topic.string(), edit_content.string(),
 //                                            tencentLocation!!.city, tencentLocation!!.address, tencentLocation!!.latitude, tencentLocation!!.longitude,
 //                                            edit_contact.string(), edit_contact_phone.string(), edit_people.string(), myApplication!!.loginUser!!.name,

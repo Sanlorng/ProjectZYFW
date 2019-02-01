@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ProjectDetailsActivity
 import com.bigcreate.zyfw.models.Project
+import com.bigcreate.zyfw.mvp.base.SearchModel
 
-class ProjectListAdapter(val listProject: List<Project>) : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>() {
+class ProjectListAdapter(val listProject: List<SearchModel>) : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>() {
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view){
 
     }

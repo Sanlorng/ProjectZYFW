@@ -21,6 +21,7 @@ import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.models.ProjectResponse
+import com.google.gson.JsonParser
 
 class RecommendService : JobService() {
 
@@ -33,14 +34,16 @@ class RecommendService : JobService() {
                 Thread{
                     val loginUserId = defaultSharedPreferences.getString("user_id",null)
                     val response = WebKit.okClient.getRequest(WebInterface.FINDDATA_URL+loginUserId)?.string()
-                    val model = WebKit.gson.fromJson(response,ProjectResponse::class.java)
-                    model?.content?.run {
+                    //val model = JsonParser().parse(response).asJsonObject
+                    //if (model.get("code").asInt == 200)
+
+                    "".run {
                         Log.d("content",response)
                         val builder = NotificationCompat.Builder(this@RecommendService,"0")
                                 .setSmallIcon(R.drawable.ic_favorite_black_24dp)
-                                .setContentText(projectContent)
+                                .setContentText("hhhh")
                                 .setStyle(NotificationCompat.BigTextStyle()
-                                        .bigText(projectContent))
+                                        .bigText("hhhhh"))
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         createNotificationChannel()
                         with(NotificationManagerCompat.from(this@RecommendService)){

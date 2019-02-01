@@ -118,6 +118,15 @@ fun Window.openStatusBarMask(enable:Boolean){
     }
 }
 
+fun Window.defaultStatusBarMask(value: Boolean){
+    PreferenceManager.getDefaultSharedPreferences(context).getBoolean("status_bar_mask",true)
+}
+fun Window.setStatusBarMask(value: Boolean){
+    statusBarColor = if (value)
+        context.getColor(R.color.statusbarColor)
+    else
+        context.getColor(R.color.zeroColor)
+}
 fun Context.dialog(title:String, content:String,posButton:String,posListener:DialogInterface.OnClickListener){
     val dialog = AlertDialog.Builder(this)
     dialog.setTitle(title)

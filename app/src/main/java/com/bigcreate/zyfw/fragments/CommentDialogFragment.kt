@@ -80,7 +80,7 @@ class CommentDialogFragment: DialogFragment(),View.OnClickListener,TextWatcher {
                     val projectId = activity!!.intent.getStringExtra("project_id")
                     Attributes.loginUserInfo?.run {
                         val comment = Comment(projectId, editext.text.toString(),null,
-                                null, null, userId.toInt(), userNick,null,null)
+                                null, null, 1, "",null,null)
                         Thread{
                             Log.d("require",WebKit.gson.toJson(comment))
                             val response = WebKit.okClient.postRequest(WebInterface.TAKECOMMENT_URL,WebKit.mediaJson,WebKit.gson.toJson(comment))!!.string()

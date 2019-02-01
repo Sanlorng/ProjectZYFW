@@ -4,6 +4,8 @@ import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
@@ -12,24 +14,28 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bigcreate.library.*
+import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.base.MyApplication
-import com.bigcreate.zyfw.base.WebInterface
-import com.bigcreate.zyfw.base.defaultSharedPreferences
-import com.bigcreate.zyfw.base.myApplication
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.LoginRequest
 import com.bigcreate.zyfw.models.LoginByPassResponse
+import com.bigcreate.zyfw.mvp.base.LoginModel
+import com.bigcreate.zyfw.mvp.user.LoginContract
+import com.bigcreate.zyfw.mvp.user.LoginImpl
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.MediaType
+import kotlinx.coroutines.GlobalScope
 
 /**
  * A login screen that offers login via email/password.
  */
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(),LoginContract.View {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -41,10 +47,12 @@ class LoginActivity : AppCompatActivity() {
     private var registUrl = "ProjectForDaChuang/register"
     private var loginUrl = "ProjectForDaChuang/login"
     val JSON = MediaType.parse("application/json; charset=utf-8")
+    val loginPresenter = LoginImpl(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbar_login)
+        window.transucentSystemUI(true)
         toolbar_login.setNavigationOnClickListener {
             finish()
         }
@@ -76,8 +84,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        window.transucentSystemUI(true)
-        if (myApplication?.loginToken != null)
+        if (Attributes.loginUserInfo != null)
             finish()
         super.onResume()
     }
@@ -114,7 +121,42 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    override fun onLoginFailed(response: JsonObject) {
+        toast("登录失败")
+        showProgress(false)
+    }
 
+    override fun onLoginSuccess(loginInfo: LoginModel) {
+        Attributes.loginUserInfo = loginInfo
+        setResult(ResultCode.OK)
+        finish()
+    }
+
+    override fun getViewContext(): Context {
+        return this
+    }
+
+    override fun onNetworkFailed() {
+        toast("网络连接失败")
+        showProgress(false)
+    }
+
+
+
+    override fun onRequesting() {
+        showProgress(true)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        loginPresenter.detachView()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode){
+            RequestCode.REGISTER-> if (resultCode == ResultCode.OK){setResult(ResultCode.OK);finish()}
+        }
+    }
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -162,19 +204,18 @@ class LoginActivity : AppCompatActivity() {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true)
-            mAuthTask = UserLoginTask(emailStr, passwordStr)
-            mAuthTask!!.execute(null as Void?)
+//            mAuthTask = UserLoginTask(emailStr, passwordStr)
+//            mAuthTask!!.execute(null as Void?)
+            loginPresenter.doLoginByPass(LoginRequest(emailStr,passwordStr))
         }
         email_sign_in_button.isEnabled = true
     }
 
     private fun isPhoneValid(email: String): Boolean {
-        //TODO: Replace this with your own logic
         return email.length == 11
     }
 
     private fun isPasswordValid(password: String): Boolean {
-        //TODO: Replace this with your own logic
         return password.length > 4
     }
 
@@ -235,7 +276,6 @@ class LoginActivity : AppCompatActivity() {
         override fun onPostExecute(success: Boolean?) {
             mAuthTask = null
             showProgress(false)
-
             if (success!!) {
                 //myApplication?.loginUser = User(mEmail,mPassword,myApplication?.loginToken!!,userId!!)
                 defaultSharedPreferences.edit()
@@ -263,7 +303,7 @@ class LoginActivity : AppCompatActivity() {
                 loginUrl
             else
                 registUrl
-            //ffff
+            //TODO
 //            val loginRequest = LoginRequest(ipAddress!!, mEmail, mPassword, null)
             val loginRequest = ""
             Log.d("jsonToServer", Gson().toJson(loginRequest))
@@ -282,7 +322,6 @@ class LoginActivity : AppCompatActivity() {
 
         }
     }
-
     companion object {
 
         /**

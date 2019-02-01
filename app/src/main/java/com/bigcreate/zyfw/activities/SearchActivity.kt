@@ -15,7 +15,6 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.myApplication
-import com.bigcreate.zyfw.models.SearchRequire
 import com.bigcreate.zyfw.models.SearchResponse
 import kotlinx.android.synthetic.main.activity_search.*
 
@@ -48,26 +47,27 @@ class SearchActivity : AppCompatActivity() {
     @SuppressLint("StaticFieldLeak")
     inner class SearchAsyncTask internal constructor(val string: String):AsyncTask<Void, Void, Boolean>(){
         override fun doInBackground(vararg params: Void?): Boolean {
-           return try {
-               myApplication?.run {
-                   val response = WebKit.okClient.postRequest(WebInterface.SEARCH_URL, WebInterface.TYPE_JSON, WebKit.gson.toJson(SearchRequire(null, string,"桂林")))
-                   val responseString = response?.string()
-                   Log.d("is client","yes")
-                   responseString?.run {
-                       Log.d("response",this)
-                   }
-                   searchResponse = WebKit.gson.fromJson<SearchResponse>(responseString, SearchResponse::class.java)
-               }
-               searchResponse != null && searchResponse?.stateCode?.compareTo(200) == 0
-           }catch (e:Exception){
-               Log.d("error","when search request")
-               false
-           }
+//           return try {
+//               myApplication?.run {
+//                   val response = WebKit.okClient.postRequest(WebInterface.SEARCH_URL, WebInterface.TYPE_JSON, WebKit.gson.toJson(SearchRequire(null, string,"桂林")))
+//                   val responseString = response?.string()
+//                   Log.d("is client","yes")
+//                   responseString?.run {
+//                       Log.d("response",this)
+//                   }
+//                   searchResponse = WebKit.gson.fromJson<SearchResponse>(responseString, SearchResponse::class.java)
+//               }
+//               searchResponse != null && searchResponse?.stateCode?.compareTo(200) == 0
+//           }catch (e:Exception){
+//               Log.d("error","when search request")
+//               false
+//           }
+            return false
         }
 
         override fun onPostExecute(result: Boolean?) {
             if (result!!) {
-                search_result.adapter = ProjectListAdapter(searchResponse!!.content)
+//                search_result.adapter = ProjectListAdapter(searchResponse!!.content)
                 search_result.layoutManager = LinearLayoutManager(this@SearchActivity)
             }
             super.onPostExecute(result)

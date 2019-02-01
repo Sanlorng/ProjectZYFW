@@ -50,47 +50,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:contentDescription="@string/action_sign_in"
-                android:id="@+id/user_icon_sign_up"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="96dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
-
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:id="@+id/sign_up_phone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="176dp"
                 android:layout_marginEnd="32dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/user_icon_sign_up">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <AutoCompleteTextView
                     android:id="@+id/phone_sign_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/phone"
-                    android:inputType="textEmailAddress"
+                    android:inputType="numberDecimal"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:maxLength="11"
                     android:textSize="20sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:id="@+id/sign_up_pass"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="@+id/sign_up_phone"
                 app:layout_constraintStart_toStartOf="@+id/sign_up_phone"
                 app:layout_constraintTop_toBottomOf="@+id/sign_up_phone">
@@ -107,6 +97,28 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:textSize="20sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:id="@+id/layoutValidCodeRegister"
+                android:layout_marginTop="16dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@+id/sign_up_phone"
+                app:layout_constraintTop_toBottomOf="@+id/sign_up_pass">
+
+                <AutoCompleteTextView
+                    android:id="@+id/textValidCodeRegister"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="@string/valid_code"
+                    android:inputType="number"
+                    android:maxLength="6" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -114,13 +126,25 @@
                 style="@style/Base.Widget.AppCompat.Button.Colored"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/sign_up"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@+id/sign_up_phone"
                 app:layout_constraintStart_toStartOf="@id/sign_up_phone"
-                app:layout_constraintTop_toBottomOf="@+id/sign_up_pass" />
+                app:layout_constraintTop_toBottomOf="@+id/layoutValidCodeRegister" />
 
+            <Button
+                android:id="@+id/buttonSendValidCodeSignUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/send_valid_code"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:layout_constraintBottom_toBottomOf="@+id/layoutValidCodeRegister"
+                app:layout_constraintEnd_toEndOf="@+id/sign_up_pass"
+                app:layout_constraintStart_toEndOf="@+id/layoutValidCodeRegister"
+                app:layout_constraintTop_toTopOf="@+id/layoutValidCodeRegister" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
