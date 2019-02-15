@@ -5,6 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.base.myApplication
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -20,16 +21,16 @@ class SettingsActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         window.transucentSystemUI(true)
-        if (myApplication?.loginToken == null)
+        if (Attributes.loginUserInfo== null)
             account_exit_button.visibility = View.GONE
         else
             account_exit_button.visibility = View.VISIBLE
         account_exit_button.setOnClickListener {
             myApplication?.loginToken = null
             defaultSharedPreferences.edit()
-                    .putString("user_name",null)
-                    .putString("user_pass",null)
-                    .putString("user_token",null)
+                    .putString("username","")
+                    .putString("password","")
+                    .putBoolean("saved_account",false)
                     .apply()
             finish()
         }

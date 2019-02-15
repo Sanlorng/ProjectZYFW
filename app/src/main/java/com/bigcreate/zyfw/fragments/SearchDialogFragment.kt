@@ -4,21 +4,20 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import androidx.core.app.DialogCompat
 import androidx.core.content.edit
 import androidx.core.view.isVisible
 import androidx.core.view.setMargins
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.library.fromJson
 import com.bigcreate.library.toJson
 import com.bigcreate.library.toast
+import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.Attributes
@@ -30,24 +29,23 @@ import com.bigcreate.zyfw.mvp.base.SearchModel
 import com.bigcreate.zyfw.mvp.project.SearchContract
 import com.bigcreate.zyfw.mvp.project.SearchImpl
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.chip.Chip
 import com.google.gson.JsonObject
 import com.tencent.map.geolocation.TencentLocation
-import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.appbar.*
-import kotlinx.android.synthetic.main.comment_pop.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
-import kotlinx.android.synthetic.main.fragment_setup_info.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class SearchDialogFragment: DialogFragment() {
     var searchKey = ""
     var searchMap = HashMap<String,Long>()
     var location: TencentLocation? = null
+    var searchHisory = ArrayList<Pair<String,Long>>()
     val searchRequest = SearchRequest(Attributes.loginUserInfo!!.token,null,null,null)
     val searchView = object: SearchContract.View{
         override fun onSearchFailed(response: JsonObject) {
@@ -58,11 +56,18 @@ class SearchDialogFragment: DialogFragment() {
         override fun onSearchFinished(searchResult: List<SearchModel>) {
             dialog.apply {
                 GlobalScope.launch {
-                    if (searchMap.containsKey(searchKey))
-                        searchMap.remove(searchKey)
-                    searchMap.put(searchKey,System.currentTimeMillis())
-                    if (searchMap.size>10)
-                        searchMap.remove(searchMap.keys.first())
+//                    if (searchMap.containsKey(searchKey))
+//                        searchMap.remove(searchKey)
+//                    searchMap.put(searchKey,System.currentTimeMillis())
+//                    if (searchMap.size>10)
+//                        searchMap.remove(searchMap.keys.first())
+                    searchHisory = ArrayList(searchHisory.filter {
+                        it.first != searchKey
+                    }).apply {
+                        add(0, Pair(searchKey,System.currentTimeMillis()))
+                        if (searchHisory.size > 10 )
+                            removeAt(10)
+                    }
                     showSearchHistory(this@apply)
                 }
                 progressBarSearch.isVisible = false
@@ -166,7 +171,7 @@ class SearchDialogFragment: DialogFragment() {
                         token = Attributes.loginUserInfo!!.token
                         projectRegion = location?.city
                         projectTopic = searchKey
-                        projectContent = projectTopic
+                        projectContent = null
                     })
                     true
                 }else
@@ -178,9 +183,15 @@ class SearchDialogFragment: DialogFragment() {
             val searchMapString = context.defaultSharedPreferences.getString("searchHistory",null)
             if (searchMapString!= null){
                 Log.e("searchHistory",searchMapString)
-                searchMap = searchMapString.fromJson<HashMap<String,Long>>()
+//                searchMap = searchMapString.fromJson<HashMap<String,Long>>()
+                searchHisory = searchMapString.fromJson<ArrayList<Pair<String,Long>>>()
                 showSearchHistory(this@apply)
             }
+            val layoutParam = cardViewAppBarMain.layoutParams as AppBarLayout.LayoutParams
+            layoutParam.topMargin += context.let {
+                it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height","dimen","android"))
+            }
+            cardViewAppBarMain.layoutParams = layoutParam
         }
 
     }
@@ -189,10 +200,14 @@ class SearchDialogFragment: DialogFragment() {
         dialog.apply {
             locationImpl.doLocationRequest()
             inputTextSearch.requestFocus()
+
         }
         super.onResume()
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
     override fun onHiddenChanged(hidden: Boolean) {
         if (hidden){
 //            searchImpl.detachView()
@@ -203,11 +218,10 @@ class SearchDialogFragment: DialogFragment() {
         }
         super.onHiddenChanged(hidden)
     }
-    override fun dismiss() {
 
-        super.dismiss()
+    override fun showNow(manager: FragmentManager?, tag: String?) {
+        super.showNow(manager, tag)
     }
-
     override fun onCancel(dialog: DialogInterface?) {
         super.onCancel(dialog)
 //        context?.defaultSharedPreferences?.edit {
@@ -219,13 +233,13 @@ class SearchDialogFragment: DialogFragment() {
         searchImpl.detachView()
         locationImpl.detachView()
         context?.defaultSharedPreferences?.edit {
-            putString("searchHistory",searchMap.toJson())
+            putString("searchHistory",searchHisory.toJson())
         }
         super.onDismiss(dialog)
     }
     private fun showSearchHistory(dialog: Dialog){
         dialog.apply {
-            searchMap.toList().apply {
+            searchHisory.apply {
                 val last = when{
                     size == 0 -> 0
                     size > 10 -> 9
@@ -249,17 +263,25 @@ class SearchDialogFragment: DialogFragment() {
                                 Chip(context).apply {
                                     text = "清空搜索历史"
                                     setOnClickListener {
-                                        searchMap.clear()
+                                        searchHisory.clear()
                                         chipGroupSearchHistory.removeAllViews()
-                                        textSearchHistroy.isVisible = false
+                                        textSearchHistory.isVisible = false
                                         chipGroupSearchHistory.isVisible = false
                                     }
                                 }
                         )
-                        textSearchHistroy.isVisible = true
+                        textSearchHistory.isVisible = true
                     }
                 }
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog.window?.apply {
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT)
+            transucentSystemUI(true)
         }
     }
 }

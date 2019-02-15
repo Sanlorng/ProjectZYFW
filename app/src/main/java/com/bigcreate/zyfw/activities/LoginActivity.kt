@@ -123,6 +123,7 @@ class LoginActivity : AppCompatActivity(),LoginContract.View {
 
     override fun onLoginFailed(response: JsonObject) {
         toast("登录失败")
+        toast("s")
         showProgress(false)
     }
 

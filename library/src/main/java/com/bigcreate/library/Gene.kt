@@ -14,3 +14,8 @@ fun Any.fieldStrings():String{
 fun Any.toJson():String{
     return Gson().toJson(this)
 }
+
+val Boolean?.valueOrNotNull:Boolean
+get() {
+    return this ?: false
+}

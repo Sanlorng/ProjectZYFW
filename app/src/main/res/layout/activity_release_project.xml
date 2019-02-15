@@ -127,76 +127,81 @@
                 android:layout_height="wrap_content">
 
             </com.google.android.material.chip.ChipGroup>
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_view_photo"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="8dp"
-                android:background="?attr/selectableItemBackground"
-                app:layout_constraintEnd_toEndOf="@+id/textInputLayout5"
-                app:layout_constraintStart_toStartOf="@+id/textInputLayout5">
+            <!--<com.google.android.material.card.MaterialCardView-->
+                <!--android:id="@+id/card_view_photo"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:background="?attr/selectableItemBackground"-->
+                <!--app:layout_constraintEnd_toEndOf="@+id/textInputLayout5"-->
+                <!--app:layout_constraintStart_toStartOf="@+id/textInputLayout5">-->
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:minHeight="100dp"
-                    android:orientation="vertical">
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:minHeight="100dp"-->
+                    <!--android:orientation="vertical">-->
 
-                    <ImageView
-                        android:id="@+id/imageView_photo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:scaleType="fitCenter"
-                        android:maxHeight="64dp"
-                        android:minHeight="48dp"
-                        app:srcCompat="@drawable/ic_add_a_photo_black_24dp" />
+                    <!--<ImageView-->
+                        <!--android:id="@+id/imageView_photo"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="16dp"-->
+                        <!--android:scaleType="fitCenter"-->
+                        <!--android:maxHeight="64dp"-->
+                        <!--android:minHeight="48dp"-->
+                        <!--app:srcCompat="@drawable/ic_add_a_photo_black_24dp" />-->
 
-                    <TextView
-                        android:id="@+id/textView_add_photo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="添加照片"
-                        android:textAlignment="center" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    <!--<TextView-->
+                        <!--android:id="@+id/textView_add_photo"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="添加照片"-->
+                        <!--android:textAlignment="center" />-->
+                <!--</LinearLayout>-->
+            <!--</com.google.android.material.card.MaterialCardView>-->
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_view_video"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="?attr/selectableItemBackground"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/card_view_photo"
-                app:layout_constraintStart_toStartOf="@+id/card_view_photo"
-                app:layout_constraintTop_toBottomOf="@+id/card_view_photo">
+            <!--<com.google.android.material.card.MaterialCardView-->
+                <!--android:id="@+id/card_view_video"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:layout_marginBottom="8dp"-->
+                <!--android:background="?attr/selectableItemBackground"-->
+                <!--app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--app:layout_constraintEnd_toEndOf="@+id/card_view_photo"-->
+                <!--app:layout_constraintStart_toStartOf="@+id/card_view_photo"-->
+                <!--app:layout_constraintTop_toBottomOf="@+id/card_view_photo">-->
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:minHeight="100dp"
-                    android:orientation="vertical">
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:minHeight="100dp"-->
+                    <!--android:orientation="vertical">-->
 
-                    <ImageView
-                        android:id="@+id/imageView_video"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:maxHeight="64dp"
-                        android:minHeight="48dp"
-                        android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_video_call_black_24dp" />
+                    <!--<ImageView-->
+                        <!--android:id="@+id/imageView_video"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="16dp"-->
+                        <!--android:maxHeight="64dp"-->
+                        <!--android:minHeight="48dp"-->
+                        <!--android:scaleType="fitCenter"-->
+                        <!--app:srcCompat="@drawable/ic_video_call_black_24dp" />-->
 
-                    <TextView
-                        android:id="@+id/textView_add_video"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="添加视频"
-                        android:textAlignment="center" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    <!--<TextView-->
+                        <!--android:id="@+id/textView_add_video"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="添加视频"-->
+                        <!--android:textAlignment="center" />-->
+                <!--</LinearLayout>-->
+            <!--</com.google.android.material.card.MaterialCardView>-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="地点"/>
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_location"
                 android:layout_width="wrap_content"
@@ -204,38 +209,37 @@
                 android:checkable="true"
                 android:gravity="start"
                 android:text=""
-                android:textAppearance="@style/Widget.MaterialComponents.Chip.Action"
                 app:chipIcon="@drawable/ic_place_black_24dp" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    app:icon="@drawable/ic_add_a_photo_black_24dp"
-                    app:cornerRadius="60dp"
-                    android:text="添加照片"
-                    android:textColor="#000000"
-                    app:iconTint="#000000"
-                    app:rippleColor="#000000"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    app:icon="@drawable/ic_video_call_black_24dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="#000000"
-                    app:iconTint="#000000"
-                    app:rippleColor="#000000"
-                    android:text="添加视频"
-                    app:cornerRadius="60dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content">-->
+                <!--<com.google.android.material.button.MaterialButton-->
+                    <!--style="@style/Widget.MaterialComponents.Button.OutlinedButton"-->
+                    <!--app:icon="@drawable/ic_add_a_photo_black_24dp"-->
+                    <!--app:cornerRadius="60dp"-->
+                    <!--android:text="添加照片"-->
+                    <!--android:textColor="#000000"-->
+                    <!--app:iconTint="#000000"-->
+                    <!--app:rippleColor="#000000"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+                <!--<com.google.android.material.button.MaterialButton-->
+                    <!--style="@style/Widget.MaterialComponents.Button.OutlinedButton"-->
+                    <!--app:icon="@drawable/ic_video_call_black_24dp"-->
+                    <!--android:layout_marginStart="16dp"-->
+                    <!--android:textColor="#000000"-->
+                    <!--app:iconTint="#000000"-->
+                    <!--app:rippleColor="#000000"-->
+                    <!--android:text="添加视频"-->
+                    <!--app:cornerRadius="60dp"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+            <!--</LinearLayout>-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout2"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
                 app:layout_constraintStart_toStartOf="@+id/textInputLayout"
@@ -244,8 +248,9 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edit_content"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="top"
+                    android:minLines="3"
                     android:hint="内容" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>

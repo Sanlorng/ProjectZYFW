@@ -50,9 +50,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#1A000000"
+                app:cardElevation="1dp"
+                app:cardCornerRadius="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +65,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="16dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/nick_name_setup_info"
@@ -95,7 +100,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/phone_input_setup_info" />
 
                     <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroup"
+                        android:id="@+id/chipGroupGenderType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -130,10 +135,10 @@
                         android:text="@string/identity"
                         android:textSize="18sp"
                         app:layout_constraintStart_toStartOf="@+id/gender_text_setup_info"
-                        app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
+                        app:layout_constraintTop_toBottomOf="@+id/chipGroupGenderType" />
 
                     <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroup2"
+                        android:id="@+id/chipGroupUserType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -148,21 +153,21 @@
                             android:id="@+id/chipIdStudent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Student" />
+                            android:text="@string/student" />
                         <com.google.android.material.chip.Chip
                             app:checkedIconVisible="false"
                             android:checkable="true"
                             android:id="@+id/chipIdTeacher"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Teacher" />
+                            android:text="@string/teacher" />
                         <com.google.android.material.chip.Chip
                             app:checkedIconVisible="false"
                             android:checkable="true"
                             android:id="@+id/chipIdOther"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Other" />
+                            android:text="@string/other" />
                     </com.google.android.material.chip.ChipGroup>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -175,7 +180,7 @@
                         android:layout_marginEnd="16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/chipGroup2">
+                        app:layout_constraintTop_toBottomOf="@+id/chipGroupUserType">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
@@ -236,13 +241,14 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
+                        android:scaleType="centerCrop"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_account_circle_black_24dp" />
 
                     <TextView
-                        style="@style/TextAppearance.MaterialComponents.Headline6"
+
                         android:id="@+id/textView_add_photo_setup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

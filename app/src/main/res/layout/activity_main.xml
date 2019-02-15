@@ -4,16 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_home"
     tools:context=".activities.MainActivity"
-    tools:openDrawer="left"
+    tools:openDrawer="right"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:fitsSystemWindows="true"
         android:background="#FFFFFF"
@@ -39,32 +32,26 @@
             android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <!--<com.google.android.material.card.MaterialCardView-->
-                <!--android:id="@+id/cardViewAppBarMain"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_margin="16dp"-->
-                <!--style="@style/Widget.MaterialComponents.CardView"-->
-                <!--app:strokeColor="#4A000000"-->
-                <!--app:strokeWidth="1dp"-->
-                <!--app:cardCornerRadius="8dp">-->
-                <!--<androidx.appcompat.widget.Toolbar-->
-                    <!--android:id="@+id/toolbar_home"-->
-                    <!--android:layout_height="?attr/actionBarSize"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--app:layout_collapseMode="pin"-->
-                    <!--app:contentInsetStart="0dp"-->
-                    <!--app:contentInsetStartWithNavigation="0dp"-->
-                    <!--android:background="#00000000">-->
-                    <!--<com.google.android.material.textfield.TextInputEditText-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:hint="搜索主题"-->
-                        <!--android:background="#00000000"/>-->
-                <!--</androidx.appcompat.widget.Toolbar>-->
-            <!--</com.google.android.material.card.MaterialCardView>-->
             <include layout="@layout/appbar"/>
         </com.google.android.material.appbar.AppBarLayout>
+        <LinearLayout
+            android:id="@+id/layoutLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <ProgressBar
+                android:id="@+id/progressLoading"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/textLoading"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正在请求定位"/>
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/nestedScrollView_home"
             android:layout_width="match_parent"

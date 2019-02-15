@@ -41,9 +41,10 @@ class RecommendService : JobService() {
                         Log.d("content",response)
                         val builder = NotificationCompat.Builder(this@RecommendService,"0")
                                 .setSmallIcon(R.drawable.ic_favorite_black_24dp)
-                                .setContentText("hhhh")
+                                .setContentText("由Job发出的通知")
+                                .setContentTitle("推荐项目")
                                 .setStyle(NotificationCompat.BigTextStyle()
-                                        .bigText("hhhhh"))
+                                        .bigText("由Job发出的通知"))
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         createNotificationChannel()
                         with(NotificationManagerCompat.from(this@RecommendService)){

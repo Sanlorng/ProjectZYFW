@@ -32,8 +32,8 @@ class ProjectListAdapter(val listProject: List<SearchModel>) : RecyclerView.Adap
             }
             setOnClickListener {
                 val intent = Intent(context,ProjectDetailsActivity::class.java)
-                intent.putExtra("project_id",item.projectId)
-                intent.putExtra("project_topic",item.projectTopic)
+                intent.putExtra("projectId",item.projectId)
+                intent.putExtra("projectTopic",item.projectTopic)
                 context.startActivity(intent)
             }
         }

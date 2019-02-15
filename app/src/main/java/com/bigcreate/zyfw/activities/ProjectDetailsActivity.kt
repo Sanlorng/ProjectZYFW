@@ -29,11 +29,10 @@ import com.tencent.mapsdk.raster.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_project_details.*
 
 class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallBack {
-    private var task : SearchAsyncTask? = null
     private var searchResponse : ProjectResponse ?= null
     private var commentResponse : CommentResponse ?= null
-    private var project_id : String ?= null
-    private var project_name: String? = null
+    private var projectId : String ?= null
+    private var projectName: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_project_details)
@@ -42,11 +41,11 @@ class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallB
             toolbar_project_details.setNavigationOnClickListener {
                 finish()
             }
-            project_id = intent.getStringExtra("project_id")
-            project_name = intent.getStringExtra("project_topic")
-            textView_project_title.text = project_name
+            projectId = intent.getStringExtra("projectId")
+            projectName = intent.getStringExtra("projectTopic")
+            textView_project_title.text = projectName
 
-            attemptSearch()
+//            attemptSearch()
         val tencentLocation = TencentLocationManager.getInstance(this)
         val request = TencentLocationRequest.create()
         request?.run {
@@ -64,41 +63,41 @@ class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallB
         }
         tencentLocation.requestLocationUpdates(request,GetLocationListenner())
         }
-        private fun attemptSearch(){
-            if (task != null)
-                return
-            task = SearchAsyncTask(project_id!!)
-            task!!.execute(null as Void?)
-    }
-    @SuppressLint("StaticFieldLeak")
-    inner class SearchAsyncTask internal constructor(val string: String): AsyncTask<Void, Void, Boolean>(){
-        override fun doInBackground(vararg params: Void?): Boolean {
-            return try {
-                myApplication?.run {
-                    val response = WebKit.okClient.getRequest(WebInterface.PROJECT_URL + project_id)
-                    val responseComment = WebKit.okClient.getRequest(WebInterface.COMMENT_URL + project_id)?.string()
-                    val responseString = response?.string()
-                    Log.d("is client","yes")
-                    responseString?.run {
-                        Log.d("response",this)
-                    }
-                    searchResponse = WebKit.gson.fromJson<ProjectResponse>(responseString, ProjectResponse::class.java)
-                    commentResponse = WebKit.gson.fromJson(responseComment,CommentResponse::class.java)
-                }
-                searchResponse != null && searchResponse?.stateCode?.compareTo(200) == 0
-            }catch (e:Exception){
-                Log.d("error","when search request")
-                false
-            }
-        }
-
-        override fun onPostExecute(result: Boolean?) {
-            if (result!!) {
-                updateInfo()
-            }
-            super.onPostExecute(result)
-        }
-    }
+//        private fun attemptSearch(){
+//            if (task != null)
+//                return
+//            task = SearchAsyncTask(projectId!!)
+//            task!!.execute(null as Void?)
+//    }
+//    @SuppressLint("StaticFieldLeak")
+//    inner class SearchAsyncTask internal constructor(val string: String): AsyncTask<Void, Void, Boolean>(){
+//        override fun doInBackground(vararg params: Void?): Boolean {
+//            return try {
+//                myApplication?.run {
+//                    val response = WebKit.okClient.getRequest(WebInterface.PROJECT_URL + projectId)
+//                    val responseComment = WebKit.okClient.getRequest(WebInterface.COMMENT_URL + projectId)?.string()
+//                    val responseString = response?.string()
+//                    Log.d("is client","yes")
+//                    responseString?.run {
+//                        Log.d("response",this)
+//                    }
+//                    searchResponse = WebKit.gson.fromJson<ProjectResponse>(responseString, ProjectResponse::class.java)
+//                    commentResponse = WebKit.gson.fromJson(responseComment,CommentResponse::class.java)
+//                }
+//                searchResponse != null && searchResponse?.stateCode?.compareTo(200) == 0
+//            }catch (e:Exception){
+//                Log.d("error","when search request")
+//                false
+//            }
+//        }
+//
+//        override fun onPostExecute(result: Boolean?) {
+//            if (result!!) {
+//                updateInfo()
+//            }
+//            super.onPostExecute(result)
+//        }
+//    }
     fun updateInfo(){
         progressBar4.isVisible = false
         app_bar_map.isVisible = true
@@ -161,7 +160,7 @@ class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallB
 
     override fun commentSuccess() {
         Thread{
-            val responseComment = WebKit.okClient.getRequest(WebInterface.COMMENT_URL + project_id)?.string()
+            val responseComment = WebKit.okClient.getRequest(WebInterface.COMMENT_URL + projectId)?.string()
             commentResponse = WebKit.gson.fromJson(responseComment,CommentResponse::class.java)
             runOnUiThread {
             commentResponse?.content?.run {
@@ -176,6 +175,5 @@ class ProjectDetailsActivity : AppCompatActivity(),FillTextCallBack,CommentCallB
             }
             }
         }.start()
-        updateInfo()
     }
 }

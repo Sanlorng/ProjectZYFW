@@ -101,11 +101,13 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:id="@+id/layoutValidCodeRegister"
-                android:layout_marginTop="16dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/buttonSendValidCodeSignUp"
                 app:layout_constraintStart_toStartOf="@+id/sign_up_phone"
                 app:layout_constraintTop_toBottomOf="@+id/sign_up_pass">
 
@@ -115,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:layout_weight="1"
-                    android:ems="10"
+                    android:ems="6"
                     android:hint="@string/valid_code"
                     android:inputType="number"
                     android:maxLength="6" />
@@ -135,15 +137,14 @@
 
             <Button
                 android:id="@+id/buttonSendValidCodeSignUp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:ems="7"
                 android:text="@string/send_valid_code"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toBottomOf="@+id/layoutValidCodeRegister"
                 app:layout_constraintEnd_toEndOf="@+id/sign_up_pass"
-                app:layout_constraintStart_toEndOf="@+id/layoutValidCodeRegister"
                 app:layout_constraintTop_toTopOf="@+id/layoutValidCodeRegister" />
 
 
