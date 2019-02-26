@@ -21,8 +21,8 @@ class DetailsImpl(var mView: DetailsContract.NetworkView?) : DetailsContract.Pre
             if (!getViewContext().isNetworkActive)
                 onNetworkFailed()
             onRequesting()
-            getDetailsJob = GlobalScope.launch {
-                try {
+            try {
+                getDetailsJob = GlobalScope.launch {
                     RemoteService.getProjectInfo(getProjectRequest).execute().body()?.apply {
                         onRequestFinished()
                         if (get("code").asInt == 200)
@@ -34,10 +34,10 @@ class DetailsImpl(var mView: DetailsContract.NetworkView?) : DetailsContract.Pre
                             }
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }

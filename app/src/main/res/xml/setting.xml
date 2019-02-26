@@ -11,8 +11,10 @@
         <Preference android:key="Notification" android:title="通知选项" android:summary="推荐、私信等" android:icon="@drawable/ic_notifications_none_black_24dp" >
         </Preference>
         <Preference android:title="应用详情" android:key="about" android:summary="版本号" android:icon="@drawable/ic_info_outline_black_24dp"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="应用">
         <Preference android:title="应用更新" android:key="appUpdate" android:summary="" />
         <Preference android:title="关于我们" android:key="about_us" android:summary="志愿服务"/>
-
     </PreferenceCategory>
 </PreferenceScreen>

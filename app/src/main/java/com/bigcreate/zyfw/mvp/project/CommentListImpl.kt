@@ -23,8 +23,8 @@ class CommentListImpl(var mView: CommentListContract.View?) : CommentListContrac
                 return
             }
             onRequesting()
-            getCommentJob = GlobalScope.launch {
-                try {
+            try {
+                getCommentJob = GlobalScope.launch {
                     RemoteService.getProjectComments(getProjectRequest).execute().body()?.apply {
                         val data = get("data").asJsonObject
                         Attributes.loginUserInfo!!.token = data.get("newToken").asString
@@ -36,10 +36,10 @@ class CommentListImpl(var mView: CommentListContract.View?) : CommentListContrac
                             }
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            }catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }

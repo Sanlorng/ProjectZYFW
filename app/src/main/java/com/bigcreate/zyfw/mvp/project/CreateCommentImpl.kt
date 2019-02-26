@@ -20,9 +20,8 @@ class CreateCommentImpl(var mView: CreateCommentContract.View?) : CreateCommentC
                 return
             }
             onRequesting()
-            createCommentJob = GlobalScope.launch {
-                try {
-
+            try {
+                createCommentJob = GlobalScope.launch {
                     RemoteService.createProjectComment(createCommentRequest).execute().body()?.apply {
                         val data = get("data").asJsonObject
                         if (get("code").asInt == 200)
@@ -35,10 +34,10 @@ class CreateCommentImpl(var mView: CreateCommentContract.View?) : CreateCommentC
                             }
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            }catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }

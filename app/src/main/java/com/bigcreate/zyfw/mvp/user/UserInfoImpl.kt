@@ -26,8 +26,8 @@ class UserInfoImpl(var mView: UserInfoContract.NetworkView?) : UserInfoContract.
                 return
             }
             onRequesting()
-            GlobalScope.launch {
-                try {
+            try {
+                GlobalScope.launch {
                     RemoteService.initPersonInfo(initPersonInfoRequest).execute().body()?.apply {
                         launch(Dispatchers.Main) {
                             onRequestFinished()
@@ -37,10 +37,10 @@ class UserInfoImpl(var mView: UserInfoContract.NetworkView?) : UserInfoContract.
                             }
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
 
@@ -54,8 +54,8 @@ class UserInfoImpl(var mView: UserInfoContract.NetworkView?) : UserInfoContract.
                 return
             }
             onRequesting()
-            GlobalScope.launch {
-                try {
+            try {
+                GlobalScope.launch {
                     RemoteService.updatePersonInfo(updateInfoRequest).execute().body()?.apply {
                         launch(Dispatchers.Main) {
                             onRequestFinished()
@@ -65,10 +65,10 @@ class UserInfoImpl(var mView: UserInfoContract.NetworkView?) : UserInfoContract.
                             }
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }
@@ -81,10 +81,10 @@ class UserInfoImpl(var mView: UserInfoContract.NetworkView?) : UserInfoContract.
                 return
             }
             onRequesting()
+            try {
             GlobalScope.launch {
                 val type = MediaType.parse("multipart/form-data")
                 val part = MultipartBody.Part.createFormData("file", file.name, RequestBody.create(type, file))
-                try {
                     RemoteService.setupUserAvatar(part, RequestBody.create(type, token), RequestBody.create(type, username)).execute().body()?.apply {
                         launch(Dispatchers.Main) {
                             onRequestFinished()
@@ -94,10 +94,10 @@ class UserInfoImpl(var mView: UserInfoContract.NetworkView?) : UserInfoContract.
                             }
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }

@@ -24,8 +24,8 @@ class LoginImpl(var mView: LoginContract.NetworkView?) : LoginContract.Presenter
                 return
             }
             onRequesting()
-            job = GlobalScope.launch {
-                try {
+            try {
+                job = GlobalScope.launch {
                     RemoteService.loginByPass(loginRequest).execute().body()?.apply {
                         val code = this.get("code").asInt
                         launch(Dispatchers.Main) {
@@ -48,10 +48,11 @@ class LoginImpl(var mView: LoginContract.NetworkView?) : LoginContract.Presenter
 
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
+
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }

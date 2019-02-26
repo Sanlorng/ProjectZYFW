@@ -25,6 +25,7 @@ import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.models.SimpleRequest
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class RecommendService : JobService() {
 
@@ -41,34 +42,38 @@ class RecommendService : JobService() {
                 //if (model.get("code").asInt == 200)
                 GlobalScope.launch {
                     Attributes.loginUserInfo?.apply {
-                        RemoteService.getRecommendData(SimpleRequest(token, username)).execute().body()?.apply {
-                            val data = get("data").asJsonObject
-                            when (get("code").asInt) {
-                                200 -> {
-                                    token = data.get("newToken").asString
-                                    if (!data.get("content").isJsonNull) {
-                                        data.get("content").toJson().fromJson<Project>().apply {
-                                            val builder = NotificationCompat.Builder(this@RecommendService, "0")
-                                                    .setSmallIcon(R.drawable.ic_favorite_black_24dp)
-                                                    .setContentText(projectTopic)
-                                                    .setContentTitle("推荐项目")
-                                                    .setStyle(NotificationCompat.BigTextStyle()
-                                                            .bigText("由Job发出的通知"))
-                                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                                    .setContentIntent(
-                                                            PendingIntent.getActivity(this@RecommendService,
-                                                                    0, Intent(this@RecommendService, ProjectDetailsActivity::class.java).apply {
-                                                                putExtra("projectId", projectId)
-                                                                        .putExtra("projectTopic", projectTopic)
-                                                            }, PendingIntent.FLAG_UPDATE_CURRENT))
-                                            createNotificationChannel()
-                                            with(NotificationManagerCompat.from(this@RecommendService)) {
-                                                notify(0, builder.build())
+                        try {
+                            RemoteService.getRecommendData(SimpleRequest(token, username)).execute().body()?.apply {
+                                val data = get("data").asJsonObject
+                                when (get("code").asInt) {
+                                    200 -> {
+                                        token = data.get("newToken").asString
+                                        if (!data.get("content").isJsonNull) {
+                                            data.get("content").toJson().fromJson<Project>().apply {
+                                                val builder = NotificationCompat.Builder(this@RecommendService, "0")
+                                                        .setSmallIcon(R.drawable.ic_favorite_black_24dp)
+                                                        .setContentText(projectTopic)
+                                                        .setContentTitle("推荐项目")
+                                                        .setStyle(NotificationCompat.BigTextStyle()
+                                                                .bigText("由Job发出的通知"))
+                                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                                        .setContentIntent(
+                                                                PendingIntent.getActivity(this@RecommendService,
+                                                                        0, Intent(this@RecommendService, ProjectDetailsActivity::class.java).apply {
+                                                                    putExtra("projectId", projectId)
+                                                                            .putExtra("projectTopic", projectTopic)
+                                                                }, PendingIntent.FLAG_UPDATE_CURRENT))
+                                                createNotificationChannel()
+                                                with(NotificationManagerCompat.from(this@RecommendService)) {
+                                                    notify(0, builder.build())
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+                        }catch (e: Exception){
+
                         }
                     }
                 }

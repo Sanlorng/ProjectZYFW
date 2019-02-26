@@ -30,9 +30,9 @@ class SearchImpl(var mView: SearchContract.NetworkView?) : SearchContract.Presen
                 return
             }
             onRequesting()
-            job = GlobalScope.launch {
-                RemoteService.searchProjectByBlur(request).execute().body()?.apply {
-                    try {
+            try {
+                job = GlobalScope.launch {
+                    RemoteService.searchProjectByBlur(request).execute().body()?.apply {
                         launch(Dispatchers.Main) {
                             when (get("code").asInt) {
                                 200 -> {
@@ -44,11 +44,11 @@ class SearchImpl(var mView: SearchContract.NetworkView?) : SearchContract.Presen
                                 }
                             }
                         }
-                    } catch (e: SocketTimeoutException) {
-                        onRequestFinished()
-                        onNetworkFailed()
                     }
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }

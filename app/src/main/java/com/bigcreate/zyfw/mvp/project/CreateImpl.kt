@@ -19,10 +19,12 @@ class CreateImpl(var mView: CreateContract.NetworkView?) : CreateContract.Presen
         view.run {
             if (!getViewContext().isNetworkActive)
                 onNetworkFailed()
-            createJob = GlobalScope.launch {
-                try {
+            onRequesting()
+            try {
+                createJob = GlobalScope.launch {
                     RemoteService.createProject(projectRequest).execute().body()?.apply {
                         launch(Dispatchers.Main) {
+                            onRequestFinished()
                             when (get("code").asInt) {
                                 200 -> {
                                     Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
@@ -32,10 +34,10 @@ class CreateImpl(var mView: CreateContract.NetworkView?) : CreateContract.Presen
                             }
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
 
@@ -46,10 +48,12 @@ class CreateImpl(var mView: CreateContract.NetworkView?) : CreateContract.Presen
         view.run {
             if (!getViewContext().isNetworkActive)
                 view.onNetworkFailed()
-            updateJob = GlobalScope.launch {
-                try {
+            onRequesting()
+            try {
+                updateJob = GlobalScope.launch {
                     RemoteService.updateProject(updateProjectRequest).execute().body()?.apply {
                         launch(Dispatchers.Main) {
+                            onRequestFinished()
                             when (get("code").asInt) {
                                 200 -> {
                                     Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
@@ -59,10 +63,10 @@ class CreateImpl(var mView: CreateContract.NetworkView?) : CreateContract.Presen
                             }
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }

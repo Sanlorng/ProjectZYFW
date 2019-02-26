@@ -23,8 +23,8 @@ class UpdateImpl(var mView: UpdateContract.NetworkView?) : UpdateContract.Presen
                 return
             }
             onRequesting()
-            job = GlobalScope.launch {
-                try {
+            try {
+                job = GlobalScope.launch {
                     UpdateService.getAppUpdateVersion(packageName).execute().body()?.apply {
                         if (BuildConfig.DEBUG) {
                             Log.e("packageName", packageName)
@@ -35,10 +35,10 @@ class UpdateImpl(var mView: UpdateContract.NetworkView?) : UpdateContract.Presen
                             onUpdateCheckSuccess(this@apply)
                         }
                     }
-                } catch (e: SocketTimeoutException) {
-                    onRequestFinished()
-                    onNetworkFailed()
                 }
+            } catch (e: SocketTimeoutException) {
+                onRequestFinished()
+                onNetworkFailed()
             }
         }
     }
