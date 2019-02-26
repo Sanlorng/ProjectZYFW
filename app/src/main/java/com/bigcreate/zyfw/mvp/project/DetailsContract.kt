@@ -1,17 +1,18 @@
 package com.bigcreate.zyfw.mvp.project
 
 import com.bigcreate.zyfw.models.GetProjectRequest
+import com.bigcreate.zyfw.models.Project
+import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.BasePresenter
-import com.bigcreate.zyfw.mvp.base.BaseView
 import com.google.gson.JsonObject
 
 interface DetailsContract {
-    interface Presenter:BasePresenter{
+    interface Presenter : BasePresenter {
         fun doGetDetails(getProjectRequest: GetProjectRequest)
     }
 
-    interface View: BaseView{
-        fun onGetDetailsSuccess(jsonObject: JsonObject)
+    interface NetworkView : BaseNetworkView {
+        fun onGetDetailsSuccess(project: Project)
         fun onGetDetailsFailed(jsonObject: JsonObject)
     }
 

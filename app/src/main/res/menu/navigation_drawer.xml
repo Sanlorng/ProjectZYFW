@@ -12,6 +12,9 @@
         <item android:title="@string/settings"
             android:id="@+id/setting_menu"
             android:icon="@drawable/ic_settings_black_24dp"/>
+        <item android:title="接口测试"
+            android:id="@+id/testInterface"
+            android:icon="@drawable/ic_build_black_24dp"/>
     </menu>
     </item>
 </menu>

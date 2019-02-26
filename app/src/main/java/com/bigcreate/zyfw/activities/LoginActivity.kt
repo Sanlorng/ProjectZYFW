@@ -3,51 +3,48 @@ package com.bigcreate.zyfw.activities
 import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bigcreate.library.*
-import com.bigcreate.zyfw.BuildConfig
+import com.bigcreate.library.startActivity
+import com.bigcreate.library.toast
+import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.base.*
+import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.MyApplication
+import com.bigcreate.zyfw.base.RequestCode
+import com.bigcreate.zyfw.base.ResultCode
+import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
-import com.bigcreate.zyfw.models.LoginByPassResponse
-import com.bigcreate.zyfw.mvp.base.LoginModel
 import com.bigcreate.zyfw.mvp.user.LoginContract
 import com.bigcreate.zyfw.mvp.user.LoginImpl
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_login.*
-import okhttp3.MediaType
-import kotlinx.coroutines.GlobalScope
 
 /**
  * A login screen that offers login via email/password.
  */
-class LoginActivity : AppCompatActivity(),LoginContract.View {
+class LoginActivity : AppCompatActivity(), LoginContract.NetworkView {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private var mAuthTask: UserLoginTask? = null
-    private val mGson = Gson()
-    private var mResponseString: String? = null
+//    private var mAuthTask: UserLoginTask? = null
+//    private val mGson = Gson()
+//    private var mResponseString: String? = null
     private var mSinOrSup = true
-    private var userId:String? = null
-    private var registUrl = "ProjectForDaChuang/register"
-    private var loginUrl = "ProjectForDaChuang/login"
-    val JSON = MediaType.parse("application/json; charset=utf-8")
-    val loginPresenter = LoginImpl(this)
+    //    private var userId: String? = null
+//    private var registUrl = "ProjectForDaChuang/register"
+//    private var loginUrl = "ProjectForDaChuang/login"
+//    val JSON = MediaType.parse("application/json; charset=utf-8")
+    private val loginPresenter = LoginImpl(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -124,7 +121,6 @@ class LoginActivity : AppCompatActivity(),LoginContract.View {
     override fun onLoginFailed(response: JsonObject) {
         toast("登录失败")
         toast("s")
-        showProgress(false)
     }
 
     override fun onLoginSuccess(loginInfo: LoginModel) {
@@ -139,14 +135,16 @@ class LoginActivity : AppCompatActivity(),LoginContract.View {
 
     override fun onNetworkFailed() {
         toast("网络连接失败")
-        showProgress(false)
     }
-
-
 
     override fun onRequesting() {
         showProgress(true)
     }
+
+    override fun onRequestFinished() {
+        showProgress(false)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         loginPresenter.detachView()
@@ -154,19 +152,22 @@ class LoginActivity : AppCompatActivity(),LoginContract.View {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode){
-            RequestCode.REGISTER-> if (resultCode == ResultCode.OK){setResult(ResultCode.OK);finish()}
+        when (requestCode) {
+            RequestCode.REGISTER -> if (resultCode == ResultCode.OK) {
+                setResult(ResultCode.OK);finish()
+            }
         }
     }
+
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private fun attemptLogin() {
-        if (mAuthTask != null) {
-            return
-        }
+//        if (mAuthTask != null) {
+//            return
+//        }
         email_sign_in_button.isEnabled = false
         // Reset errors.
         email.error = null
@@ -207,7 +208,7 @@ class LoginActivity : AppCompatActivity(),LoginContract.View {
             showProgress(true)
 //            mAuthTask = UserLoginTask(emailStr, passwordStr)
 //            mAuthTask!!.execute(null as Void?)
-            loginPresenter.doLoginByPass(LoginRequest(emailStr,passwordStr))
+            loginPresenter.doLoginByPass(LoginRequest(emailStr, passwordStr))
         }
         email_sign_in_button.isEnabled = true
     }
@@ -255,74 +256,74 @@ class LoginActivity : AppCompatActivity(),LoginContract.View {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    @SuppressLint("StaticFieldLeak")
-    inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
-
-        override fun doInBackground(vararg params: Void): Boolean? {
-            // TODO: attempt authentication against a network service.
-
-            return try {
-                tryLoginTask()
-                val response = mGson.fromJson(mResponseString, LoginByPassResponse::class.java)
-                response?.run {
-                    userId = content
-                }
-                response?.token != null
-            } catch (e: Exception) {
-                false
-            }
-
-        }
-
-        override fun onPostExecute(success: Boolean?) {
-            mAuthTask = null
-            showProgress(false)
-            if (success!!) {
-                //myApplication?.loginUser = User(mEmail,mPassword,myApplication?.loginToken!!,userId!!)
-                defaultSharedPreferences.edit()
-                        .putString("user_name",mEmail)
-                        .putString("user_pass",mPassword)
-                        .putString("user_id",userId)
-                        .putString("user_token",myApplication?.loginToken)
-                        .apply()
-                myApplication?.loginUser = null
-                finish()
-            } else {
-                password.error = getString(R.string.error_incorrect_password)
-                password.requestFocus()
-            }
-        }
-
-        override fun onCancelled() {
-            mAuthTask = null
-            showProgress(false)
-        }
-
-        private fun tryLoginTask() {
-            var temp: String? = null
-            temp = if (mSinOrSup)
-                loginUrl
-            else
-                registUrl
-            //TODO
-//            val loginRequest = LoginRequest(ipAddress!!, mEmail, mPassword, null)
-            val loginRequest = ""
-            Log.d("jsonToServer", Gson().toJson(loginRequest))
-            myApplication?.run {
-                val response = WebKit.okClient.postRequest(WebInterface.LOGIN_URL,WebInterface.TYPE_JSON,WebKit.gson.toJson(loginRequest))
-                mResponseString = response?.string()
-                Log.d("response", mResponseString)
-                loginToken = try {
-                    WebKit.gson.fromJson<LoginByPassResponse>(mResponseString,LoginByPassResponse::class.java::class.java).token
-                }catch (e:Exception){
-                    Log.d("loginToken ", "null")
-                    null
-                }
-            }
-            Log.d("response", mResponseString)
-
-        }
-    }
+//    @SuppressLint("StaticFieldLeak")
+//    inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
+//
+//        override fun doInBackground(vararg params: Void): Boolean? {
+//            // TODO: attempt authentication against a network service.
+//
+//            return try {
+//                tryLoginTask()
+//                val response = mGson.fromJson(mResponseString, LoginByPassResponse::class.java)
+//                response?.run {
+//                    userId = content
+//                }
+//                response?.token != null
+//            } catch (e: Exception) {
+//                false
+//            }
+//
+//        }
+//
+//        override fun onPostExecute(success: Boolean?) {
+//            mAuthTask = null
+//            showProgress(false)
+//            if (success!!) {
+//                //myApplication?.loginUser = User(mEmail,mPassword,myApplication?.loginToken!!,userId!!)
+//                defaultSharedPreferences.edit()
+//                        .putString("user_name",mEmail)
+//                        .putString("user_pass",mPassword)
+//                        .putString("user_id",userId)
+//                        .putString("user_token",myApplication?.loginToken)
+//                        .apply()
+//                myApplication?.loginUser = null
+//                finish()
+//            } else {
+//                password.error = getString(R.string.error_incorrect_password)
+//                password.requestFocus()
+//            }
+//        }
+//
+//        override fun onCancelled() {
+//            mAuthTask = null
+//            showProgress(false)
+//        }
+//
+//        private fun tryLoginTask() {
+//            var temp: String? = null
+//            temp = if (mSinOrSup)
+//                loginUrl
+//            else
+//                registUrl
+//            //TODO
+////            val loginRequest = LoginRequest(ipAddress!!, mEmail, mPassword, null)
+//            val loginRequest = ""
+//            Log.d("jsonToServer", Gson().toJson(loginRequest))
+//            myApplication?.run {
+//                val response = WebKit.okClient.postRequest(WebInterface.LOGIN_URL,WebInterface.TYPE_JSON,WebKit.gson.toJson(loginRequest))
+//                mResponseString = response?.string()
+//                Log.d("response", mResponseString)
+//                loginToken = try {
+//                    WebKit.gson.fromJson<LoginByPassResponse>(mResponseString,LoginByPassResponse::class.java::class.java).token
+//                }catch (e:Exception){
+//                    Log.d("loginToken ", "null")
+//                    null
+//                }
+//            }
+//            Log.d("response", mResponseString)
+//
+//        }
+//    }
     companion object {
 
         /**

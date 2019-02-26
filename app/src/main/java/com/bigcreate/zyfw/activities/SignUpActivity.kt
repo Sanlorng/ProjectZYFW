@@ -9,7 +9,7 @@ import com.bigcreate.zyfw.fragments.SetupInfoFragment
 import com.bigcreate.zyfw.fragments.SignUpFragment
 
 class SignUpActivity : AppCompatActivity() {
-    var fragmentTransaction: FragmentTransaction ?= null
+    private var fragmentTransaction: FragmentTransaction? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
@@ -17,7 +17,7 @@ class SignUpActivity : AppCompatActivity() {
         fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction?.run {
             if (type != null && type == "setupInfo")
-                replace(R.id.container_sign_up,SetupInfoFragment())
+                replace(R.id.container_sign_up, SetupInfoFragment())
             else
                 replace(R.id.container_sign_up, SignUpFragment())
 
@@ -29,7 +29,7 @@ class SignUpActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val type = intent.getStringExtra("type")
         if (type != null && type == "setupInfo")
-            Toast.makeText(this,"请设置完你的个人信息，再进行其他操作",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "请设置完你的个人信息，再进行其他操作", Toast.LENGTH_SHORT).show()
         else
             super.onBackPressed()
     }

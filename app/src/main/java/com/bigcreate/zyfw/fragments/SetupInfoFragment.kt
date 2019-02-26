@@ -1,6 +1,5 @@
 package com.bigcreate.zyfw.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -19,13 +18,8 @@ import androidx.fragment.app.Fragment
 import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.appCompactActivity
-import com.bigcreate.zyfw.base.myApplication
-import com.bigcreate.zyfw.models.InfoResponse
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
-import com.bigcreate.zyfw.models.SimpleRequest
-import com.bigcreate.zyfw.models.UserInfo
 import com.bigcreate.zyfw.mvp.user.UserInfoContract
 import com.bigcreate.zyfw.mvp.user.UserInfoImpl
 import com.google.gson.JsonObject
@@ -34,10 +28,6 @@ import com.tencent.map.geolocation.TencentLocationListener
 import com.tencent.map.geolocation.TencentLocationManager
 import com.tencent.map.geolocation.TencentLocationRequest
 import kotlinx.android.synthetic.main.fragment_setup_info.*
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.Retrofit
 import java.io.File
 
 // TODO: Rename parameter arguments, choose names that match
@@ -54,18 +44,17 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.View {
+class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoContract.NetworkView {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
     private var tencentLocation: TencentLocation? = null
     private var listAdress = ArrayList<String>()
-    private var imageString = ""
     private val userInfoImpl = UserInfoImpl(this)
-    val PHOTORESULT = 3
-    val IMAGE_UNSPECIFIED = "image/*"
-    var avatarFile: File? = null
+    val photoResult = 3
+    val imageType = "image/*"
+    private var avatarFile: File? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -81,7 +70,7 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        activity?.intent?.putExtra("type","setupInfo")
+        activity?.intent?.putExtra("type", "setupInfo")
         val isSetup = activity?.intent?.getStringExtra("type")
         if (isSetup == null || isSetup != "setupInfo") {
             appCompactActivity?.run {
@@ -94,43 +83,43 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
         }
         imageView_setup.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,IMAGE_UNSPECIFIED)
-            startActivityForResult(intent,PHOTORESULT)
+            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageType)
+            startActivityForResult(intent, photoResult)
         }
         chipGroupGenderType.setOnCheckedChangeListener { chipGroup, i ->
-            Log.e("check",chipGroupGenderType.checkedChipId.toString())
-            Log.e("i",i.toString())
+            Log.e("check", chipGroupGenderType.checkedChipId.toString())
+            Log.e("i", i.toString())
         }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
             phone_input_setup_info.autofillHints?.set(0, value = Attributes.loginUserInfo!!.username)
         else
             phone_input_setup_info.editText?.append(Attributes.loginUserInfo!!.username)
         ok_button_setup_info.setOnClickListener {
-            Log.d("click","click ok")
+            Log.d("click", "click ok")
             //val response = WebKit.okClient.postRequest()
-            if (nick_name_setup_info.editText!!.isEmpty()||address_input_setup_info.editText!!.isEmpty()||
-                    phone_input_setup_info.editText!!.isEmpty()||avatarFile==null||chipGroupGenderType.checkedChipId==-1||chipGroupUserType.checkedChipId==-1)
-                Toast.makeText(context!!,"你还有尚未填写的资料，请填好后重试",Toast.LENGTH_SHORT).show()
+            if (nick_name_setup_info.editText!!.isEmpty() || address_input_setup_info.editText!!.isEmpty() ||
+                    phone_input_setup_info.editText!!.isEmpty() || avatarFile == null || chipGroupGenderType.checkedChipId == -1 || chipGroupUserType.checkedChipId == -1)
+                Toast.makeText(context!!, "你还有尚未填写的资料，请填好后重试", Toast.LENGTH_SHORT).show()
             else {
 
 //                activity?.myApplication?.loginUser?.run {
-                    progressBar2.visibility = View.VISIBLE
-                    textView7.isEnabled = false
-                    gender_text_setup_info.isEnabled = false
-                    nick_name_setup_info.isEnabled = false
-                    phone_input_setup_info.isEnabled = false
-                    address_input_setup_info.isEnabled = false
+                progressBar2.visibility = View.VISIBLE
+                textView7.isEnabled = false
+                gender_text_setup_info.isEnabled = false
+                nick_name_setup_info.isEnabled = false
+                phone_input_setup_info.isEnabled = false
+                address_input_setup_info.isEnabled = false
 //                    gender_spinner_setup_info.isEnabled = false
 //                    identity_spinner_setup_info.isEnabled = false
-                    ok_button_setup_info.isEnabled = false
-                    chip.isEnabled = false
-                    val userInfo = Attributes.loginUserInfo!!
-                    userInfoImpl.doInitUserInfo(InitPersonInfoRequest(userInfo.username,
-                            nick_name_setup_info.editText!!.string().trim(),
-                            getIndexForChip(chipGroupGenderType.checkedChipId),
-                            getIndexForChip(chipGroupUserType.checkedChipId),
-                            address_input_setup_info.editText!!.string().trim(),
-                            phone_input_setup_info.editText!!.string().trim(),userInfo.token))
+                ok_button_setup_info.isEnabled = false
+                chip.isEnabled = false
+                val userInfo = Attributes.loginUserInfo!!
+                userInfoImpl.doInitUserInfo(InitPersonInfoRequest(userInfo.username,
+                        nick_name_setup_info.editText!!.string().trim(),
+                        getIndexForChip(chipGroupGenderType.checkedChipId),
+                        getIndexForChip(chipGroupUserType.checkedChipId),
+                        address_input_setup_info.editText!!.string().trim(),
+                        phone_input_setup_info.editText!!.string().trim(), userInfo.token))
 //                    Thread {
 //                        //TODO
 ////                        val setupInfoRequire = InfoRequire(name, nick_name_setup_info.editText!!.string(), gender_spinner_setup_info.selectedItem as String,
@@ -157,7 +146,7 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
 //                                }
 //                            }
 //                            activity?.runOnUiThread {
-//                                progressBar2.visibility = View.GONE
+//                                progressBar2.visibility = NetworkView.GONE
 //                                nick_name_setup_info.isEnabled = true
 //                                phone_input_setup_info.isEnabled = true
 //                                address_input_setup_info.isEnabled = true
@@ -178,33 +167,33 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
         }
 //        username_setup_info.text = activity?.myApplication?.loginUser?.name
         chip.setOnClickListener {
-            Log.d("is click","is click")
-                val popupMenu = PopupMenu(context!!,chip)
-                popupMenu.menu.run {
-                    if (tencentLocation != null) {
-                        this.clear()
-                        listAdress.clear()
-                        if (tencentLocation!!.address!= "")
-                            listAdress.add(tencentLocation!!.address)
-                        else
-                            tencentLocation!!.run {
-                                Log.d("adress is null","address")
-                                listAdress.add((province+city+district+ town + village + street + streetNo).split("Unknown").first())
-                            }
+            Log.d("is click", "is click")
+            val popupMenu = PopupMenu(context!!, chip)
+            popupMenu.menu.run {
+                if (tencentLocation != null) {
+                    this.clear()
+                    listAdress.clear()
+                    if (tencentLocation!!.address != "")
+                        listAdress.add(tencentLocation!!.address)
+                    else
+                        tencentLocation!!.run {
+                            Log.d("adress is null", "address")
+                            listAdress.add((province + city + district + town + village + street + streetNo).split("Unknown").first())
+                        }
 
-                        tencentLocation!!.poiList.forEach {
-                            listAdress.add(it.address)
-                            it.address.logIt("address")
-                        }
-                        for(i in 0 until listAdress.size) {
-                            add(Menu.NONE,Menu.FIRST + i,i,listAdress[i])
-                        }
-                        Log.d("size",tencentLocation!!.poiList.size.toString())
-                    }else{
-                        Toast.makeText(context!!,"无法获取地理位置",Toast.LENGTH_SHORT).show()
+                    tencentLocation!!.poiList.forEach {
+                        listAdress.add(it.address)
+                        it.address.logIt("address")
                     }
+                    for (i in 0 until listAdress.size) {
+                        add(Menu.NONE, Menu.FIRST + i, i, listAdress[i])
+                    }
+                    Log.d("size", tencentLocation!!.poiList.size.toString())
+                } else {
+                    Toast.makeText(context!!, "无法获取地理位置", Toast.LENGTH_SHORT).show()
                 }
-                popupMenu.setOnMenuItemClickListener {
+            }
+            popupMenu.setOnMenuItemClickListener {
                 val i = it.itemId - Menu.FIRST
                 tencentLocation?.run {
                     address_input_setup_info.editText?.text?.run {
@@ -216,10 +205,9 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
                 }
                 true
             }
-                popupMenu.show()
-                Log.d("is show","show")
+            popupMenu.show()
+            Log.d("is show", "show")
         }
-
 
 
         val tencentLocation = TencentLocationManager.getInstance(context)
@@ -253,8 +241,6 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
      * for more information.
      */
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
     }
 
     companion object {
@@ -282,7 +268,7 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
 
     override fun onLocationChanged(p0: TencentLocation?, p1: Int, p2: String?) {
         p0?.run {
-                    tencentLocation = this
+            tencentLocation = this
         }
     }
 
@@ -298,7 +284,7 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
             data.data?.run {
                 Log.d("url", this.path)
                 when (requestCode) {
-                    PHOTORESULT -> {
+                    photoResult -> {
                         imageView_setup.setImageBitmap(context!!.getBitmapFromUri(this))
                         imageView_setup.scaleType = ImageView.ScaleType.CENTER_CROP
                         textView_add_photo_setup.text = "更换照片"
@@ -317,11 +303,14 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
     }
 
     override fun onInitUserInfoSuccess(jsonObject: JsonObject) {
-            val file = MultipartBody.Part.createFormData("file",avatarFile!!.name, RequestBody.create(MediaType.parse("image/*"),avatarFile!!))
-            val userInfo = Attributes.loginUserInfo!!
-            userInfo.token = jsonObject.getAsJsonObject("data").get("newToken").asString
-            val body = 
-            userInfoImpl.doSetupAvatar(file, mapOf("token" to userInfo.token, "username" to userInfo.username))
+
+        val userInfo = Attributes.loginUserInfo!!
+        userInfo.token = jsonObject.getAsJsonObject("data").get("newToken").asString
+        userInfo.apply {
+            userInfoImpl.doSetupAvatar(
+                    avatarFile!!, token, username)
+        }
+
     }
 
     override fun onNetworkFailed() {
@@ -329,6 +318,10 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
     }
 
     override fun onRequesting() {
+
+    }
+
+    override fun onRequestFinished() {
 
     }
 
@@ -343,10 +336,15 @@ class SetupInfoFragment : Fragment(),TencentLocationListener,UserInfoContract.Vi
     override fun onSetupAvatarSuccess() {
         activity?.finish()
     }
-    private fun getIndexForChip(@IntegerRes id :Int):Int{
-        return when(id){
-            R.id.chipIdStudent,R.id.chipMaleSetupInfo -> 1
-            R.id.chipIdTeacher,R.id.chipFemaleSetupInfo -> 2
+
+    override fun onSetupAvatarFailed() {
+        context?.toast("头像上传失败")
+    }
+
+    private fun getIndexForChip(@IntegerRes id: Int): Int {
+        return when (id) {
+            R.id.chipIdStudent, R.id.chipMaleSetupInfo -> 1
+            R.id.chipIdTeacher, R.id.chipFemaleSetupInfo -> 2
             R.id.chipIdOther -> 3
             else -> 0
         }

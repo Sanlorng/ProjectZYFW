@@ -36,15 +36,14 @@ class MessageFragment : Fragment(), Runnable {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private val SUCESS = 1
-    private var messageList = HashMap<String,MessageHeader>()
-    private var listener: OnFragmentInteractionListener? = null
+    private val success = 1
+    private var messageList = HashMap<String, MessageHeader>()
     private var handler = @SuppressLint
-    object :Handler(){
+    object : Handler() {
         override fun handleMessage(msg: Message?) {
             super.handleMessage(msg)
-            when (msg?.what){
-                SUCESS -> {
+            when (msg?.what) {
+                success -> {
                     no_message.visibility = View.GONE
                     message_recyclerview.adapter = MessageListAdapter(messageList)
                     message_recyclerview.layoutManager = LinearLayoutManager(context)
@@ -87,8 +86,6 @@ class MessageFragment : Fragment(), Runnable {
      * for more information.
      */
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
     }
 
     companion object {
@@ -115,12 +112,13 @@ class MessageFragment : Fragment(), Runnable {
         Looper.prepare()
         initHashSet()
         val msg = Message()
-        msg.what = SUCESS
+        msg.what = success
         handler.sendMessage(msg)
         Looper.loop()
     }
-    fun initHashSet(){
+
+    private fun initHashSet() {
         for (i in 1..10)
-        messageList?.put(i.toString(),MessageHeader())
+            messageList[i.toString()] = MessageHeader()
     }
 }

@@ -1,6 +1,22 @@
 package com.bigcreate.zyfw.models
 
-data class Project(var projectId:String, var projectTopic: String, var projectContent: String,
-                   var projectRegion: String, var projectAddress: String, var latitude: Double, var longitude: Double, var projectPrincipalName: String, var projectPrincipalPhone:String,
-                   var projectIssueTime:String, var projectPeopleNumbers : String, var projectUserId: Int, var projectTypeId: Int, var username: String,
-                   var videoBase64: String, var pictureBase64: String)
+data class Project(
+        val latitude: Double,
+        val longitude: Double,
+        val pictureBase64: String,
+        val projectAddress: String,
+        val projectContent: String,
+        val projectId: Int,
+        val projectIssueTime: String,
+        val projectPeopleNumbers: String,
+        val projectPictureLink: String,
+        val projectPrincipalName: String,
+        val projectPrincipalPhone: String,
+        val projectRegion: String,
+        val projectTopic: String,
+        val projectTypeId: Int,
+        val projectVideoLink: String,
+        val token: String,
+        val username: String,
+        val videoBase64: String
+)

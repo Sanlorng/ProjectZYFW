@@ -8,15 +8,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.Comment
 
-class CommentAdapter(val CommentList:List<Comment>):RecyclerView.Adapter<CommentAdapter.ViewHolder>(){
-    inner class ViewHolder(view:View):RecyclerView.ViewHolder(view){
+class CommentAdapter(private val CommentList: List<Comment>) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         init {
 
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_comment,parent,false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

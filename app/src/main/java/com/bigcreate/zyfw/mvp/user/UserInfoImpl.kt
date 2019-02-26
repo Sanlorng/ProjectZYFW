@@ -1,25 +1,45 @@
 package com.bigcreate.zyfw.mvp.user
 
+import com.bigcreate.library.isNetworkActive
 import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
-import com.bigcreate.zyfw.models.SimpleRequest
 import com.bigcreate.zyfw.models.UpdateInfoRequest
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import okhttp3.MediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
+import java.net.SocketTimeoutException
 
-class UserInfoImpl(var mView:UserInfoContract.View?):UserInfoContract.Presenter {
-    var initJob:Job? = null
-    var updateJob: Job? = null
-    var avatarJob: Job? = null
+class UserInfoImpl(var mView: UserInfoContract.NetworkView?) : UserInfoContract.Presenter {
+    private var initJob: Job? = null
+    private var updateJob: Job? = null
+    private var avatarJob: Job? = null
     override fun doInitUserInfo(initPersonInfoRequest: InitPersonInfoRequest) {
         val view = mView!!
-        GlobalScope.launch {
-            RemoteService.initPersonInfo(initPersonInfoRequest).execute().body()?.apply {
-                launch(Dispatchers.Main) {
-                    when (get("code").asInt) {
-                        200 -> view.onInitUserInfoSuccess(this@apply)
-                        else -> view.onInitUserInfoFailed(this@apply)
+        view.run {
+            if (!getViewContext().isNetworkActive) {
+                onNetworkFailed()
+                return
+            }
+            onRequesting()
+            GlobalScope.launch {
+                try {
+                    RemoteService.initPersonInfo(initPersonInfoRequest).execute().body()?.apply {
+                        launch(Dispatchers.Main) {
+                            onRequestFinished()
+                            when (get("code").asInt) {
+                                200 -> onInitUserInfoSuccess(this@apply)
+                                else -> onInitUserInfoFailed(this@apply)
+                            }
+                        }
                     }
+                } catch (e: SocketTimeoutException) {
+                    onRequestFinished()
+                    onNetworkFailed()
                 }
             }
         }
@@ -28,26 +48,55 @@ class UserInfoImpl(var mView:UserInfoContract.View?):UserInfoContract.Presenter 
 
     override fun doUpdateUserInfo(updateInfoRequest: UpdateInfoRequest) {
         val view = mView!!
-        GlobalScope.launch {
-            RemoteService.updatePersonInfo(updateInfoRequest).execute().body()?.apply {
-                launch(Dispatchers.Main){
-                    when(get("code").asInt){
-                        200 -> view.onUpdateUserInfoSuccess(this@apply)
-                        else -> view.onUpdateUserInfoFailed(this@apply)
+        view.run {
+            if (!getViewContext().isNetworkActive) {
+                onNetworkFailed()
+                return
+            }
+            onRequesting()
+            GlobalScope.launch {
+                try {
+                    RemoteService.updatePersonInfo(updateInfoRequest).execute().body()?.apply {
+                        launch(Dispatchers.Main) {
+                            onRequestFinished()
+                            when (get("code").asInt) {
+                                200 -> onUpdateUserInfoSuccess(this@apply)
+                                else -> onUpdateUserInfoFailed(this@apply)
+                            }
+                        }
                     }
+                } catch (e: SocketTimeoutException) {
+                    onRequestFinished()
+                    onNetworkFailed()
                 }
             }
         }
     }
 
-    override fun doSetupAvatar(file: MultipartBody.Part, body: Map<String,String>) {
+    override fun doSetupAvatar(file: File, token: String, username: String) {
         val view = mView!!
-        GlobalScope.launch {
-            RemoteService.setupUserAvatar(file,body).execute().body()?.apply {
-                launch(Dispatchers.Main){
-                    when(get("code").asInt){
+        view.run {
+            if (!getViewContext().isNetworkActive) {
+                onNetworkFailed()
+                return
+            }
+            onRequesting()
+            GlobalScope.launch {
+                val type = MediaType.parse("multipart/form-data")
+                val part = MultipartBody.Part.createFormData("file", file.name, RequestBody.create(type, file))
+                try {
+                    RemoteService.setupUserAvatar(part, RequestBody.create(type, token), RequestBody.create(type, username)).execute().body()?.apply {
+                        launch(Dispatchers.Main) {
+                            onRequestFinished()
+                            when (get("code").asInt) {
+                                200 -> onSetupAvatarSuccess()
+                                else -> onSetupAvatarFailed()
+                            }
+                        }
                     }
-                    view.onSetupAvatarSuccess()
+                } catch (e: SocketTimeoutException) {
+                    onRequestFinished()
+                    onNetworkFailed()
                 }
             }
         }

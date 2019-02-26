@@ -1,5 +1,5 @@
 package com.bigcreate.zyfw.callback
 
-interface CommentCallBack{
+interface CommentCallBack {
     fun commentSuccess()
 }

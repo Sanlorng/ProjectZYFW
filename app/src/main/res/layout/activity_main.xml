@@ -34,24 +34,11 @@
             android:layout_height="wrap_content">
             <include layout="@layout/appbar"/>
         </com.google.android.material.appbar.AppBarLayout>
-        <LinearLayout
-            android:id="@+id/layoutLoading"
+        <include
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="vertical">
-            <ProgressBar
-                android:id="@+id/progressLoading"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/textLoading"
-                android:layout_marginTop="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="正在请求定位"/>
-        </LinearLayout>
+            layout="@layout/layout_loading"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/nestedScrollView_home"
             android:layout_width="match_parent"

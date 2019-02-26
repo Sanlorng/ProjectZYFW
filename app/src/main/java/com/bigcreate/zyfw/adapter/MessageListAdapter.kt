@@ -10,9 +10,9 @@ import com.bigcreate.zyfw.models.MessageHeader
 /**
  * Create by Sanlorng on 2018/4/16
  */
-class MessageListAdapter(val messageMap:HashMap<String,MessageHeader>) : RecyclerView.Adapter<MessageListAdapter.ViewHolder>(){
+class MessageListAdapter(private val messageMap: HashMap<String, MessageHeader>) : RecyclerView.Adapter<MessageListAdapter.ViewHolder>() {
 
-    inner class ViewHolder(view : View) : RecyclerView.ViewHolder(view){
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         init {
 
         }
@@ -20,8 +20,7 @@ class MessageListAdapter(val messageMap:HashMap<String,MessageHeader>) : Recycle
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.message_header, parent, false)
-        val holder = ViewHolder(view)
-        return holder
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

@@ -3,10 +3,12 @@ package com.bigcreate.zyfw.activities
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import com.bigcreate.library.startActivity
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.RestResult
@@ -15,9 +17,9 @@ import com.bigcreate.zyfw.mvp.app.UpdateContract
 import com.bigcreate.zyfw.mvp.app.UpdateImpl
 import kotlinx.android.synthetic.main.activity_update_manager.*
 
-class UpdateManagerActivity : AppCompatActivity(),UpdateContract.View {
+class UpdateManagerActivity : AppCompatActivity(), UpdateContract.NetworkView {
     var path = ""
-    val updateImpl = UpdateImpl(this)
+    private val updateImpl = UpdateImpl(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_manager)
@@ -27,8 +29,27 @@ class UpdateManagerActivity : AppCompatActivity(),UpdateContract.View {
         toolbarAppbarManager.setNavigationOnClickListener {
             finish()
         }
+        toolbarAppbarManager.inflateMenu(R.menu.toolbar_app_manager)
+        toolbarAppbarManager.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.appUpdateHistory -> startActivity(AppUpdateHistoryActivity::class.java)
+            }
+            true
+        }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         updateImpl.doUpdateCheck(packageName)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_app_manager, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.appUpdateHistory -> startActivity(AppUpdateHistoryActivity::class.java)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun getViewContext(): Context {
@@ -43,6 +64,10 @@ class UpdateManagerActivity : AppCompatActivity(),UpdateContract.View {
         textChangelog.text = "正在检查更新"
     }
 
+    override fun onRequestFinished() {
+
+    }
+
     override fun onUpdateCheckFailed(response: RestResult<UpdateInfo>) {
         textChangelog.text = "检查更新失败"
     }
@@ -53,14 +78,6 @@ class UpdateManagerActivity : AppCompatActivity(),UpdateContract.View {
         materialButtonDownload.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, updateInfo.path.toUri()))
         }
-
-    }
-
-    fun downloadUpdate(updateInfo: UpdateInfo){
-        val downloadManager = getSystemService(DownloadManager::class.java)
-//        downloadManager.enqueue(DownloadManager.Request(updateInfo.path.toUri()).apply {
-//            setNotificationVisibility(DownloadManager.)
-//        })
 
     }
 

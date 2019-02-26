@@ -1,9 +1,8 @@
 package com.bigcreate.zyfw.base
 
-import android.content.Context
-
-object NetworkHelper{
+object NetworkHelper {
     var isNetworkActive = true
 }
-val Context.isNetworkActive: Boolean
-get() = NetworkHelper.isNetworkActive
+
+val isNetworkActive: Boolean
+    get() = NetworkHelper.isNetworkActive

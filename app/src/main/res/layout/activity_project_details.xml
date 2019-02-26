@@ -4,34 +4,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView_comment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:paddingTop="8dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:elevation="8dp"
-        android:focusable="true">
-            <TextView
-                android:drawableStart="@drawable/ic_comment_black_24dp"
-                android:drawablePadding="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:id="@+id/editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:enabled="true"
-                android:hint="@string/write_something"
-                android:textSize="16sp" />
+    <!--<androidx.cardview.widget.CardView-->
+        <!--android:id="@+id/cardView_comment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--android:paddingTop="8dp"-->
+        <!--android:background="?attr/selectableItemBackground"-->
+        <!--android:clickable="true"-->
+        <!--android:elevation="8dp"-->
+        <!--android:focusable="true">-->
+            <!--<TextView-->
+                <!--android:drawableStart="@drawable/ic_comment_black_24dp"-->
+                <!--android:drawablePadding="8dp"-->
+                <!--android:layout_marginTop="4dp"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:paddingBottom="8dp"-->
+                <!--android:paddingTop="8dp"-->
+                <!--android:id="@+id/editText"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="16dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:enabled="true"-->
+                <!--android:hint="@string/write_something"-->
+                <!--android:textSize="16sp" />-->
 
-    </androidx.cardview.widget.CardView>
+    <!--</androidx.cardview.widget.CardView>-->
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -50,12 +50,11 @@
 
             <com.tencent.tencentmap.mapsdk.map.MapView
                 android:id="@+id/app_bar_map"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                android:src="@android:drawable/sym_def_app_icon" />
+                android:scaleType="centerCrop"/>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar_project_details"
@@ -74,93 +73,122 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+    <!--<androidx.core.widget.NestedScrollView-->
+        <!--android:id="@+id/nestedScrollView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView_topic"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView_Content"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<ProgressBar-->
+                <!--android:id="@+id/progressBar4"-->
+                <!--style="?android:attr/progressBarStyle"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView_Region"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView_Address"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView_numbers"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView_name"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView_phone"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/textView_Comments"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:textColor="?attr/colorAccent"-->
+                <!--android:textSize="18sp" />-->
+
+            <!--<androidx.recyclerview.widget.RecyclerView-->
+                <!--android:id="@+id/recycler_comments"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--/>-->
+        <!--</LinearLayout>-->
+    <!--</androidx.core.widget.NestedScrollView>-->
+
+    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:src="@drawable/ic_add_white_24dp"-->
+        <!--app:layout_anchor="@id/appbar"-->
+        <!--app:layout_anchorGravity="bottom|end"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:clickable="true"-->
+        <!--android:focusable="true"/>-->
+    <LinearLayout
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView_topic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView_Content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <ProgressBar
-                android:id="@+id/progressBar4"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView_Region"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView_Address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView_numbers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView_Comments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="?attr/colorAccent"
-                android:textSize="18sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_comments"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                />
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:src="@drawable/ic_add_white_24dp"
-        app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|end"
-        android:layout_margin="16dp"
-        android:clickable="true"
-        android:focusable="true"/>
-
-
-
+        android:orientation="vertical">
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabProjectDetails"
+        android:background="#00000000"
+        app:tabIndicatorFullWidth="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="详情"/>
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="评论"/>
+    </com.google.android.material.tabs.TabLayout>
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPagerDetails"
+        app:layout_anchor="@id/tabProjectDetails"
+        app:layout_anchorGravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    </LinearLayout>
+    <!--<LinearLayout-->
+        <!--app:layout_behavior="@string/bottom_sheet_behavior"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+    <!--</LinearLayout>-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

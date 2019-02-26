@@ -3,14 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="130dp"
+    android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:background="#FAFAFA">
 
             <EditText
                 android:id="@+id/editText_comment"
                 android:layout_width="match_parent"
-                android:layout_height="75dp"
+                android:layout_height="wrap_content"
+                android:lines="4"
                 android:layout_margin="8dp"
                 android:gravity="top"
                 android:background="#00000000"

@@ -8,13 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ProjectDetailsActivity
-import com.bigcreate.zyfw.models.Project
-import com.bigcreate.zyfw.mvp.base.SearchModel
+import com.bigcreate.zyfw.models.SearchModel
 
-class ProjectListAdapter(val listProject: List<SearchModel>) : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>() {
-    inner class ViewHolder(view: View): RecyclerView.ViewHolder(view){
-
-    }
+class ProjectListAdapter(private val listProject: List<SearchModel>) : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>() {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     override fun getItemCount(): Int {
         return listProject.size
@@ -26,21 +23,21 @@ class ProjectListAdapter(val listProject: List<SearchModel>) : RecyclerView.Adap
             findViewById<TextView>(R.id.title_project_item).text = item.projectTopic
             findViewById<TextView>(R.id.address_project_item).text = item.projectAddress
             findViewById<TextView>(R.id.number_project_item).text = item.projectPeopleNumbers
-            if (position == 0){
+            if (position == 0) {
                 val mLayoutParams = layoutParams as RecyclerView.LayoutParams
                 mLayoutParams.topMargin = 20
             }
             setOnClickListener {
-                val intent = Intent(context,ProjectDetailsActivity::class.java)
-                intent.putExtra("projectId",item.projectId)
-                intent.putExtra("projectTopic",item.projectTopic)
+                val intent = Intent(context, ProjectDetailsActivity::class.java)
+                intent.putExtra("projectId", item.projectId)
+                intent.putExtra("projectTopic", item.projectTopic)
                 context.startActivity(intent)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-       val view = LayoutInflater.from(parent.context).inflate(R.layout.project_item,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.project_item, parent, false)
         return ViewHolder(view)
     }
 }

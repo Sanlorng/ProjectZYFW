@@ -3,24 +3,16 @@ package com.bigcreate.zyfw.activities
 import android.annotation.SuppressLint
 import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
-import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bigcreate.library.WebKit
-import com.bigcreate.library.postRequest
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.adapter.ProjectListAdapter
-import com.bigcreate.zyfw.base.WebInterface
-import com.bigcreate.zyfw.base.myApplication
 import com.bigcreate.zyfw.models.SearchResponse
 import kotlinx.android.synthetic.main.activity_search.*
 
 class SearchActivity : AppCompatActivity() {
-    var task:SearchAsyncTask ?= null
-    var searchResponse : SearchResponse ?= null
+    private var task: SearchAsyncTask? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -29,7 +21,7 @@ class SearchActivity : AppCompatActivity() {
         toolbar_search.setNavigationOnClickListener {
             finish()
         }
-        keyword_search.setOnEditorActionListener { v, actionId, event ->
+        keyword_search.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL)
                 attemptSearch()
             true
@@ -38,14 +30,15 @@ class SearchActivity : AppCompatActivity() {
 //        keyword_search.callOnClick()
     }
 
-    private fun attemptSearch(){
+    private fun attemptSearch() {
         if (task != null)
             return
         task = SearchAsyncTask(keyword_search.text.toString())
         task!!.execute(null as Void?)
     }
+
     @SuppressLint("StaticFieldLeak")
-    inner class SearchAsyncTask internal constructor(val string: String):AsyncTask<Void, Void, Boolean>(){
+    inner class SearchAsyncTask internal constructor(val string: String) : AsyncTask<Void, Void, Boolean>() {
         override fun doInBackground(vararg params: Void?): Boolean {
 //           return try {
 //               myApplication?.run {

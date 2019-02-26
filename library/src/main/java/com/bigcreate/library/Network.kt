@@ -80,3 +80,8 @@ fun OkHttpClient.postRequest(url:String,mediaType:MediaType?,data:String): Respo
     }
 }
 
+val Context.isNetworkActive:Boolean
+get(){
+    return true
+}
+

@@ -1,20 +1,29 @@
 package com.bigcreate.zyfw.models
 
-import androidx.annotation.Keep
-
 data class SimpleRequest(var token: String, var username: String)
 data class LoginRequest(var username: String, var password: String)
 data class IsSetupInfoRequest(var token: String, var username: String)
-data class RegisterRequest(var username: String, var password: String, var code: String )
+data class RegisterRequest(var username: String, var password: String, var code: String)
 data class InitPersonInfoRequest(var username: String, var userNick: String, var userSexCode: Int,
-                       var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String)
+                                 var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String)
+
 data class UpdateInfoRequest(var username: String, var userAddress: String, var userPhone: String)
 data class SearchRequest(var token: String, var projectRegion: String?, var projectTopic: String?, var projectContent: String?)
 data class CreateProjectRequest(var projectTopic: String, var projectContent: String, var projectRegion: String,
-                          var projectAddress: String,var latitude: Double, var longitude: Double, var projectPrincipalName: String,var projectPrincipalPhone: String, var projectPeopleNumbers : String,
-                          var username: String, var token: String, var projectTypeId: Int)
-data class GetInfoRequire(var username: String)
-data class GetProjectRequest(var token: String,var projectId: String)
+                                var projectAddress: String, var latitude: Double, var longitude: Double, var projectPrincipalName: String, var projectPrincipalPhone: String, var projectPeopleNumbers: String,
+                                var username: String, var token: String, var projectTypeId: Int)
+
+data class GetProjectRequest(var token: String, var projectId: String)
+data class UpdateProjectRequest(var projectTopic: String, var projectContent: String, var projectAddress: String, var projectPrincipalName: String,
+                                var projectPrincipalPhone: String, var projectPeopleNumbers: String, var username: String, var projectId: String, var token: String)
+
+data class CreateCommentRequest(
+        val comment: String,
+        val projectId: String,
+        val token: String,
+        val username: String
+)
+
 data class UpdateInfo(
 
         var updateId: Int? = 1,
@@ -36,6 +45,6 @@ data class UpdateInfo(
         var label: String = ""
 )
 
-data class RestResult<T>(val message: String, val code: Int){
-        val data: T? = null
+data class RestResult<T>(val message: String, val code: Int) {
+    val data: T? = null
 }
