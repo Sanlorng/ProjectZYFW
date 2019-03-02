@@ -1,7 +1,6 @@
 package com.bigcreate.zyfw.fragments
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,8 +8,8 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.MessageListAdapter
@@ -45,6 +44,7 @@ class MessageFragment : Fragment(), Runnable {
             when (msg?.what) {
                 success -> {
                     no_message.visibility = View.GONE
+                    message_recyclerview.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
                     message_recyclerview.adapter = MessageListAdapter(messageList)
                     message_recyclerview.layoutManager = LinearLayoutManager(context)
                 }
@@ -69,9 +69,6 @@ class MessageFragment : Fragment(), Runnable {
 
     override fun onStart() {
         super.onStart()
-        val activity = activity as AppCompatActivity
-        toolbar_message.title = getString(R.string.title_message)
-        toolbar_message.inflateMenu(R.menu.toolbar_message)
     }
 
     /**

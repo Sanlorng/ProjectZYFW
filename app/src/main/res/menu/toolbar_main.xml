@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:title="@string/notification"
+        android:id="@+id/messageMain"
         app:showAsAction="always"
         android:icon="@drawable/ic_notifications_none_black_24dp"/>
 </menu>

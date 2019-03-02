@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.adapter.DetailsMediaAdapter
 import com.bigcreate.zyfw.models.Project
-import com.bigcreate.zyfw.mvp.project.DetailsContract
+import com.bigcreate.zyfw.mvp.project.DetailsImpl
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_details.*
 import kotlinx.android.synthetic.main.layout_loading.*
@@ -27,7 +29,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class DetailsFragment : Fragment(), DetailsContract.NetworkView {
+class DetailsFragment : Fragment(), DetailsImpl.View {
     // TODO: Rename and change types of parameters
     private var projectId: String? = null
     private var param2: String? = null
@@ -54,12 +56,24 @@ class DetailsFragment : Fragment(), DetailsContract.NetworkView {
         layoutDetailsFragment.isVisible = true
         project.apply {
             locationDetails.text = projectAddress
-            typeDetails.text = context!!.resources.getStringArray(R.array.project_type_id)[projectTypeId]
+            typeDetails.text = context!!.resources.getStringArray(R.array.project_type_id)[projectTypeId-1]
             textNameDetails.text = projectPrincipalName
             textDescriptionDetails.text = projectContent
             textNumberDetails.text = projectPeopleNumbers
             textPhoneDetails.text = "+86$projectPrincipalPhone"
             textTimeDetails.text = projectIssueTime
+            ArrayList<DetailsMediaAdapter.Model>().apply {
+                if(projectPictureLinkTwo.isNotEmpty())
+                projectPictureLinkTwo.forEach {
+                    add(DetailsMediaAdapter.Image(it))
+                }
+                if (projectPictureLinkTwo.isNotEmpty())
+                projectVideoLinkTwo.forEach {
+                    add(DetailsMediaAdapter.Video(it))
+                }
+                listDetailMedia.layoutManager = LinearLayoutManager(context!!)
+                listDetailMedia.adapter = DetailsMediaAdapter(this)
+            }
         }
     }
 
@@ -72,11 +86,11 @@ class DetailsFragment : Fragment(), DetailsContract.NetworkView {
     }
 
     override fun onRequesting() {
-        layoutLoading.isVisible = true
+        layoutLoading?.isVisible = true
     }
 
     override fun onRequestFinished() {
-        layoutLoading.isVisible = false
+        layoutLoading?.isVisible = false
     }
 
 

@@ -1,6 +1,5 @@
 package com.bigcreate.zyfw.activities
 
-import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,23 +7,23 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import com.bigcreate.library.setIconTint
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.RestResult
 import com.bigcreate.zyfw.models.UpdateInfo
-import com.bigcreate.zyfw.mvp.app.UpdateContract
 import com.bigcreate.zyfw.mvp.app.UpdateImpl
 import kotlinx.android.synthetic.main.activity_update_manager.*
 
-class UpdateManagerActivity : AppCompatActivity(), UpdateContract.NetworkView {
+class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
     var path = ""
     private val updateImpl = UpdateImpl(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_manager)
         window.transucentSystemUI(true)
-        updateImpl.doUpdateCheck(packageName)
+        updateImpl.doRequest(packageName)
         setSupportActionBar(toolbarAppbarManager)
         toolbarAppbarManager.setNavigationOnClickListener {
             finish()
@@ -37,11 +36,14 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateContract.NetworkView {
             true
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        updateImpl.doUpdateCheck(packageName)
+        updateImpl.doRequest(packageName)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_app_manager, menu)
+        menu?.apply {
+            findItem(R.id.appUpdateHistory).setIconTint(getColor(R.color.colorAccent))
+        }
         return true
     }
 

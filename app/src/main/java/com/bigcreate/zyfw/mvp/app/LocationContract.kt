@@ -10,7 +10,7 @@ interface LocationContract {
         fun doLocationRequest()
     }
 
-    interface NetworkView : BaseView {
+    interface View : BaseView {
         fun onLocationRequestSuccess(location: TencentLocation)
         fun onLocationRequestFailed()
         fun onLocationPermissionDenied()

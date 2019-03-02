@@ -3,12 +3,12 @@ package com.bigcreate.zyfw.base
 import android.content.Context
 import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.models.LoginModel
+import com.bigcreate.zyfw.models.User
 import com.bigcreate.zyfw.models.UserInfo
 
 object Attributes {
     var loginUserInfo: LoginModel? = null
     var token: String? = null
-    var isLogin = false
     var userInfo: UserInfo? = null
     var userImg: String? = null
 }
@@ -23,6 +23,10 @@ object RequestCode {
     const val REGISTER = 2
     const val EDIT_PROJECT = 3
     const val AVATAR = 4
+    const val OPEN_PROJECT = 5
+    const val SETUP_USER_INFO = 6
+    const val SELECT_IMAGE = 7
+    const val SELECT_VIDEO = 8
 }
 
 object ResultCode {

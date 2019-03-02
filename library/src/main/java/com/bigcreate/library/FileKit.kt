@@ -80,4 +80,13 @@ private fun Uri.isMediaDocument():Boolean {
     return "com.android.providers.media.documents" == this.authority
 }
 
+private fun Uri.isFileExplorer(): Boolean {
+    //content://com.android.fileexplorer.myprovider/external_files/DCIM/1549763195593.jpg
+    return "com.android.fileexplorer.myprovider" == this.authority
+}
+
+private fun Uri.isMiuiGallery():Boolean {
+    //content://com.miui.gallery.open/raw//storage/emulated/0/DCIM/Camera/IMG_20190301_154642.jpg
+    return "com.miui.gallery.open" == authority
+}
 fun String.logIt(tag:String) = Log.d(tag,this)

@@ -26,7 +26,19 @@
                 <!--android:text="测试推荐"/>-->
         <!--</LinearLayout>-->
     <!--</androidx.core.widget.NestedScrollView>-->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/testInterfaceToolbar"
+            android:fitsSystemWindows="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"/>
+    </com.google.android.material.appbar.AppBarLayout>
     <com.google.android.material.navigation.NavigationView
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:id="@+id/navigation_test"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

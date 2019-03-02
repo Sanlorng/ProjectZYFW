@@ -3,7 +3,6 @@ package com.bigcreate.zyfw.fragments
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -14,20 +13,16 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.bigcreate.library.toast
-import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.library.valueOrNotNull
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.appCompactActivity
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.RegisterRequest
-import com.bigcreate.zyfw.mvp.user.RegisterContract
 import com.bigcreate.zyfw.mvp.user.RegisterImpl
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_sign_up.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,10 +38,12 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SignUpFragment : Fragment(), RegisterContract.NetworkView {
+class SignUpFragment : Fragment(), RegisterImpl.View {
     // TODO: Rename and change types of parameters
+    private var isForgetPass = false
     private var param1: String? = null
     private var param2: String? = null
+    private var isSendCode = false
     private var listener: OnFragmentInteractionListener? = null
     private val presenter = RegisterImpl(this)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +56,7 @@ class SignUpFragment : Fragment(), RegisterContract.NetworkView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        isForgetPass = activity?.intent?.getBooleanExtra("isResetPassword",false).valueOrNotNull
         appCompactActivity?.setSupportActionBar(toolbar_sign_up)
         appCompactActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar_sign_up.setNavigationOnClickListener {
@@ -74,12 +72,15 @@ class SignUpFragment : Fragment(), RegisterContract.NetworkView {
             }
             false
         })
+        toolbar_sign_up.requestApplyInsets()
         buttonSendValidCodeSignUp.setOnClickListener {
             if (phone_sign_up.text.toString().length != 11) {
                 phone_sign_up.error = "请输入手机号"
                 phone_sign_up.requestFocus()
-            } else
+            } else {
+                isSendCode = true
                 presenter.doSendValidCode(phone_sign_up.text.toString())
+            }
         }
     }
 
@@ -95,72 +96,7 @@ class SignUpFragment : Fragment(), RegisterContract.NetworkView {
         listener = null
     }
 
-    //    @SuppressLint("StaticFieldLeak")
-//    inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
-//
-//        override fun doInBackground(vararg params: Void): Boolean? {
-//            // TODO: attempt authentication against a network service.
-//
-//            return try {
-//                tryLoginTask()
-//                activity?.myApplication?.loginToken != null
-//            } catch (e: Throwable) {
-//                false
-//            }
-//
-//        }
-//
-//        override fun onPostExecute(success: Boolean?) {
-//            mAuthTask = null
-//            showProgress(false)
-//
-//            if (success!!) {
-//                activity?.myApplication?.run {
-//                    loginUser = User(phone_sign_up.text.toString(), password_sign_up.text.toString(),loginToken!!,"12")
-//                    loginUser?.run {
-//                        Log.d("name",name)
-//                        Log.d("pass",password)
-//                    }
-//
-//                }
-//                val transaction = activity?.supportFragmentManager?.beginTransaction()
-//                transaction?.run {
-//                    replace(R.id.container_sign_up,SetupInfoFragment())
-//                    setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-//                    addToBackStack(null)
-//                    commit()
-//                }
-//            } else {
-//                password_sign_up.error = getString(R.string.error_incorrect_password)
-//                password_sign_up.requestFocus()
-//            }
-//        }
-//
-//        override fun onCancelled() {
-//            mAuthTask = null
-//            showProgress(false)
-//        }
-//
-//        private fun tryLoginTask() {
-//            var temp: String? = null
-//            activity?.myApplication?.run {
-//                //TODO
-////                val registerRequire = RegisterRequire(ipAddress, phone_sign_up.text.toString(), password_sign_up.text.toString())
-////                val data = WebKit.gson.toJson(registerRequire)
-//                val data = ""
-//                Log.d("lisss",data)
-//                mResponseString = WebKit.okClient.postRequest(WebInterface.REGISTER_URL, WebInterface.TYPE_JSON, data)?.string()
-//                Log.d("responseString",mResponseString)
-//                loginToken = WebKit.gson.fromJson(mResponseString,RegisterResponse::class.java).token
-//
-//            }
-//
-//        }
-//    }
     private fun attemptLogin() {
-//        if (mAuthTask != null) {
-//            return
-//        }
 
         // Reset errors.
         phone_sign_up.error = null
@@ -199,9 +135,10 @@ class SignUpFragment : Fragment(), RegisterContract.NetworkView {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true)
-//            mAuthTask = UserLoginTask(emailStr, passwordStr)
-//            mAuthTask!!.execute(null as Void?)
-            presenter.doRegister(RegisterRequest(emailStr, passwordStr, textValidCodeRegister.text.toString()))
+            if (isForgetPass)
+                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr, textValidCodeRegister.text.toString()))
+            else
+                presenter.doRegister(RegisterRequest(emailStr, passwordStr, textValidCodeRegister.text.toString()))
         }
         phone_sign_up_button.isEnabled = true
     }
@@ -246,7 +183,7 @@ class SignUpFragment : Fragment(), RegisterContract.NetworkView {
                 })
     }
 
-    override fun onRegisterFaild(response: JsonObject) {
+    override fun onRegisterFailed(response: JsonObject) {
         context?.toast("注册失败")
     }
 
@@ -275,12 +212,12 @@ class SignUpFragment : Fragment(), RegisterContract.NetworkView {
         context?.toast("验证码已发送到您的手机，请注意查收")
         GlobalScope.launch {
             for (i in 60 downTo 1) {
-                launch(Dispatchers.Main) {
+                withContext(Dispatchers.Main) {
                     buttonSendValidCodeSignUp.text = "重新发送(${i}s)"
                 }
                 delay(1000)
             }
-            launch(Dispatchers.Main) {
+            withContext(Dispatchers.Main) {
                 buttonSendValidCodeSignUp.text = "重新发送"
                 buttonSendValidCodeSignUp.isEnabled = true
             }
@@ -288,11 +225,14 @@ class SignUpFragment : Fragment(), RegisterContract.NetworkView {
     }
 
     override fun onRequesting() {
+        if (!isSendCode)
         showProgress(true)
     }
 
     override fun onRequestFinished() {
-
+        if (!isSendCode)
+        showProgress(false)
+        isSendCode = false
     }
 
     override fun onNetworkFailed() {
@@ -336,12 +276,5 @@ class SignUpFragment : Fragment(), RegisterContract.NetworkView {
                         putString(ARG_PARAM2, param2)
                     }
                 }
-    }
-
-    override fun onResume() {
-        activity?.window?.run {
-            transucentSystemUI(true)
-        }
-        super.onResume()
     }
 }

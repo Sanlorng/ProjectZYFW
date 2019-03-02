@@ -1,54 +1,25 @@
 package com.bigcreate.zyfw.mvp.app
 
-import android.util.Log
-import com.bigcreate.library.WebKit
-import com.bigcreate.library.isNetworkActive
-import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.base.UpdateService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.net.SocketTimeoutException
+import com.bigcreate.zyfw.models.RestResult
+import com.bigcreate.zyfw.models.UpdateInfo
+import com.bigcreate.zyfw.mvp.base.BaseNetworkView
+import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 
-class UpdateImpl(var mView: UpdateContract.NetworkView?) : UpdateContract.Presenter {
-    var job: Job? = null
-    override fun doUpdateCheck(packageName: String) {
-        if (mView == null)
-            throw Throwable("Please bind view")
-        val view = mView!!
-        view.run {
-            if (!getViewContext().isNetworkActive) {
-                onNetworkFailed()
-                return
-            }
-            onRequesting()
-            try {
-                job = GlobalScope.launch {
-                    UpdateService.getAppUpdateVersion(packageName).execute().body()?.apply {
-                        if (BuildConfig.DEBUG) {
-                            Log.e("packageName", packageName)
-                            Log.e("response", WebKit.gson.toJson(this))
-                        }
-                        launch(Dispatchers.Main) {
-                            onRequestFinished()
-                            onUpdateCheckSuccess(this@apply)
-                        }
-                    }
-                }
-            } catch (e: SocketTimeoutException) {
-                onRequestFinished()
-                onNetworkFailed()
-            }
+class UpdateImpl(mView: View?) :
+        BasePresenterImpl<String, UpdateInfo, UpdateImpl.View>(mView) {
+    override fun afterRequestSuccess(data: UpdateInfo?) {
+        data?.apply {
+            mView?.onUpdateCheckSuccess(this)
         }
     }
 
-    override fun detachView() {
-        cancelJob()
-        mView = null
+    override fun backgroundRequest(request: String): UpdateInfo? {
+        return UpdateService.getAppUpdateVersion(request).execute().body()
     }
 
-    override fun cancelJob() {
-        job?.cancel()
+    interface View : BaseNetworkView {
+        fun onUpdateCheckSuccess(updateInfo: UpdateInfo)
+        fun onUpdateCheckFailed(response: RestResult<UpdateInfo>)
     }
 }

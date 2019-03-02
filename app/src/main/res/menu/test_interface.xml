@@ -3,4 +3,6 @@
     <item android:id="@+id/testAvatar" android:title="测试头像"/>
     <item android:id="@+id/testRecommend" android:title="测试推荐"/>
     <item android:id="@+id/testDownloadAvatar" android:title="测试下载"/>
+    <item android:id="@+id/testRegister" android:title="测试注册"/>
+    <item android:id="@+id/testAuthLogin" android:title="测试验证"/>
 </menu>

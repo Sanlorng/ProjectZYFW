@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/release_project_menu"
+        android:id="@+id/releaseCreateProject"
         android:icon="@drawable/ic_send_black_24dp"
         android:title="发布"
         android:iconTint="@color/colorAccent"

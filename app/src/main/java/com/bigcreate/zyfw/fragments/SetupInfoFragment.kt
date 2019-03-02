@@ -1,7 +1,6 @@
 package com.bigcreate.zyfw.fragments
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,11 +16,16 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.appCompactActivity
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
-import com.bigcreate.zyfw.mvp.user.UserInfoContract
 import com.bigcreate.zyfw.mvp.user.UserInfoImpl
+import com.bilibili.boxing.Boxing
+import com.bilibili.boxing.BoxingMediaLoader
+import com.bilibili.boxing.loader.IBoxingCallback
+import com.bilibili.boxing.loader.IBoxingMediaLoader
+import com.bilibili.boxing.model.config.BoxingConfig
+import com.bilibili.boxing_impl.ui.BoxingActivity
+import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
 import com.tencent.map.geolocation.TencentLocation
 import com.tencent.map.geolocation.TencentLocationListener
@@ -44,7 +48,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoContract.NetworkView {
+class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -55,6 +59,19 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoContract.
     val photoResult = 3
     val imageType = "image/*"
     private var avatarFile: File? = null
+    private val boxImpl = object : IBoxingMediaLoader {
+        override fun displayRaw(img: ImageView, absPath: String, width: Int, height: Int, callback: IBoxingCallback?) {
+            Glide.with(this@SetupInfoFragment)
+                    .load(absPath)
+                    .into(img)
+        }
+
+        override fun displayThumbnail(img: ImageView, absPath: String, width: Int, height: Int) {
+            Glide.with(this@SetupInfoFragment)
+                    .load(absPath)
+                    .into(img)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -81,11 +98,17 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoContract.
                 fragmentManager!!.popBackStack()
             }
         }
+        toolbar_setup_info.requestApplyInsets()
+        BoxingMediaLoader.getInstance().init(boxImpl)
         imageView_setup.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageType)
-            startActivityForResult(intent, photoResult)
+//            val intent = Intent(Intent.ACTION_GET_CONTENT)
+//            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageType)
+//            startActivityForResult(intent, photoResult)
+            Boxing.of(BoxingConfig(BoxingConfig.Mode.SINGLE_IMG).needCamera(R.drawable.ic_add_a_photo_black_24dp))
+                    .withIntent(context!!,BoxingActivity::class.java)
+                    .start(this,RequestCode.SELECT_IMAGE)
         }
+        phone_input_setup_info.editText?.append(Attributes.loginUserInfo!!.username)
         chipGroupGenderType.setOnCheckedChangeListener { chipGroup, i ->
             Log.e("check", chipGroupGenderType.checkedChipId.toString())
             Log.e("i", i.toString())
@@ -96,21 +119,16 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoContract.
             phone_input_setup_info.editText?.append(Attributes.loginUserInfo!!.username)
         ok_button_setup_info.setOnClickListener {
             Log.d("click", "click ok")
-            //val response = WebKit.okClient.postRequest()
             if (nick_name_setup_info.editText!!.isEmpty() || address_input_setup_info.editText!!.isEmpty() ||
                     phone_input_setup_info.editText!!.isEmpty() || avatarFile == null || chipGroupGenderType.checkedChipId == -1 || chipGroupUserType.checkedChipId == -1)
                 Toast.makeText(context!!, "你还有尚未填写的资料，请填好后重试", Toast.LENGTH_SHORT).show()
             else {
-
-//                activity?.myApplication?.loginUser?.run {
                 progressBar2.visibility = View.VISIBLE
                 textView7.isEnabled = false
                 gender_text_setup_info.isEnabled = false
                 nick_name_setup_info.isEnabled = false
                 phone_input_setup_info.isEnabled = false
                 address_input_setup_info.isEnabled = false
-//                    gender_spinner_setup_info.isEnabled = false
-//                    identity_spinner_setup_info.isEnabled = false
                 ok_button_setup_info.isEnabled = false
                 chip.isEnabled = false
                 val userInfo = Attributes.loginUserInfo!!
@@ -120,52 +138,8 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoContract.
                         getIndexForChip(chipGroupUserType.checkedChipId),
                         address_input_setup_info.editText!!.string().trim(),
                         phone_input_setup_info.editText!!.string().trim(), userInfo.token))
-//                    Thread {
-//                        //TODO
-////                        val setupInfoRequire = InfoRequire(name, nick_name_setup_info.editText!!.string(), gender_spinner_setup_info.selectedItem as String,
-////                                identity_spinner_setup_info.selectedItem as String, address_input_setup_info.editText!!.string(), phone_input_setup_info.editText!!.string(),imageString)
-////                        val data = WebKit.gson.toJson(setupInfoRequire)
-//                        val data = ""
-//                        Log.d("json", data)
-//                        val response = WebKit.okClient.postRequest(WebInterface.SETUPINFO_URL, WebKit.mediaJson, data)?.string()
-//                        response?.run {
-//                            Log.d("this",this)
-//                            val model = WebKit.gson.fromJson(this, InfoResponse::class.java)
-//                            when (model.stateCode) {
-//                                200 -> {
-//                                    activity?.runOnUiThread {
-//                                        Toast.makeText(context!!,"信息设置成功！",Toast.LENGTH_SHORT).show()
-//                                        activity!!.finish()
-//                                    }
-//                                }
-//                                else -> {
-//                                    activity?.runOnUiThread {
-//                                        Toast.makeText(context!!,"信息设置失败!请重试",Toast.LENGTH_SHORT).show()
-//
-//                                    }
-//                                }
-//                            }
-//                            activity?.runOnUiThread {
-//                                progressBar2.visibility = NetworkView.GONE
-//                                nick_name_setup_info.isEnabled = true
-//                                phone_input_setup_info.isEnabled = true
-//                                address_input_setup_info.isEnabled = true
-////                                gender_spinner_setup_info.isEnabled = true
-////                                identity_spinner_setup_info.isEnabled = true
-//                                ok_button_setup_info.isEnabled = true
-//                                textView7.isEnabled = true
-//                                gender_text_setup_info.isEnabled = true
-//                                chip.isEnabled = true
-//
-//                                //activity!!.finish()
-//                            }
-//                            }
-//                        }.start()
-//                    }
-
             }
         }
-//        username_setup_info.text = activity?.myApplication?.loginUser?.name
         chip.setOnClickListener {
             Log.d("is click", "is click")
             val popupMenu = PopupMenu(context!!, chip)
@@ -280,18 +254,23 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoContract.
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        data?.run {
-            data.data?.run {
-                Log.d("url", this.path)
+        Boxing.getResult(data)?.run {
+//            data.data?.run {
+                Log.d("url", get(0).path)
                 when (requestCode) {
-                    photoResult -> {
-                        imageView_setup.setImageBitmap(context!!.getBitmapFromUri(this))
-                        imageView_setup.scaleType = ImageView.ScaleType.CENTER_CROP
+                    RequestCode.SELECT_IMAGE -> {
+//                        imageView_setup.setImageBitmap(context!!.getBitmapFromUri(this).roundBitmap)
+//                        imageView_setup.scaleType = ImageView.ScaleType.CENTER_CROP
                         textView_add_photo_setup.text = "更换照片"
-                        avatarFile = File(context!!.getPath(this))
+                        Glide.with(this@SetupInfoFragment)
+                                .load(get(0).path)
+                                .applyCenterCrop()
+                                .applyCircleCrop()
+                                .into(imageView_setup)
+                        avatarFile = File(get(0).path)
                     }
                 }
-            }
+//            }
         }
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -334,7 +313,10 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoContract.
     }
 
     override fun onSetupAvatarSuccess() {
-        activity?.finish()
+        activity?.apply {
+            setResult(ResultCode.OK)
+            finish()
+        }
     }
 
     override fun onSetupAvatarFailed() {

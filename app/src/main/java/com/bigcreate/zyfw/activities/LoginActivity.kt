@@ -22,7 +22,6 @@ import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
-import com.bigcreate.zyfw.mvp.user.LoginContract
 import com.bigcreate.zyfw.mvp.user.LoginImpl
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonObject
@@ -31,18 +30,11 @@ import kotlinx.android.synthetic.main.activity_login.*
 /**
  * A login screen that offers login via email/password.
  */
-class LoginActivity : AppCompatActivity(), LoginContract.NetworkView {
+class LoginActivity : AppCompatActivity(), LoginImpl.View {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-//    private var mAuthTask: UserLoginTask? = null
-//    private val mGson = Gson()
-//    private var mResponseString: String? = null
     private var mSinOrSup = true
-    //    private var userId: String? = null
-//    private var registUrl = "ProjectForDaChuang/register"
-//    private var loginUrl = "ProjectForDaChuang/login"
-//    val JSON = MediaType.parse("application/json; charset=utf-8")
     private val loginPresenter = LoginImpl(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,10 +66,11 @@ class LoginActivity : AppCompatActivity(), LoginContract.NetworkView {
         sign_up.setOnClickListener {
             startActivity(SignUpActivity::class.java)
         }
-        /*button_sign_up.setOnClickListener{
-            mSinOrSup = false
-            attemptLogin()
-        }*/
+        forget_pass.setOnClickListener {
+            startActivity(Intent(this,SignUpActivity::class.java).apply {
+                putExtra("isResetPassword",true)
+            })
+        }
     }
 
     override fun onResume() {
@@ -165,9 +158,6 @@ class LoginActivity : AppCompatActivity(), LoginContract.NetworkView {
      * errors are presented and no actual login attempt is made.
      */
     private fun attemptLogin() {
-//        if (mAuthTask != null) {
-//            return
-//        }
         email_sign_in_button.isEnabled = false
         // Reset errors.
         email.error = null
@@ -180,14 +170,12 @@ class LoginActivity : AppCompatActivity(), LoginContract.NetworkView {
         var cancel = false
         var focusView: View? = null
 
-        // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(passwordStr) && !isPasswordValid(passwordStr)) {
             password.error = getString(R.string.error_invalid_password)
             focusView = password
             cancel = true
         }
 
-        // Check for a valid email address.
         if (TextUtils.isEmpty(emailStr)) {
             email.error = getString(R.string.error_field_required)
             focusView = email
@@ -199,16 +187,10 @@ class LoginActivity : AppCompatActivity(), LoginContract.NetworkView {
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView?.requestFocus()
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
             showProgress(true)
-//            mAuthTask = UserLoginTask(emailStr, passwordStr)
-//            mAuthTask!!.execute(null as Void?)
-            loginPresenter.doLoginByPass(LoginRequest(emailStr, passwordStr))
+            loginPresenter.doRequest(LoginRequest(emailStr, passwordStr))
         }
         email_sign_in_button.isEnabled = true
     }
@@ -251,79 +233,6 @@ class LoginActivity : AppCompatActivity(), LoginContract.NetworkView {
                 })
     }
 
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-//    @SuppressLint("StaticFieldLeak")
-//    inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
-//
-//        override fun doInBackground(vararg params: Void): Boolean? {
-//            // TODO: attempt authentication against a network service.
-//
-//            return try {
-//                tryLoginTask()
-//                val response = mGson.fromJson(mResponseString, LoginByPassResponse::class.java)
-//                response?.run {
-//                    userId = content
-//                }
-//                response?.token != null
-//            } catch (e: Exception) {
-//                false
-//            }
-//
-//        }
-//
-//        override fun onPostExecute(success: Boolean?) {
-//            mAuthTask = null
-//            showProgress(false)
-//            if (success!!) {
-//                //myApplication?.loginUser = User(mEmail,mPassword,myApplication?.loginToken!!,userId!!)
-//                defaultSharedPreferences.edit()
-//                        .putString("user_name",mEmail)
-//                        .putString("user_pass",mPassword)
-//                        .putString("user_id",userId)
-//                        .putString("user_token",myApplication?.loginToken)
-//                        .apply()
-//                myApplication?.loginUser = null
-//                finish()
-//            } else {
-//                password.error = getString(R.string.error_incorrect_password)
-//                password.requestFocus()
-//            }
-//        }
-//
-//        override fun onCancelled() {
-//            mAuthTask = null
-//            showProgress(false)
-//        }
-//
-//        private fun tryLoginTask() {
-//            var temp: String? = null
-//            temp = if (mSinOrSup)
-//                loginUrl
-//            else
-//                registUrl
-//            //TODO
-////            val loginRequest = LoginRequest(ipAddress!!, mEmail, mPassword, null)
-//            val loginRequest = ""
-//            Log.d("jsonToServer", Gson().toJson(loginRequest))
-//            myApplication?.run {
-//                val response = WebKit.okClient.postRequest(WebInterface.LOGIN_URL,WebInterface.TYPE_JSON,WebKit.gson.toJson(loginRequest))
-//                mResponseString = response?.string()
-//                Log.d("response", mResponseString)
-//                loginToken = try {
-//                    WebKit.gson.fromJson<LoginByPassResponse>(mResponseString,LoginByPassResponse::class.java::class.java).token
-//                }catch (e:Exception){
-//                    Log.d("loginToken ", "null")
-//                    null
-//                }
-//            }
-//            Log.d("response", mResponseString)
-//
-//        }
-//    }
     companion object {
 
         /**

@@ -12,6 +12,10 @@ import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorLong
+import androidx.annotation.ColorRes
+import androidx.core.graphics.drawable.DrawableCompat
 import java.lang.Exception
 
 /**
@@ -179,4 +183,10 @@ get() {
 
 fun Context.notification(){
 
+}
+
+fun MenuItem.setIconTint(@ColorLong id: Int){
+    icon = icon.apply {
+        DrawableCompat.setTint(this, id)
+    }
 }

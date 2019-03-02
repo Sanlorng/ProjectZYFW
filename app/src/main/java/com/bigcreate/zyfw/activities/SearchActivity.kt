@@ -8,10 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.models.SearchResponse
 import kotlinx.android.synthetic.main.activity_search.*
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AuthLoginActivity() {
     private var task: SearchAsyncTask? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +26,6 @@ class SearchActivity : AppCompatActivity() {
             true
         }
         keyword_search.requestFocus()
-//        keyword_search.callOnClick()
     }
 
     private fun attemptSearch() {
@@ -40,21 +38,7 @@ class SearchActivity : AppCompatActivity() {
     @SuppressLint("StaticFieldLeak")
     inner class SearchAsyncTask internal constructor(val string: String) : AsyncTask<Void, Void, Boolean>() {
         override fun doInBackground(vararg params: Void?): Boolean {
-//           return try {
-//               myApplication?.run {
-//                   val response = WebKit.okClient.postRequest(WebInterface.SEARCH_URL, WebInterface.TYPE_JSON, WebKit.gson.toJson(SearchRequire(null, string,"桂林")))
-//                   val responseString = response?.string()
-//                   Log.d("is client","yes")
-//                   responseString?.run {
-//                       Log.d("response",this)
-//                   }
-//                   searchResponse = WebKit.gson.fromJson<SearchResponse>(responseString, SearchResponse::class.java)
-//               }
-//               searchResponse != null && searchResponse?.stateCode?.compareTo(200) == 0
-//           }catch (e:Exception){
-//               Log.d("error","when search request")
-//               false
-//           }
+
             return false
         }
 

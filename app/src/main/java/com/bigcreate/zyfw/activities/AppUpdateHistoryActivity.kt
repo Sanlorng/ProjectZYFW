@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.activity_app_update_history.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class AppUpdateHistoryActivity : AppCompatActivity() {
 
@@ -31,7 +30,7 @@ class AppUpdateHistoryActivity : AppCompatActivity() {
                         listUpdateHistory.adapter = UpdateHistoryListAdapter(this@apply)
                     }
                 }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
 
             }
         }

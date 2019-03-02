@@ -60,7 +60,8 @@
                 android:id="@+id/toolbar_project_details"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title=" "
+                android:theme="?attr/actionBarTheme"
+                app:title="  "
                 app:layout_collapseMode="pin">
 
                 <TextView
@@ -68,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorAccent"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

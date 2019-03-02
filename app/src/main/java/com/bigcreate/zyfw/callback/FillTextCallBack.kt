@@ -1,4 +1,4 @@
-package com.bigcreate.zyfw.fragments
+package com.bigcreate.zyfw.callback
 
 interface FillTextCallBack {
     fun getTextContent(): CharSequence

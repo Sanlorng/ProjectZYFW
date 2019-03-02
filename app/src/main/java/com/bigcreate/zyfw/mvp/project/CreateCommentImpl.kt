@@ -1,53 +1,34 @@
 package com.bigcreate.zyfw.mvp.project
 
-import com.bigcreate.library.isNetworkActive
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.models.CreateCommentRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.net.SocketTimeoutException
+import com.bigcreate.zyfw.mvp.base.BaseNetworkView
+import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
+import com.google.gson.JsonObject
 
-class CreateCommentImpl(var mView: CreateCommentContract.View?) : CreateCommentContract.Presenter {
-    private var createCommentJob: Job? = null
-    override fun doCreateComment(createCommentRequest: CreateCommentRequest) {
-        val view = mView!!
-        view.run {
-            if (!getViewContext().isNetworkActive) {
-                onNetworkFailed()
-                return
-            }
-            onRequesting()
-            try {
-                createCommentJob = GlobalScope.launch {
-                    RemoteService.createProjectComment(createCommentRequest).execute().body()?.apply {
-                        val data = get("data").asJsonObject
-                        if (get("code").asInt == 200)
-                            Attributes.loginUserInfo!!.token = data.get("newToken").asString
-                        GlobalScope.launch(Dispatchers.Main) {
-                            onRequestFinished()
-                            when (get("code").asInt) {
-                                200 -> onCreateCommentSuccess(this@apply)
-                                else -> onCreateCommentFailed(this@apply)
-                            }
-                        }
+class CreateCommentImpl(mView: View?) :
+        BasePresenterImpl<CreateCommentRequest, JsonObject, CreateCommentImpl.View>(mView) {
+    override fun afterRequestSuccess(data: JsonObject?) {
+        mView?.run {
+            data?.apply {
+                when (get("code").asInt) {
+                    200 -> {
+                        Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
+                        onCreateCommentSuccess(this@apply)
                     }
+                    else -> onCreateCommentFailed(this@apply)
                 }
-            }catch (e: SocketTimeoutException) {
-                onRequestFinished()
-                onNetworkFailed()
             }
         }
     }
 
-    override fun cancelJob() {
-        createCommentJob?.cancel()
+    override fun backgroundRequest(request: CreateCommentRequest): JsonObject? {
+        return RemoteService.createProjectComment(request).execute().body()
     }
 
-    override fun detachView() {
-        cancelJob()
-        mView = null
+    interface View : BaseNetworkView {
+        fun onCreateCommentSuccess(jsonObject: JsonObject)
+        fun onCreateCommentFailed(jsonObject: JsonObject)
     }
 }

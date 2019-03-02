@@ -16,9 +16,9 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.CommentAdapter
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.callback.CommentCallBack
+import com.bigcreate.zyfw.callback.FillTextCallBack
 import com.bigcreate.zyfw.models.Comment
-import com.bigcreate.zyfw.models.GetProjectRequest
-import com.bigcreate.zyfw.mvp.project.CommentListContract
+import com.bigcreate.zyfw.models.CommentListRequest
 import com.bigcreate.zyfw.mvp.project.CommentListImpl
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_comments.*
@@ -39,7 +39,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class CommentsFragment : Fragment(), CommentListContract.View, FillTextCallBack, CommentCallBack {
+class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, CommentCallBack {
 
     private var projectId: String? = null
     private var param2: String? = null
@@ -73,10 +73,12 @@ class CommentsFragment : Fragment(), CommentListContract.View, FillTextCallBack,
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        val intent = activity?.intent
-//        val projectId= intent?.getStringArrayExtra("project_id")
+        swipeLayoutComment.setOnRefreshListener {
+            if (projectId!= null)
+            commentImpl.doRequest(CommentListRequest(token = Attributes.loginUserInfo!!.token, projectId = projectId!!, pageNum = 1))
+        }
         projectId?.run {
-            commentImpl.doGetCommentList(GetProjectRequest(token = Attributes.loginUserInfo!!.token, projectId = this))
+            commentImpl.doRequest(CommentListRequest(token = Attributes.loginUserInfo!!.token, projectId = this, pageNum = 1))
         }
         job = GlobalScope.async(Dispatchers.Main) {
             CommentDialogFragment().apply {
@@ -146,7 +148,7 @@ class CommentsFragment : Fragment(), CommentListContract.View, FillTextCallBack,
 
     override fun commentSuccess() {
         projectId?.run {
-            commentImpl.doGetCommentList(GetProjectRequest(token = Attributes.loginUserInfo!!.token, projectId = this))
+            commentImpl.doRequest(CommentListRequest(token = Attributes.loginUserInfo!!.token, projectId = this, pageNum = 1))
         }
     }
 
@@ -186,5 +188,28 @@ class CommentsFragment : Fragment(), CommentListContract.View, FillTextCallBack,
                     }
                 }
     }
-
+//    class CommentData(application: Application): AndroidViewModel(application) {
+//        private var mPage = CommentData.PAGE_FIRST
+//        private var mDataLiveData:LiveData<PagedList<Comment>>? = null
+//        val allComment: LiveData<PagedList<Comment>>
+//        get() {
+//            if (null == mDataLiveData) {
+//                mDataLiveData =
+//            }
+//            return mDataLiveData ?: throw AssertionError("check")
+//        }
+//        companion object {
+//            private const val NEED_NUMBER = 10
+//            private const val PAGE_FIRST = 1
+//        }
+//
+//    }
+//    object CommentPagedListProvider {
+//
+//    }
+//    abstract class CommentLimitOffsetNetworkDataSource<T> protected constructor(
+//            val dataProvider: RemoteService) : PositionalDataSource<T>() {
+//        var queryFiltter = ""
+//        ov
+//    }
 }

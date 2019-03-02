@@ -6,7 +6,7 @@ import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import kotlinx.android.synthetic.main.activity_settings.*
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AuthLoginActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,20 +16,6 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        window.transucentSystemUI(true)
-//        if (Attributes.loginUserInfo == null)
-//            account_exit_button.visibility = View.GONE
-//        else
-//            account_exit_button.visibility = View.VISIBLE
-//        account_exit_button.setOnClickListener {
-//            Attributes.loginUserInfo = null
-//            defaultSharedPreferences.edit()
-//                    .putString("username", "")
-//                    .putString("password", "")
-//                    .putBoolean("saved_account", false)
-//                    .apply()
-//            finish()
-//        }
 
     }
 }

@@ -1,68 +1,50 @@
 package com.bigcreate.zyfw.mvp.user
 
 import androidx.core.content.edit
-import com.bigcreate.library.isNetworkActive
+import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
+import com.bigcreate.zyfw.mvp.base.BaseNetworkView
+import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
+import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.net.SocketTimeoutException
 
-class LoginImpl(var mView: LoginContract.NetworkView?) : LoginContract.Presenter {
-    private var job: Job? = null
-    override fun doLoginByPass(loginRequest: LoginRequest) {
-        if (mView == null)
-            throw Exception("Please bind view")
-        val view = mView!!
-        view.run {
-            if (!getViewContext().isNetworkActive) {
-                onNetworkFailed()
-                return
-            }
-            onRequesting()
-            try {
-                job = GlobalScope.launch {
-                    RemoteService.loginByPass(loginRequest).execute().body()?.apply {
-                        val code = this.get("code").asInt
-                        launch(Dispatchers.Main) {
-                            when (code) {
-                                200 -> {
-                                    launch(Dispatchers.IO) {
-                                        getViewContext().defaultSharedPreferences.edit {
-                                            putBoolean("saved_account", true)
-                                            putString("username", loginRequest.username)
-                                            putString("password", loginRequest.password)
-                                        }
-                                    }
-                                    onLoginSuccess(LoginModel(loginRequest.username, loginRequest.password, get("data").asJsonObject.get("newToken").asString))
-                                }
-
-                                else -> {
-                                    onLoginFailed(this@apply)
-                                }
+class LoginImpl(mView: View?) : BasePresenterImpl<LoginRequest, JsonObject, LoginImpl.View>(mView) {
+    private lateinit var loginRequest: LoginRequest
+    override fun afterRequestSuccess(data: JsonObject?) {
+        mView?.run {
+            data?.apply {
+                val code = this.get("code").asInt
+                when (code) {
+                    200 -> {
+                        GlobalScope.launch(Dispatchers.IO) {
+                            getViewContext().defaultSharedPreferences.edit {
+                                putBoolean("saved_account", true)
+                                putString("username", loginRequest.username)
+                                putString("password", loginRequest.password)
                             }
-
                         }
+                        onLoginSuccess(LoginModel(loginRequest.username, loginRequest.password, get("data").asJsonObject.get("newToken").asString))
                     }
-
+                    else -> {
+                        onLoginFailed(this@apply)
+                    }
                 }
-            } catch (e: SocketTimeoutException) {
-                onRequestFinished()
-                onNetworkFailed()
             }
         }
     }
 
-    override fun detachView() {
-        cancelJob()
-        mView = null
+    override fun backgroundRequest(request: LoginRequest): JsonObject? {
+        loginRequest = request
+        return RemoteService.loginByPass(loginRequest).execute().body()
     }
 
-    override fun cancelJob() {
-        job?.cancel()
+    interface View : BaseNetworkView {
+        fun onLoginSuccess(loginInfo: LoginModel)
+        fun onLoginFailed(response: JsonObject)
     }
 }

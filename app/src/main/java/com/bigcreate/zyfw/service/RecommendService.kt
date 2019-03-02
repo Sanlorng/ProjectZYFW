@@ -25,7 +25,6 @@ import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.models.SimpleRequest
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class RecommendService : JobService() {
 
@@ -61,7 +60,7 @@ class RecommendService : JobService() {
                                                                 PendingIntent.getActivity(this@RecommendService,
                                                                         0, Intent(this@RecommendService, ProjectDetailsActivity::class.java).apply {
                                                                     putExtra("projectId", projectId)
-                                                                            .putExtra("projectTopic", projectTopic)
+                                                                    putExtra("projectTopic", projectTopic)
                                                                 }, PendingIntent.FLAG_UPDATE_CURRENT))
                                                 createNotificationChannel()
                                                 with(NotificationManagerCompat.from(this@RecommendService)) {
@@ -72,7 +71,7 @@ class RecommendService : JobService() {
                                     }
                                 }
                             }
-                        }catch (e: Exception){
+                        } catch (e: Exception) {
 
                         }
                     }

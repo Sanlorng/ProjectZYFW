@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:title="编辑"
         android:visible="false"
-        android:id="@+id/editProjectDetails"
+        android:id="@+id/projectDetailsAction"
         android:icon="@drawable/ic_mode_edit_black_24dp"
+        app:showAsAction="always"/>
+    <item android:title="收藏"
+        android:id="@+id/projectDetailsFavorite"
+        android:icon="@drawable/ic_star_border_black_24dp"
+        android:checkable="true"
+        android:checked="false"
         app:showAsAction="always"/>
 </menu>

@@ -3,6 +3,7 @@ package com.bigcreate.zyfw.fragments
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -19,14 +20,17 @@ import com.bigcreate.library.toast
 import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.activities.MainActivity
+import com.bigcreate.zyfw.activities.ProjectDetailsActivity
 import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.RequestCode
+import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.models.SearchRequest
 import com.bigcreate.zyfw.mvp.app.LocationContract
 import com.bigcreate.zyfw.mvp.app.LocationImpl
-import com.bigcreate.zyfw.mvp.project.SearchContract
 import com.bigcreate.zyfw.mvp.project.SearchImpl
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
@@ -42,14 +46,15 @@ class SearchDialogFragment : DialogFragment() {
     var searchKey = ""
     var location: TencentLocation? = null
     var searchHistory = ArrayList<Pair<String, Long>>()
+    private var projectId = -1
     private val searchRequest = SearchRequest(Attributes.loginUserInfo!!.token, null, null, null)
-    private val searchView = object : SearchContract.NetworkView {
+    private val searchView = object : SearchImpl.View {
         override fun onSearchFailed(response: JsonObject) {
             context?.toast(response.toJson())
             progressBarSearch?.isVisible = false
         }
 
-        override fun onSearchFinished(searchResult: List<SearchModel>) {
+        override fun onSearchFinished(searchResult: ArrayList<SearchModel>) {
             dialog.apply {
                 GlobalScope.launch {
                     //                    if (searchMap.containsKey(searchKey))
@@ -72,7 +77,20 @@ class SearchDialogFragment : DialogFragment() {
                 }
                 searchResultListView.apply {
                     layoutManager = LinearLayoutManager(context)
-                    adapter = ProjectListAdapter(searchResult)
+                    adapter = ProjectListAdapter(searchResult).apply {
+                        mListener = object : ProjectListAdapter.ProjectItemClickListener {
+                            override fun onItemClick(position: Int) {
+                                startActivityForResult(Intent(context, ProjectDetailsActivity::class.java).apply {
+                                    searchResult[position].run {
+                                        this@SearchDialogFragment.projectId = projectId
+                                        putExtra("position", position)
+                                        putExtra("projectId", projectId)
+                                        putExtra("projectTopic", projectTopic)
+                                    }
+                                }, RequestCode.OPEN_PROJECT)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -93,11 +111,11 @@ class SearchDialogFragment : DialogFragment() {
         }
 
         override fun onRequestFinished() {
-
+            swipeLayoutSearch?.isRefreshing = false
         }
     }
     private val searchImpl = SearchImpl(searchView)
-    private val locationView = object : LocationContract.NetworkView {
+    private val locationView = object : LocationContract.View {
         override fun onLocationPermissionDenied() {
             context?.toast("位置权限被禁止")
         }
@@ -122,7 +140,6 @@ class SearchDialogFragment : DialogFragment() {
         }
 
         override fun onRequestFinished() {
-
         }
 
     }
@@ -172,7 +189,8 @@ class SearchDialogFragment : DialogFragment() {
                         location!!.city == "Unknown" && BuildConfig.DEBUG -> "贺州市"
                         else -> location!!.city
                     }
-                    searchImpl.searchProject(searchRequest.apply {
+                    if (!inputTextSearch.editableText.trimEnd().isEmpty())
+                    searchImpl.doRequest(searchRequest.apply {
                         searchKey = inputTextSearch.editableText.trimEnd().toString()
                         token = Attributes.loginUserInfo!!.token
                         projectRegion = city
@@ -185,6 +203,12 @@ class SearchDialogFragment : DialogFragment() {
             }
             inputTextSearch.addTextChangedListener {
                 toolbar_home.menu.findItem(R.id.searchClear).isVisible = !it.isNullOrEmpty()
+            }
+            swipeLayoutSearch.setOnRefreshListener {
+                if (!inputTextSearch.editableText.trimEnd().isEmpty())
+                    searchImpl.doRequest(searchRequest)
+                else
+                    swipeLayoutSearch.isRefreshing = false
             }
             val searchMapString = context.defaultSharedPreferences.getString("searchHistory", null)
             if (searchMapString != null) {
@@ -256,22 +280,38 @@ class SearchDialogFragment : DialogFragment() {
                                         }
                                     }
                             )
-                        chipGroupSearchHistory.addView(
-                                Chip(context).apply {
-                                    text = "清空搜索历史"
-                                    setOnClickListener {
-                                        searchHistory.clear()
-                                        chipGroupSearchHistory.removeAllViews()
-                                        textSearchHistory.isVisible = false
-                                        chipGroupSearchHistory.isVisible = false
-                                    }
-                                }
-                        )
-                        textSearchHistory.isVisible = true
+//                        chipGroupSearchHistory.addView(
+//                                Chip(context).apply {
+//                                    text = "清空搜索历史"
+//                                    setOnClickListener {
+//
+//                                    }
+//                                }
+//                        )
+                        clearSearchHistory.setOnClickListener {
+                            searchHistory.clear()
+                            chipGroupSearchHistory.removeAllViews()
+                            searchHistoryLayout.isVisible = false
+                            chipGroupSearchHistory.isVisible = false
+                        }
+                        searchHistoryLayout.isVisible = true
                     }
                 }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == RequestCode.OPEN_PROJECT && resultCode == ResultCode.OK) {
+            (searchResultListView.adapter as ProjectListAdapter).apply {
+                listProject.remove(listProject.find {
+                    it.projectId == this@SearchDialogFragment.projectId
+                })
+                notifyDataSetChanged()
+                (activity as MainActivity).reSearch()
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onStart() {

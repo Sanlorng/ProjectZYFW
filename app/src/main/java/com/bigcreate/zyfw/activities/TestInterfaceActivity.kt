@@ -7,6 +7,8 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.bigcreate.library.getPath
+import com.bigcreate.library.startActivity
+import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
@@ -26,12 +28,13 @@ class TestInterfaceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_interface)
-//        buttonTestAvatar.setOnClickListener {
-
-//        }
-//        test.setOnClickListener {
-
-//        }
+        setSupportActionBar(testInterfaceToolbar)
+        supportActionBar?.title = "接口测试"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        window.transucentSystemUI(true)
+        testInterfaceToolbar.setNavigationOnClickListener {
+            finish()
+        }
         navigation_test.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.testAvatar -> {
@@ -68,6 +71,12 @@ class TestInterfaceActivity : AppCompatActivity() {
                         }
                     }
                 }
+                R.id.testRegister -> {
+                    startActivity(SignUpActivity::class.java)
+                }
+                R.id.testAuthLogin -> {
+                    Attributes.loginUserInfo = null
+                }
             }
             true
         }
@@ -87,14 +96,6 @@ class TestInterfaceActivity : AppCompatActivity() {
                             part,
                             RequestBody.create(type, loginUser.token),
                             RequestBody.create(type, loginUser.username)).execute()
-//                    RemoteService.instance.setupUserAvatar(MultipartBody.Builder()
-//                            .addFormDataPart("username",loginUser.username)
-//                            .addFormDataPart("token",loginUser.token)
-////                            .addPart(MultipartBody.Part.create(RequestBody.create(MediaType.parse("multipart/form-data"),SimpleRequest(
-////                                    token = loginUser.token,username = loginUser.username
-////                            ).toJson())))
-//                            .addFormDataPart("file",file.name, RequestBody.create(type,file))
-//                            .build()).execute()
                 }
             }
         }

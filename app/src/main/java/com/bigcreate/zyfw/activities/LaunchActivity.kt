@@ -9,15 +9,15 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
-import com.bigcreate.zyfw.mvp.user.LoginContract
 import com.bigcreate.zyfw.mvp.user.LoginImpl
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_launch.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class LaunchActivity : AppCompatActivity(), LoginContract.NetworkView {
+class LaunchActivity : AppCompatActivity(), LoginImpl.View {
     private val presenter = LoginImpl(this)
+    private var isLoginSuccess = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
@@ -28,16 +28,16 @@ class LaunchActivity : AppCompatActivity(), LoginContract.NetworkView {
             hasLoginInfo -> {
                 GlobalScope.launch {
                     val request = LoginRequest(defaultSharedPreferences.getString("username", "")!!, defaultSharedPreferences.getString("password", "")!!)
-                    presenter.doLoginByPass(request)
+                    presenter.doRequest(request)
                 }
             }
             else -> {
                 showProgress(false)
-                button_login_launch.setOnClickListener {
-                    startActivityForResult(Intent(this@LaunchActivity, LoginActivity::class.java), RequestCode.LOGIN)
-                }
             }
 
+        }
+        button_login_launch.setOnClickListener {
+            startActivityForResult(Intent(this@LaunchActivity, LoginActivity::class.java), RequestCode.LOGIN)
         }
     }
 
@@ -59,6 +59,7 @@ class LaunchActivity : AppCompatActivity(), LoginContract.NetworkView {
 
 
     override fun onLoginFailed(response: JsonObject) {
+        showProgress(false)
         toast("登陆失败")
     }
 
@@ -74,10 +75,6 @@ class LaunchActivity : AppCompatActivity(), LoginContract.NetworkView {
 
     override fun onRequesting() {
         showProgress(true)
-    }
-
-    override fun onRequestFinished() {
-        showProgress(false)
     }
 
     override fun onDestroy() {

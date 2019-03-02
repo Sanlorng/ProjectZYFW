@@ -18,13 +18,13 @@ import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.callback.CommentCallBack
+import com.bigcreate.zyfw.callback.FillTextCallBack
 import com.bigcreate.zyfw.models.CreateCommentRequest
-import com.bigcreate.zyfw.mvp.project.CreateCommentContract
 import com.bigcreate.zyfw.mvp.project.CreateCommentImpl
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.comment_pop.*
 
-class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatcher, CreateCommentContract.View {
+class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatcher, CreateCommentImpl.View {
     var fillTextCallBack: FillTextCallBack? = null
     var commentCallBack: CommentCallBack? = null
     private var createCommentImpl = CreateCommentImpl(this)
@@ -81,41 +81,12 @@ class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatche
             R.id.button_comment -> {
                 val projectId = fillTextCallBack!!.getProjectId()
                 Attributes.loginUserInfo?.run {
-                    createCommentImpl.doCreateComment(CreateCommentRequest(
+                    createCommentImpl.doRequest(CreateCommentRequest(
                             comment = editext.text.toString(),
                             projectId = projectId,
                             token = token,
                             username = username
                     ))
-//                        val comment = Comment(projectId, editext.text.toString(),null,
-//                                null, null, 1, "",null,null)
-
-//                        Thread{
-//                            Log.d("require",WebKit.gson.toJson(comment))
-//                            val response = WebKit.okClient.postRequest(WebInterface.TAKECOMMENT_URL,WebKit.mediaJson,WebKit.gson.toJson(comment))!!.string()
-//                            Log.d("commentR",response)
-//                            val model = WebKit.gson.fromJson(response,ContentResponse::class.java)
-//                            when(model.stateCode){
-//                                200->{
-//                                    activity?.runOnUiThread {
-//                                        editext.text.clear()
-//                                        Toast.makeText(context,"评论成功",Toast.LENGTH_SHORT).show()
-//                                        dismiss()
-//                                        commentCallBack?.commentSuccess()
-//                                    }
-//                                }
-//                                410->{
-//                                    activity?.runOnUiThread {
-//                                        Toast.makeText(context, "您评论的内容包含敏感词：" + model.content, Toast.LENGTH_SHORT).show()
-//                                    }
-//                                }
-//                                else ->{
-//                                    activity?.runOnUiThread {
-//                                        Toast.makeText(context, "评论失败", Toast.LENGTH_SHORT).show()
-//                                    }
-//                                }
-//                            }
-//                        }.start()
                 }
             }
         }

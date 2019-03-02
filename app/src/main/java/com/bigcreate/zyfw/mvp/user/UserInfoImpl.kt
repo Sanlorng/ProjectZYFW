@@ -1,115 +1,98 @@
 package com.bigcreate.zyfw.mvp.user
 
-import com.bigcreate.library.isNetworkActive
+import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.models.FileUploadRequest
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
 import com.bigcreate.zyfw.models.UpdateInfoRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import com.bigcreate.zyfw.mvp.base.BaseMultiPresenterImpl
+import com.bigcreate.zyfw.mvp.base.BaseNetworkView
+import com.bigcreate.zyfw.mvp.base.PresenterInter
+import com.google.gson.JsonObject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import java.io.File
-import java.net.SocketTimeoutException
 
-class UserInfoImpl(var mView: UserInfoContract.NetworkView?) : UserInfoContract.Presenter {
+class UserInfoImpl(mView: View?) : BaseMultiPresenterImpl<UserInfoImpl.View>(mView) {
     private var initJob: Job? = null
     private var updateJob: Job? = null
     private var avatarJob: Job? = null
-    override fun doInitUserInfo(initPersonInfoRequest: InitPersonInfoRequest) {
-        val view = mView!!
-        view.run {
-            if (!getViewContext().isNetworkActive) {
-                onNetworkFailed()
-                return
-            }
-            onRequesting()
-            try {
-                GlobalScope.launch {
-                    RemoteService.initPersonInfo(initPersonInfoRequest).execute().body()?.apply {
-                        launch(Dispatchers.Main) {
-                            onRequestFinished()
-                            when (get("code").asInt) {
-                                200 -> onInitUserInfoSuccess(this@apply)
-                                else -> onInitUserInfoFailed(this@apply)
-                            }
-                        }
+    private val initInter = object : PresenterInter<InitPersonInfoRequest, JsonObject> {
+        override fun afterRequestSuccess(data: JsonObject?) {
+            mView?.run {
+                data?.apply {
+                    Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
+                    when (get("code").asInt) {
+                        200 -> onInitUserInfoSuccess(this@apply)
+                        else -> onInitUserInfoFailed(this@apply)
                     }
                 }
-            } catch (e: SocketTimeoutException) {
-                onRequestFinished()
-                onNetworkFailed()
             }
         }
 
-    }
-
-    override fun doUpdateUserInfo(updateInfoRequest: UpdateInfoRequest) {
-        val view = mView!!
-        view.run {
-            if (!getViewContext().isNetworkActive) {
-                onNetworkFailed()
-                return
-            }
-            onRequesting()
-            try {
-                GlobalScope.launch {
-                    RemoteService.updatePersonInfo(updateInfoRequest).execute().body()?.apply {
-                        launch(Dispatchers.Main) {
-                            onRequestFinished()
-                            when (get("code").asInt) {
-                                200 -> onUpdateUserInfoSuccess(this@apply)
-                                else -> onUpdateUserInfoFailed(this@apply)
-                            }
-                        }
-                    }
-                }
-            } catch (e: SocketTimeoutException) {
-                onRequestFinished()
-                onNetworkFailed()
-            }
+        override fun backgroundRequest(request: InitPersonInfoRequest): JsonObject? {
+            return RemoteService.initPersonInfo(request).execute().body()
         }
     }
 
-    override fun doSetupAvatar(file: File, token: String, username: String) {
-        val view = mView!!
-        view.run {
-            if (!getViewContext().isNetworkActive) {
-                onNetworkFailed()
-                return
-            }
-            onRequesting()
-            try {
-            GlobalScope.launch {
-                val type = MediaType.parse("multipart/form-data")
-                val part = MultipartBody.Part.createFormData("file", file.name, RequestBody.create(type, file))
-                    RemoteService.setupUserAvatar(part, RequestBody.create(type, token), RequestBody.create(type, username)).execute().body()?.apply {
-                        launch(Dispatchers.Main) {
-                            onRequestFinished()
-                            when (get("code").asInt) {
-                                200 -> onSetupAvatarSuccess()
-                                else -> onSetupAvatarFailed()
-                            }
-                        }
+    private val updateInter = object : PresenterInter<UpdateInfoRequest, JsonObject> {
+        override fun afterRequestSuccess(data: JsonObject?) {
+            mView?.run {
+                data?.apply {
+                    Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
+                    when (get("code").asInt) {
+                        200 -> onUpdateUserInfoSuccess(this@apply)
+                        else -> onUpdateUserInfoFailed(this@apply)
                     }
                 }
-            } catch (e: SocketTimeoutException) {
-                onRequestFinished()
-                onNetworkFailed()
+            }
+        }
+
+        override fun backgroundRequest(request: UpdateInfoRequest): JsonObject? {
+            return RemoteService.updatePersonInfo(request).execute().body()
+        }
+    }
+
+    private val setupAvatarInter = object : PresenterInter<FileUploadRequest, JsonObject> {
+        override fun afterRequestSuccess(data: JsonObject?) {
+            mView?.run {
+                data?.apply {
+                    when (get("code").asInt) {
+                        200 -> onSetupAvatarSuccess().apply {
+                            Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
+                        }
+                        else -> onSetupAvatarFailed()
+                    }
+                }
+            }
+        }
+
+        override fun backgroundRequest(request: FileUploadRequest): JsonObject? {
+            return request.run {
+                RemoteService.setupUserAvatar(part, token, username).execute().body()
             }
         }
     }
 
-    override fun cancelJob() {
-        initJob?.cancel()
-        updateJob?.cancel()
-        avatarJob?.cancel()
+    fun doInitUserInfo(initPersonInfoRequest: InitPersonInfoRequest) {
+        addJob(initInter.doRequest(mView, initPersonInfoRequest))
     }
 
-    override fun detachView() {
-        cancelJob()
-        mView = null
+    fun doUpdateUserInfo(updateInfoRequest: UpdateInfoRequest) {
+        addJob(updateInter.doRequest(mView, updateInfoRequest))
+    }
+
+    fun doSetupAvatar(file: File, token: String, username: String) {
+        addJob(setupAvatarInter.doRequest(mView, FileUploadRequest(
+                file, token, username
+        )))
+
+    }
+    interface View : BaseNetworkView {
+        fun onInitUserInfoSuccess(jsonObject: JsonObject)
+        fun onInitUserInfoFailed(jsonObject: JsonObject)
+        fun onUpdateUserInfoSuccess(jsonObject: JsonObject)
+        fun onUpdateUserInfoFailed(jsonObject: JsonObject)
+        fun onSetupAvatarSuccess()
+        fun onSetupAvatarFailed()
     }
 }

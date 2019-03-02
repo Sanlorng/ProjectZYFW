@@ -10,7 +10,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class LocationImpl(var mView: LocationContract.NetworkView?) : LocationContract.Presenter {
+class LocationImpl(var mView: LocationContract.View?) : LocationContract.Presenter {
     var alwaysCall = false
     var isFisrtCall = false
     var job: Job? = null

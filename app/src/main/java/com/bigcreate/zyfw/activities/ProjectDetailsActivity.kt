@@ -3,23 +3,26 @@ package com.bigcreate.zyfw.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.forEach
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
-import com.bigcreate.library.toJson
-import com.bigcreate.library.toast
-import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.FragmentAdapter
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.fragments.CommentsFragment
 import com.bigcreate.zyfw.fragments.DetailsFragment
+import com.bigcreate.zyfw.fragments.ProjectActionItemListDialogFragment
 import com.bigcreate.zyfw.models.GetProjectRequest
 import com.bigcreate.zyfw.models.Project
-import com.bigcreate.zyfw.mvp.project.DetailsContract
+import com.bigcreate.zyfw.models.ProjectFavoriteRequest
 import com.bigcreate.zyfw.mvp.project.DetailsImpl
+import com.bigcreate.zyfw.mvp.project.FavoriteProjectImpl
 import com.google.android.material.appbar.AppBarLayout
 import com.google.gson.JsonObject
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory
@@ -28,14 +31,20 @@ import com.tencent.mapsdk.raster.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_project_details.*
 import kotlinx.coroutines.*
 
-class ProjectDetailsActivity : AppCompatActivity(), DetailsContract.NetworkView {
+class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectActionItemListDialogFragment.Listener, FavoriteProjectImpl.View {
     private var project: Project? = null
     private var projectId = -1
-    private lateinit var fragmentJob: Deferred<DetailsContract.NetworkView>
+    private lateinit var fragmentJob: Deferred<DetailsImpl.View>
     private var commentsFragment: CommentsFragment? = null
     private var projectName: String? = null
     private val detailsImpl = DetailsImpl(this)
     private var appbarHeight = 0
+    private var favoriteProjectImpl = FavoriteProjectImpl(this)
+    private var isFavoriteRequest = false
+    private var projectType = -1
+    private lateinit var favoriteIcon: Deferred<MenuItem>
+    private lateinit var actionIcon: Deferred<MenuItem>
+    private lateinit var bottomJob: Deferred<ProjectActionItemListDialogFragment>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_project_details)
@@ -48,47 +57,17 @@ class ProjectDetailsActivity : AppCompatActivity(), DetailsContract.NetworkView 
         projectId = intent.getIntExtra("projectId", -1)
         projectName = intent.getStringExtra("projectTopic")
         textView_project_title.text = projectName
-
-//        val tencentLocation = TencentLocationManager.getInstance(this)
-//        val request = TencentLocationRequest.create()
-//        request?.run {
-//            requestLevel = TencentLocationRequest.REQUEST_LEVEL_NAME
-//            isAllowCache = true
-//            interval = 1500
-//            isAllowGPS =true
-//            isAllowDirection = true
-//        }
-        toolbar_project_details.inflateMenu(R.menu.toolbar_project_details).apply {
-            toolbar_project_details.menu.forEach {
-                it.isVisible = false
-            }
-        }
-        toolbar_project_details.inflateMenu(R.menu.toolbar_project_details)
-        toolbar_project_details.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.editProjectDetails -> startActivityForResult(Intent(this, ProjectDetailsActivity::class.java).apply {
-                    putExtra("projectId", projectId)
-                    putExtra("projectDetails", project.toJson())
-                }, RequestCode.EDIT_PROJECT)
-            }
-            true
-        }
-//        val commentFragment = CommentDialogFragment()
-//        commentFragment.fillTextCallBack = this
-//        commentFragment.commentCallBack = this
-//        cardView_comment.setOnClickListener {
-//            commentFragment.show(supportFragmentManager,"commentFragment")
-//        }
         fragmentJob = GlobalScope.async(Dispatchers.Main) {
-            //            val detailsFragment =
-//            commentsFragment =
             FragmentAdapter(supportFragmentManager, listOf(DetailsFragment.newInstance(projectId.toString(), ""), CommentsFragment.newInstance(projectId.toString(), ""))).let {
                 commentsFragment = it.list[1] as CommentsFragment
                 commentsFragment?.marginHeight(appbarHeight)
                 viewPagerDetails.adapter = it
                 tabProjectDetails.setupWithViewPager(viewPagerDetails)
-                it.list[0] as DetailsContract.NetworkView
+                it.list[0] as DetailsImpl.View
             }
+        }
+        bottomJob = GlobalScope.async(Dispatchers.Main) {
+            ProjectActionItemListDialogFragment.newInstance(0)
         }
         appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appbarLayout, verticalOffset ->
             if (appbarHeight == 0)
@@ -96,120 +75,9 @@ class ProjectDetailsActivity : AppCompatActivity(), DetailsContract.NetworkView 
                         toolbar_project_details.height -
                         resources.getDimensionPixelOffset(resources
                                 .getIdentifier("status_bar_height", "dimen", "android"))
-//            Log.e("total range",appbarLayout.totalScrollRange.toString())
-//            Log.e("appbarHeight",appbarHeight.toString())
-//            Log.e("offset",(appbarHeight+ verticalOffset).toString())
-//            Log.e("appbar",appbar.height.toString())
-//            Log.e("toolbar",toolbar_project_details.height.toString())
-//            Log.e("vertical",verticalOffset.toString())
-//            Log.e("statusBar",resources.getDimensionPixelOffset(resources.getIdentifier("status_bar_height","dimen","android")).toString())
-//
-//              commentsFragment?.marginHeight(appbarHeight + verticalOffset)
         })
-        detailsImpl.doGetDetails(GetProjectRequest(token = Attributes.loginUserInfo!!.token, projectId = projectId.toString()))
-//        viewPagerDetails.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
-//            override fun onPageScrollStateChanged(state: Int) {
-//
-//            }
-//
-//            override fun onPageSelected(position: Int) {
-//
-//            }
-//
-//            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-//
-//            }
-//        })
-//        tencentLocation.requestLocationUpdates(request,GetLocationListenner())
+        detailsImpl.doRequest(GetProjectRequest(token = Attributes.loginUserInfo!!.token, projectId = projectId.toString()))
     }
-//        private fun attemptSearch(){
-//            if (task != null)
-//                return
-//            task = SearchAsyncTask(projectId!!)
-//            task!!.execute(null as Void?)
-//    }
-//    @SuppressLint("StaticFieldLeak")
-//    inner class SearchAsyncTask internal constructor(val string: String): AsyncTask<Void, Void, Boolean>(){
-//        override fun doInBackground(vararg params: Void?): Boolean {
-//            return try {
-//                myApplication?.run {
-//                    val response = WebKit.okClient.getRequest(WebInterface.PROJECT_URL + projectId)
-//                    val responseComment = WebKit.okClient.getRequest(WebInterface.COMMENT_URL + projectId)?.string()
-//                    val responseString = response?.string()
-//                    Log.d("is client","yes")
-//                    responseString?.run {
-//                        Log.d("response",this)
-//                    }
-//                    searchResponse = WebKit.gson.fromJson<ProjectResponse>(responseString, ProjectResponse::class.java)
-//                    commentResponse = WebKit.gson.fromJson(responseComment,CommentResponse::class.java)
-//                }
-//                searchResponse != null && searchResponse?.stateCode?.compareTo(200) == 0
-//            }catch (e:Exception){
-//                Log.d("error","when search request")
-//                false
-//            }
-//        }
-//
-//        override fun onPostExecute(result: Boolean?) {
-//            if (result!!) {
-//                updateInfo()
-//            }
-//            super.onPostExecute(result)
-//        }
-//    }
-//    fun updateInfo(){
-//        progressBar4.isVisible = false
-//        app_bar_map.isVisible = true
-//        project?.run {
-//            app_bar_map.map.setCenter(LatLng(latitude,longitude))
-//            app_bar_map.map.setZoom(20)
-//            val marker = app_bar_map.map.addMarker(
-//                    MarkerOptions()
-//                            .position(LatLng(latitude,longitude))
-//                            .title(projectAddress.split(projectRegion).last())
-//                            .anchor(0.5f, 0.5f)
-//                            .icon(BitmapDescriptorFactory.defaultMarker()))
-//            marker.showInfoWindow()
-//            textView_Address.text = projectAddress
-//            textView_Content.text = projectContent
-//            textView_Region.text = projectRegion
-//            textView_name.text = projectPrincipalName
-//            textView_numbers.text = projectPeopleNumbers
-//            textView_phone.text = projectPrincipalPhone
-//            textView_topic.text = projectTopic
-//            commentResponse?.content?.run {
-//                recycler_comments.adapter = CommentAdapter(this)
-//                recycler_comments.layoutManager = LinearLayoutManager(this@ProjectDetailsActivity)
-//            }
-//            if (commentResponse== null){
-//                //textView_Comments.text = "网络出错，无法获得评论"
-//            }else{
-//                if (commentResponse!!.content == null){
-//                    textView_Comments.text = " "
-//                }else
-//                    textView_Comments.text = getString(R.string.comment)
-//
-//            }
-//        }
-//    }
-
-//    inner class GetLocationListenner: TencentLocationListener {
-//        override fun onStatusUpdate(p0: String?, p1: Int, p2: String?) {
-//
-//        }
-//
-//        override fun onLocationChanged(p0: TencentLocation?, p1: Int, p2: String?) {
-//            p0?.run {
-//
-//            }
-//        }
-//    }
-
-    override fun onResume() {
-        window.transucentSystemUI(true)
-        super.onResume()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         detailsImpl.detachView()
@@ -217,7 +85,7 @@ class ProjectDetailsActivity : AppCompatActivity(), DetailsContract.NetworkView 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            RequestCode.EDIT_PROJECT -> if (resultCode == ResultCode.OK) detailsImpl.doGetDetails(GetProjectRequest(Attributes.loginUserInfo!!.token, projectId.toString()))
+            RequestCode.EDIT_PROJECT,RequestCode.SELECT_IMAGE,RequestCode.SELECT_VIDEO -> if (resultCode == ResultCode.OK) detailsImpl.doRequest(GetProjectRequest(Attributes.loginUserInfo!!.token, projectId.toString()))
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -229,10 +97,29 @@ class ProjectDetailsActivity : AppCompatActivity(), DetailsContract.NetworkView 
 
     override fun onGetDetailsSuccess(project: Project) {
         this.project = project
-        GlobalScope.launch(Dispatchers.Main) { fragmentJob.await().onGetDetailsSuccess(project) }
-        project.apply {
-            if (username == Attributes.loginUserInfo!!.username)
-                toolbar_project_details.menu.findItem(R.id.editProjectDetails).isVisible = true
+        project.run {
+            projectType = projectTypeId
+            GlobalScope.launch(Dispatchers.Main) {
+                fragmentJob.await().onGetDetailsSuccess(project)
+                if (Attributes.loginUserInfo!!.username == username)
+                    actionIcon.await().apply {
+                        isVisible = true
+                        icon = getDrawable(R.drawable.ic_mode_edit_black_24dp)!!.apply {
+                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
+                        }
+                    }
+                favoriteIcon.await().apply {
+                    icon = if (favorite)
+                        getDrawable(R.drawable.ic_star_black_24dp)!!.apply {
+                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
+                        }
+                    else
+                        getDrawable(R.drawable.ic_star_border_black_24dp)!!.apply {
+                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
+                        }
+                    isChecked = favorite
+                }
+            }
             app_bar_map.map.addMarker(
                     MarkerOptions()
                             .position(LatLng(latitude, longitude))
@@ -246,6 +133,7 @@ class ProjectDetailsActivity : AppCompatActivity(), DetailsContract.NetworkView 
                 setCenter(LatLng(latitude, longitude)); setZoom(30)
             }
             app_bar_map.isVisible = true
+            this@ProjectDetailsActivity.project = this
         }
     }
 
@@ -259,36 +147,139 @@ class ProjectDetailsActivity : AppCompatActivity(), DetailsContract.NetworkView 
     }
 
     override fun onRequesting() {
-        GlobalScope.launch(Dispatchers.Main) { fragmentJob.await().onRequesting() }
+        if (isFavoriteRequest.not())
+            GlobalScope.launch(Dispatchers.Main) { fragmentJob.await().onRequesting() }
     }
 
     override fun onRequestFinished() {
+        isFavoriteRequest = false
         GlobalScope.launch(Dispatchers.Main) { fragmentJob.await().onRequestFinished() }
     }
-//    override fun getTextContent(): CharSequence {
-//        return ""
-//    }
-//
-//    override fun setTextContent(content: CharSequence) {
-////        editText.text = content
-//    }
-//
-//    override fun commentSuccess() {
-////        Thread{
-////            val responseComment = WebKit.okClient.getRequest(WebInterface.COMMENT_URL + projectId)?.string()
-////            commentResponse = WebKit.gson.fromJson(responseComment,CommentResponse::class.java)
-////            runOnUiThread {
-////            commentResponse?.content?.run {
-////                recycler_comments.adapter = CommentAdapter(this)
-////                recycler_comments.layoutManager = LinearLayoutManager(this@ProjectDetailsActivity)
-////            }
-////            if (commentResponse== null){
-////                textView_Comments.text = "网络出错，无法获得评论"
-////            }else{
-////                if (commentResponse!!.content == null)
-////                    textView_Comments.text = "此项目没有评论"
-////            }
-////            }
-////        }.start()
-//    }
+
+    override fun onFavoriteProjectFailed() {
+        toast("收藏失败")
+    }
+
+    override fun onFavoriteProjectSuccess() {
+        GlobalScope.launch(Dispatchers.Main) {
+            favoriteIcon.await().apply {
+                isChecked = true
+                icon = getDrawable(R.drawable.ic_star_black_24dp)?.apply {
+                    DrawableCompat.setTint(this,getColor(R.color.colorAccent))
+                }
+            }
+        }
+    }
+
+    override fun onUnFavoriteProjectFailed() {
+        toast("取消收藏失败")
+    }
+
+    override fun onUnFavoriteProjectSuccess() {
+        GlobalScope.launch(Dispatchers.Main) {
+            favoriteIcon.await().apply {
+                isChecked = false
+                icon = getDrawable(R.drawable.ic_star_border_black_24dp)?.apply {
+                    DrawableCompat.setTint(this,getColor(R.color.colorAccent))
+                }
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_project_details, menu)
+        menu?.apply {
+            project?.run {
+
+            }
+            favoriteIcon = GlobalScope.async(Dispatchers.Main) {
+                findItem(R.id.projectDetailsFavorite)
+            }
+            actionIcon = GlobalScope.async(Dispatchers.Main) {
+                findItem(R.id.projectDetailsAction)
+            }
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            null -> {
+            }
+            R.id.projectDetailsAction -> {
+//                startActivity(Intent(this,ReleaseProjectActivity::class.java).apply {
+////                    putExtra("projectId",)
+//                })
+                GlobalScope.launch(Dispatchers.Main) {
+                    bottomJob.await().show(supportFragmentManager, "bottomSheet")
+                }
+            }
+            R.id.projectDetailsFavorite -> {
+                isFavoriteRequest = true
+                Attributes.loginUserInfo?.apply {
+                    val request = ProjectFavoriteRequest(
+                            projectId = projectId,
+                            projectClassifyId = projectType.toString(),
+                            username = username,
+                            token = token
+                    )
+                    if (item.isChecked.not())
+                        favoriteProjectImpl.doFavoriteProject(request)
+                    else
+                        favoriteProjectImpl.doUnFavoriteProject(request)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onProjectActionItemClicked(position: Int) {
+        when (position) {
+            R.drawable.ic_mode_edit_black_24dp -> startActivityForResult(Intent(this,
+                    ReleaseProjectActivity::class.java).apply {
+                putExtra("editMode", true)
+                putExtra("projectId", projectId)
+                putExtra("projectInfo", project.toJson())
+            }, RequestCode.EDIT_PROJECT)
+            R.drawable.ic_delete_black_24dp -> AlertDialog.Builder(this)
+                    .setTitle("删除项目")
+                    .setPositiveButton("确定") { dialog, which ->
+                        try {
+                            GlobalScope.launch {
+                                RemoteService.deleteProject(
+                                        GetProjectRequest(Attributes.loginUserInfo!!.token,
+                                                projectId.toString())).execute().body()?.apply {
+                                    launch(Dispatchers.Main) {
+                                        if (get("code").asInt == 200) {
+                                            setResult(ResultCode.OK)
+                                            finish()
+                                        } else {
+                                            toast("删除失败")
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            toast("删除失败")
+                        }
+                    }
+                    .setNegativeButton("取消") { _, _ ->
+
+                    }
+                    .create().show()
+            R.drawable.ic_add_a_photo_black_24dp -> startActivityForResult(
+                    Intent(this,SelectImageAndVideoActivity::class.java).apply {
+                        type = "image"
+                        putExtra("projectId",projectId.toString())
+                    },RequestCode.SELECT_IMAGE)
+            R.drawable.ic_video_call_black_24dp -> startActivityForResult(
+                    Intent(this,SelectImageAndVideoActivity::class.java).apply {
+                        type = "video"
+                        putExtra("projectId",projectId.toString())
+                    },RequestCode.SELECT_VIDEO)
+        }
+    }
+
+
 }

@@ -1,59 +1,36 @@
 package com.bigcreate.zyfw.mvp.project
 
 import com.bigcreate.library.fromJson
-import com.bigcreate.library.isNetworkActive
 import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.models.SearchRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.net.SocketTimeoutException
+import com.bigcreate.zyfw.mvp.base.BaseNetworkView
+import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
+import com.google.gson.JsonObject
 
-class SearchImpl(var mView: SearchContract.NetworkView?) : SearchContract.Presenter {
-    var job: Job? = null
-    override fun detachView() {
-        cancelJob()
-        mView = null
-    }
+class SearchImpl(mView: View?) : BasePresenterImpl<SearchRequest, JsonObject, SearchImpl.View>(mView) {
+    override fun backgroundRequest(request: SearchRequest): JsonObject? = RemoteService.searchProjectByBlur(request).execute().body()
 
-    override fun searchProject(request: SearchRequest) {
-        if (mView == null)
-            throw Throwable("Please bind view")
-        val view = mView!!
-        view.run {
-            if (!getViewContext().isNetworkActive) {
-                onNetworkFailed()
-                return
-            }
-            onRequesting()
-            try {
-                job = GlobalScope.launch {
-                    RemoteService.searchProjectByBlur(request).execute().body()?.apply {
-                        launch(Dispatchers.Main) {
-                            when (get("code").asInt) {
-                                200 -> {
-                                    Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
-                                    onSearchFinished(get("data").asJsonObject.get("content").asJsonArray.toJson().fromJson<List<SearchModel>>())
-                                }
-                                else -> {
-                                    onSearchFailed(this@apply)
-                                }
-                            }
-                        }
+    override fun afterRequestSuccess(data: JsonObject?) {
+        mView?.run {
+            data?.apply {
+                Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
+                when (get("code").asInt) {
+                    200 -> {
+                        onSearchFinished(get("data").asJsonObject.get("content").asJsonObject.get("list").toJson().fromJson<ArrayList<SearchModel>>())
+                    }
+                    else -> {
+                        onSearchFailed(this@apply)
                     }
                 }
-            } catch (e: SocketTimeoutException) {
-                onRequestFinished()
-                onNetworkFailed()
             }
         }
     }
 
-    override fun cancelJob() {
-        job?.cancel()
+    interface View : BaseNetworkView {
+        fun onSearchFinished(searchResult: ArrayList<SearchModel>)
+        fun onSearchFailed(response: JsonObject)
     }
 }
