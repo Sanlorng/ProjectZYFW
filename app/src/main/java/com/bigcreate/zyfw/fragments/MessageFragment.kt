@@ -17,7 +17,6 @@ import com.bigcreate.zyfw.models.MessageHeader
 import kotlinx.android.synthetic.main.fragment_message.*
 
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -25,14 +24,12 @@ private const val ARG_PARAM2 = "param2"
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [MessageFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
  * Use the [MessageFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class MessageFragment : Fragment(), Runnable {
-    // TODO: Rename and change types of parameters
+class MessageFragment : Fragment(),Runnable {
     private var param1: String? = null
     private var param2: String? = null
     private val success = 1
@@ -43,10 +40,10 @@ class MessageFragment : Fragment(), Runnable {
             super.handleMessage(msg)
             when (msg?.what) {
                 success -> {
-                    no_message.visibility = View.GONE
-                    message_recyclerview.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-                    message_recyclerview.adapter = MessageListAdapter(messageList)
-                    message_recyclerview.layoutManager = LinearLayoutManager(context)
+                    textMessage.visibility = View.GONE
+                    listMessage.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+                    listMessage.adapter = MessageListAdapter(messageList)
+                    listMessage.layoutManager = LinearLayoutManager(context)
                 }
             }
         }
@@ -67,9 +64,6 @@ class MessageFragment : Fragment(), Runnable {
         return inflater.inflate(R.layout.fragment_message, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -82,8 +76,6 @@ class MessageFragment : Fragment(), Runnable {
      * (http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnFragmentInteractionListener {
-    }
 
     companion object {
         /**
@@ -94,7 +86,6 @@ class MessageFragment : Fragment(), Runnable {
          * @param param2 Parameter 2.
          * @return A new instance of fragment MessageFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
                 MessageFragment().apply {

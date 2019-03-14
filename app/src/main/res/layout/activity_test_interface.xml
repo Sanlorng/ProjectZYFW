@@ -5,27 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.TestInterfaceActivity">
-    <!--<androidx.core.widget.NestedScrollView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-        <!--<LinearLayout-->
-            <!--android:orientation="vertical"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-    <!--<com.google.android.material.button.MaterialButton-->
-        <!--style="@style/Widget.MaterialComponents.Button.TextButton"-->
-        <!--android:id="@+id/buttonTestAvatar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="测试头像"/>-->
-            <!--<com.google.android.material.button.MaterialButton-->
-                <!--style="@style/Widget.MaterialComponents.Button.TextButton"-->
-                <!--android:id="@+id/buttonTestRecommend"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="测试推荐"/>-->
-        <!--</LinearLayout>-->
-    <!--</androidx.core.widget.NestedScrollView>-->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -39,7 +18,7 @@
     </com.google.android.material.appbar.AppBarLayout>
     <com.google.android.material.navigation.NavigationView
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:id="@+id/navigation_test"
+        android:id="@+id/navigationTest"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:menu="@menu/test_interface">

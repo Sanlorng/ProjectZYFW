@@ -1,46 +1,40 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="baseStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="preferenceTheme">@style/preference</item>
-    </style>
     <style name="baseStyle.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorOnPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="buttonStyle">@style/buttonStyle</item>-->
     </style>
     <style name="AppTheme.Light" parent="baseStyle.Light">
         <!-- Customize your theme here. -->
         <item name="android:windowContentTransitions">true</item>
         <item name="actionBarTheme">@style/actionbar</item>
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="buttonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <!--<item name="alertDialogStyle">@style/dialogTheme</item>-->
+        <!--<item name="toolbarStyle">@style/actionbar</item>-->
     </style>
     <style name="actionbar" parent="baseStyle.Light">
         <item name="android:contentInsetStart">0dp</item>
+        <item name="colorOnPrimary">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:textColorPrimary">?attr/colorAccent</item>
-        <item name="android:colorControlNormal">?attr/colorAccent</item>
-        <item name="android:textColorSecondary">?attr/colorAccent</item>
+        <item name="colorControlNormal">?attr/colorAccent</item>
+        <!--<item name="android:background">@color/colorPrimary</item>-->
+        <item name="colorOnBackground">@color/colorAccent</item>
+        <!--<item name="android:textColorSecondary">?attr/colorAccent</item>-->
         <item name="android:elevation">4dp</item>
         <item name="android:tint">?attr/colorAccent</item>
-        <item name="actionBarPopupTheme">@style/actionBarPopupTheme</item>
-    </style>
-    <style name="actionBarPopupTheme" parent="Theme.Design.Light">
-            <item name="android:colorForeground">?attr/colorAccent</item>
-    </style>
-    <style name="titleText" parent="TextAppearance.AppCompat.Title">
-        <item name="android:titleTextColor">?attr/colorAccent</item>
-    </style>
-    <style name="preference" parent="Preference.Material">
-
-    </style>
-    <style name="preference.Light" parent="Preference">
-
+        <!--<item name="actionBarPopupTheme">@style/actionBarPopupTheme</item>-->
     </style>
     <style name="bottomDialog" parent="AppTheme.Light">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:windowIsFloating">true</item>
     </style>
+
 </resources>

@@ -1,21 +1,18 @@
 package com.bigcreate.zyfw.activities
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : AuthLoginActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun setContentView() {
         setContentView(R.layout.activity_settings)
-        setSupportActionBar(toolbar_settings)
-        toolbar_settings.setNavigationOnClickListener {
+    }
+    override fun afterCheckLoginSuccess() {
+        setSupportActionBar(toolbarSettings)
+        toolbarSettings.setNavigationOnClickListener {
             finish()
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
     }
 }

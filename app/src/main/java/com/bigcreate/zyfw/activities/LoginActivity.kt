@@ -14,7 +14,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.toast
-import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.MyApplication
@@ -34,24 +34,21 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private var mSinOrSup = true
     private val loginPresenter = LoginImpl(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        setSupportActionBar(toolbar_login)
-        window.transucentSystemUI(true)
-        toolbar_login.setNavigationOnClickListener {
+        setSupportActionBar(toolbarLogin)
+        window.translucentSystemUI(true)
+        toolbarLogin.setNavigationOnClickListener {
             finish()
         }
-        val application = application as MyApplication
-        application.loginUser
         supportActionBar?.title = getString(R.string.action_sign_in)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // Set up the login form.
         populateAutoComplete()
-        password.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
+        inputPassLogin.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
             if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
                 attemptLogin()
                 return@OnEditorActionListener true
@@ -59,15 +56,14 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
             false
         })
 
-        email_sign_in_button.setOnClickListener {
-            mSinOrSup = true
+        buttonActionLogin.setOnClickListener {
             attemptLogin()
         }
-        sign_up.setOnClickListener {
-            startActivity(SignUpActivity::class.java)
+        textStartSignUpLogin.setOnClickListener {
+            startActivity(RegisterActivity::class.java)
         }
-        forget_pass.setOnClickListener {
-            startActivity(Intent(this,SignUpActivity::class.java).apply {
+        textStartResetLogin.setOnClickListener {
+            startActivity(Intent(this,RegisterActivity::class.java).apply {
                 putExtra("isResetPassword",true)
             })
         }
@@ -90,7 +86,7 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
             return true
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(email, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(inputPhoneLogin, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok
                     ) { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) }
         } else {
@@ -158,31 +154,31 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
      * errors are presented and no actual login attempt is made.
      */
     private fun attemptLogin() {
-        email_sign_in_button.isEnabled = false
+        buttonActionLogin.isEnabled = false
         // Reset errors.
-        email.error = null
-        password.error = null
+        inputPhoneLogin.error = null
+        inputPassLogin.error = null
 
         // Store values at the time of the login attempt.
-        val emailStr = email.text.toString()
-        val passwordStr = password.text.toString()
+        val emailStr = inputPhoneLogin.text.toString()
+        val passwordStr = inputPassLogin.text.toString()
 
         var cancel = false
         var focusView: View? = null
 
         if (!TextUtils.isEmpty(passwordStr) && !isPasswordValid(passwordStr)) {
-            password.error = getString(R.string.error_invalid_password)
-            focusView = password
+            inputPassLogin.error = getString(R.string.error_invalid_password)
+            focusView = inputPassLogin
             cancel = true
         }
 
         if (TextUtils.isEmpty(emailStr)) {
-            email.error = getString(R.string.error_field_required)
-            focusView = email
+            inputPhoneLogin.error = getString(R.string.error_field_required)
+            focusView = inputPhoneLogin
             cancel = true
         } else if (!isPhoneValid(emailStr)) {
-            email.error = getString(R.string.error_invalid_email)
-            focusView = email
+            inputPhoneLogin.error = getString(R.string.error_invalid_email)
+            focusView = inputPhoneLogin
             cancel = true
         }
 
@@ -192,7 +188,7 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
             showProgress(true)
             loginPresenter.doRequest(LoginRequest(emailStr, passwordStr))
         }
-        email_sign_in_button.isEnabled = true
+        buttonActionLogin.isEnabled = true
     }
 
     private fun isPhoneValid(email: String): Boolean {
@@ -212,23 +208,23 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
         // the progress spinner.
         val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
-        login_form.visibility = if (show) View.GONE else View.VISIBLE
-        login_form.animate()
+        formLogin.visibility = if (show) View.GONE else View.VISIBLE
+        formLogin.animate()
                 .setDuration(shortAnimTime)
                 .alpha((if (show) 0 else 1).toFloat())
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        login_form.visibility = if (show) View.GONE else View.VISIBLE
+                        formLogin.visibility = if (show) View.GONE else View.VISIBLE
                     }
                 })
 
-        login_progress.visibility = if (show) View.VISIBLE else View.GONE
-        login_progress.animate()
+        progressLogin.visibility = if (show) View.VISIBLE else View.GONE
+        progressLogin.animate()
                 .setDuration(shortAnimTime)
                 .alpha((if (show) 1 else 0).toFloat())
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        login_progress.visibility = if (show) View.VISIBLE else View.GONE
+                        progressLogin.visibility = if (show) View.VISIBLE else View.GONE
                     }
                 })
     }
@@ -240,10 +236,6 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
          */
         private const val REQUEST_READ_CONTACTS = 0
 
-        /**
-         * A dummy authentication store containing known user names and passwords.
-         * TODO: remove after connecting to a real authentication system.
-         */
     }
 
 }

@@ -6,13 +6,10 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
-import com.bigcreate.library.getPath
-import com.bigcreate.library.startActivity
-import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RemoteService
-import com.bigcreate.zyfw.base.RequestCode
+import com.bigcreate.zyfw.base.*
+import com.bigcreate.zyfw.callback.DownloadCallback
 import com.bigcreate.zyfw.models.SimpleRequest
 import kotlinx.android.synthetic.main.activity_test_interface.*
 import kotlinx.coroutines.Dispatchers
@@ -31,11 +28,11 @@ class TestInterfaceActivity : AppCompatActivity() {
         setSupportActionBar(testInterfaceToolbar)
         supportActionBar?.title = "接口测试"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        window.transucentSystemUI(true)
+        window.translucentSystemUI(true)
         testInterfaceToolbar.setNavigationOnClickListener {
             finish()
         }
-        navigation_test.setNavigationItemSelectedListener {
+        navigationTest.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.testAvatar -> {
                     val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -44,14 +41,14 @@ class TestInterfaceActivity : AppCompatActivity() {
                 }
                 R.id.testRecommend -> {
                     GlobalScope.launch {
-                        Attributes.loginUserInfo!!.run {
+                        Attributes.loginUserInfo?.run {
                             RemoteService.getRecommendData(SimpleRequest(token, username)).execute()
                         }
                     }
                 }
                 R.id.testDownloadAvatar -> {
                     GlobalScope.launch {
-                        Attributes.loginUserInfo!!.run {
+                        Attributes.loginUserInfo?.run {
                             RemoteService.instance.getUserAvatar(SimpleRequest(token, username)).execute().body()?.byteStream()?.apply {
                                 val file = File(applicationContext.externalCacheDir!!.absolutePath + "me_avatar.jpg")
                                 val buffer = ByteArray(1024)
@@ -72,10 +69,37 @@ class TestInterfaceActivity : AppCompatActivity() {
                     }
                 }
                 R.id.testRegister -> {
-                    startActivity(SignUpActivity::class.java)
+                    startActivity(RegisterActivity::class.java)
                 }
                 R.id.testAuthLogin -> {
                     Attributes.loginUserInfo = null
+                }
+                R.id.testDownloadUpdate -> {
+                    GlobalScope.launch {
+                        UpdateService.getAppUpdateVersion(packageName).execute().body()?.apply {
+
+                                DownloadImpl.startDownload(externalCacheDir?.absolutePath + "/" + path.split("/").last(), path, object : DownloadCallback {
+                                    override fun onDownloadFailed(msg: String) {
+                                        toast("下载失败")
+                                    }
+
+                                    override fun onPreDownload() {
+                                        toast("开始下载")
+                                    }
+
+                                    override fun onDownloadSuccess(path: String) {
+                                        toast("下载成功 $path")
+                                    }
+
+                                    override fun onDownloading(totalLen: Long, currentLen: Long) {
+                                        toast("正在下载 %${currentLen.toFloat() / currentLen}")
+                                    }
+                                })
+                            }
+                    }
+                }
+                R.id.testFileProvider -> {
+                    startInstallApp(File("/storage/emulated/0/Android/data/com.bigcreate.zyfw/cache/update/appUpdate.apk"))
                 }
             }
             true

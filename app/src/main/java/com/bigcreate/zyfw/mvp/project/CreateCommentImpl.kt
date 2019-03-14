@@ -2,6 +2,8 @@ package com.bigcreate.zyfw.mvp.project
 
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.base.code
+import com.bigcreate.zyfw.base.newTokenFromData
 import com.bigcreate.zyfw.models.CreateCommentRequest
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
@@ -12,9 +14,9 @@ class CreateCommentImpl(mView: View?) :
     override fun afterRequestSuccess(data: JsonObject?) {
         mView?.run {
             data?.apply {
-                when (get("code").asInt) {
+                when (code) {
                     200 -> {
-                        Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
+                        Attributes.token = newTokenFromData
                         onCreateCommentSuccess(this@apply)
                     }
                     else -> onCreateCommentFailed(this@apply)

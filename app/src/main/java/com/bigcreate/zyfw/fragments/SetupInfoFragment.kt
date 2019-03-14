@@ -3,7 +3,6 @@ package com.bigcreate.zyfw.fragments
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -34,7 +33,6 @@ import com.tencent.map.geolocation.TencentLocationRequest
 import kotlinx.android.synthetic.main.fragment_setup_info.*
 import java.io.File
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -42,22 +40,17 @@ private const val ARG_PARAM2 = "param2"
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [SetupInfoFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
  * Use the [SetupInfoFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
 class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var listener: OnFragmentInteractionListener? = null
     private var tencentLocation: TencentLocation? = null
-    private var listAdress = ArrayList<String>()
+    private var listAddress = ArrayList<String>()
     private val userInfoImpl = UserInfoImpl(this)
-    val photoResult = 3
-    val imageType = "image/*"
     private var avatarFile: File? = null
     private val boxImpl = object : IBoxingMediaLoader {
         override fun displayRaw(img: ImageView, absPath: String, width: Int, height: Int, callback: IBoxingCallback?) {
@@ -91,76 +84,76 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
         val isSetup = activity?.intent?.getStringExtra("type")
         if (isSetup == null || isSetup != "setupInfo") {
             appCompactActivity?.run {
-                setSupportActionBar(toolbar_setup_info)
+                setSupportActionBar(toolbarSetupInfo)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
-            toolbar_setup_info.setNavigationOnClickListener {
+            toolbarSetupInfo.setNavigationOnClickListener {
                 fragmentManager!!.popBackStack()
             }
         }
-        toolbar_setup_info.requestApplyInsets()
+        toolbarSetupInfo.requestApplyInsets()
         BoxingMediaLoader.getInstance().init(boxImpl)
-        imageView_setup.setOnClickListener {
+        imageAvatarSetupInfo.setOnClickListener {
 //            val intent = Intent(Intent.ACTION_GET_CONTENT)
 //            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageType)
 //            startActivityForResult(intent, photoResult)
-            Boxing.of(BoxingConfig(BoxingConfig.Mode.SINGLE_IMG).needCamera(R.drawable.ic_add_a_photo_black_24dp))
+            Boxing.of(BoxingConfig(BoxingConfig.Mode.SINGLE_IMG))
                     .withIntent(context!!,BoxingActivity::class.java)
                     .start(this,RequestCode.SELECT_IMAGE)
         }
-        phone_input_setup_info.editText?.append(Attributes.loginUserInfo!!.username)
-        chipGroupGenderType.setOnCheckedChangeListener { chipGroup, i ->
-            Log.e("check", chipGroupGenderType.checkedChipId.toString())
+        layoutPhoneSetupInfo.editText?.append(Attributes.username)
+        chipGroupGenderTypeSetupInfo.setOnCheckedChangeListener { chipGroup, i ->
+            Log.e("check", chipGroupGenderTypeSetupInfo.checkedChipId.toString())
             Log.e("i", i.toString())
         }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
-            phone_input_setup_info.autofillHints?.set(0, value = Attributes.loginUserInfo!!.username)
+            layoutPhoneSetupInfo.autofillHints?.set(0, value = Attributes.loginUserInfo!!.username)
         else
-            phone_input_setup_info.editText?.append(Attributes.loginUserInfo!!.username)
-        ok_button_setup_info.setOnClickListener {
+            layoutPhoneSetupInfo.editText?.append(Attributes.username)
+        buttonSubmitSetupInfo.setOnClickListener {
             Log.d("click", "click ok")
-            if (nick_name_setup_info.editText!!.isEmpty() || address_input_setup_info.editText!!.isEmpty() ||
-                    phone_input_setup_info.editText!!.isEmpty() || avatarFile == null || chipGroupGenderType.checkedChipId == -1 || chipGroupUserType.checkedChipId == -1)
+            if (layoutNickSetupInfo.editText!!.isEmpty() || layoutAddressSetupInfo.editText!!.isEmpty() ||
+                    layoutPhoneSetupInfo.editText!!.isEmpty() || avatarFile == null || chipGroupGenderTypeSetupInfo.checkedChipId == -1 || chipGroupUserTypeSetupInfo.checkedChipId == -1)
                 Toast.makeText(context!!, "你还有尚未填写的资料，请填好后重试", Toast.LENGTH_SHORT).show()
             else {
-                progressBar2.visibility = View.VISIBLE
-                textView7.isEnabled = false
-                gender_text_setup_info.isEnabled = false
-                nick_name_setup_info.isEnabled = false
-                phone_input_setup_info.isEnabled = false
-                address_input_setup_info.isEnabled = false
-                ok_button_setup_info.isEnabled = false
-                chip.isEnabled = false
+                progressSetupInfo.visibility = View.VISIBLE
+                textUserTypeSetupInfo.isEnabled = false
+                textGenderSetupInfo.isEnabled = false
+                layoutNickSetupInfo.isEnabled = false
+                layoutPhoneSetupInfo.isEnabled = false
+                layoutAddressSetupInfo.isEnabled = false
+                buttonSubmitSetupInfo.isEnabled = false
+                chipQuickLocaleSetupInfo.isEnabled = false
                 val userInfo = Attributes.loginUserInfo!!
                 userInfoImpl.doInitUserInfo(InitPersonInfoRequest(userInfo.username,
-                        nick_name_setup_info.editText!!.string().trim(),
-                        getIndexForChip(chipGroupGenderType.checkedChipId),
-                        getIndexForChip(chipGroupUserType.checkedChipId),
-                        address_input_setup_info.editText!!.string().trim(),
-                        phone_input_setup_info.editText!!.string().trim(), userInfo.token))
+                        layoutNickSetupInfo.editText!!.string().trim(),
+                        getIndexForChip(chipGroupGenderTypeSetupInfo.checkedChipId),
+                        getIndexForChip(chipGroupUserTypeSetupInfo.checkedChipId),
+                        layoutAddressSetupInfo.editText!!.string().trim(),
+                        layoutPhoneSetupInfo.editText!!.string().trim(), userInfo.token))
             }
         }
-        chip.setOnClickListener {
+        chipQuickLocaleSetupInfo.setOnClickListener {
             Log.d("is click", "is click")
-            val popupMenu = PopupMenu(context!!, chip)
+            val popupMenu = PopupMenu(context!!, chipQuickLocaleSetupInfo)
             popupMenu.menu.run {
                 if (tencentLocation != null) {
                     this.clear()
-                    listAdress.clear()
+                    listAddress.clear()
                     if (tencentLocation!!.address != "")
-                        listAdress.add(tencentLocation!!.address)
+                        listAddress.add(tencentLocation!!.address)
                     else
                         tencentLocation!!.run {
-                            Log.d("adress is null", "address")
-                            listAdress.add((province + city + district + town + village + street + streetNo).split("Unknown").first())
+                            Log.d("address is null", "address")
+                            listAddress.add((province + city + district + town + village + street + streetNo).split("Unknown").first())
                         }
 
                     tencentLocation!!.poiList.forEach {
-                        listAdress.add(it.address)
+                        listAddress.add(it.address)
                         it.address.logIt("address")
                     }
-                    for (i in 0 until listAdress.size) {
-                        add(Menu.NONE, Menu.FIRST + i, i, listAdress[i])
+                    for (i in 0 until listAddress.size) {
+                        add(Menu.NONE, Menu.FIRST + i, i, listAddress[i])
                     }
                     Log.d("size", tencentLocation!!.poiList.size.toString())
                 } else {
@@ -170,9 +163,9 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
             popupMenu.setOnMenuItemClickListener {
                 val i = it.itemId - Menu.FIRST
                 tencentLocation?.run {
-                    address_input_setup_info.editText?.text?.run {
+                    layoutAddressSetupInfo.editText?.text?.run {
                         clear()
-                        append(listAdress[i])
+                        append(listAddress[i])
 
 
                     }
@@ -196,12 +189,7 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
         tencentLocation.requestLocationUpdates(request, this)
         super.onActivityCreated(savedInstanceState)
     }
-// TODO: Rename method, update argument and hook method into UI event
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -214,8 +202,7 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
      * (http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnFragmentInteractionListener {
-    }
+
 
     companion object {
         /**
@@ -226,7 +213,6 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
          * @param param2 Parameter 2.
          * @return A new instance of fragment SetupInfoFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
                 SetupInfoFragment().apply {
@@ -248,7 +234,7 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
 
     override fun onResume() {
         activity?.window?.run {
-            transucentSystemUI(true)
+            translucentSystemUI(true)
         }
         super.onResume()
     }
@@ -261,12 +247,11 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
                     RequestCode.SELECT_IMAGE -> {
 //                        imageView_setup.setImageBitmap(context!!.getBitmapFromUri(this).roundBitmap)
 //                        imageView_setup.scaleType = ImageView.ScaleType.CENTER_CROP
-                        textView_add_photo_setup.text = "更换照片"
+                        textAvatarSetupInfo.text = "更换照片"
                         Glide.with(this@SetupInfoFragment)
                                 .load(get(0).path)
-                                .applyCenterCrop()
-                                .applyCircleCrop()
-                                .into(imageView_setup)
+                                .circleCrop()
+                                .into(imageAvatarSetupInfo)
                         avatarFile = File(get(0).path)
                     }
                 }
@@ -284,7 +269,6 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
     override fun onInitUserInfoSuccess(jsonObject: JsonObject) {
 
         val userInfo = Attributes.loginUserInfo!!
-        userInfo.token = jsonObject.getAsJsonObject("data").get("newToken").asString
         userInfo.apply {
             userInfoImpl.doSetupAvatar(
                     avatarFile!!, token, username)
@@ -325,9 +309,9 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
 
     private fun getIndexForChip(@IntegerRes id: Int): Int {
         return when (id) {
-            R.id.chipIdStudent, R.id.chipMaleSetupInfo -> 1
-            R.id.chipIdTeacher, R.id.chipFemaleSetupInfo -> 2
-            R.id.chipIdOther -> 3
+            R.id.chipIdStudentSetupInfo, R.id.chipMaleSetupInfo -> 1
+            R.id.chipIdTeacherSetupInfo, R.id.chipFemaleSetupInfo -> 2
+            R.id.chipIdOtherSetupInfo -> 3
             else -> 0
         }
     }

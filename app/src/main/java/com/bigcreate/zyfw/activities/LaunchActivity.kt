@@ -17,13 +17,10 @@ import kotlinx.coroutines.launch
 
 class LaunchActivity : AppCompatActivity(), LoginImpl.View {
     private val presenter = LoginImpl(this)
-    private var isLoginSuccess = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
-        window.defaultStatusBarMask(false)
-        window.transucentSystemUI(true)
-        window.setStatusBarMask(false)
+        window.translucentSystemUI(true)
         when {
             hasLoginInfo -> {
                 GlobalScope.launch {
@@ -36,7 +33,7 @@ class LaunchActivity : AppCompatActivity(), LoginImpl.View {
             }
 
         }
-        button_login_launch.setOnClickListener {
+        buttonLoginLaunch.setOnClickListener {
             startActivityForResult(Intent(this@LaunchActivity, LoginActivity::class.java), RequestCode.LOGIN)
         }
     }
@@ -83,7 +80,7 @@ class LaunchActivity : AppCompatActivity(), LoginImpl.View {
     }
 
     private fun showProgress(value: Boolean) {
-        button_login_launch.isVisible = !value
-        progressBar_launch.isVisible = value
+        buttonLoginLaunch.isVisible = !value
+        progressLaunch.isVisible = value
     }
 }

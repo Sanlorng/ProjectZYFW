@@ -1,5 +1,6 @@
 package com.bigcreate.zyfw.service
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -11,76 +12,51 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.bigcreate.library.WebKit
-import com.bigcreate.library.fromJson
-import com.bigcreate.library.getRequest
-import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ProjectDetailsActivity
 import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RemoteService
-import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.base.defaultSharedPreferences
+import com.bigcreate.zyfw.models.LoginModel
+import com.bigcreate.zyfw.models.LoginRequest
 import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.models.SimpleRequest
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.bigcreate.zyfw.mvp.project.RecommendImpl
+import com.bigcreate.zyfw.mvp.user.LoginImpl
+import com.google.gson.JsonObject
 
-class RecommendService : JobService() {
+class RecommendService : JobService(),RecommendImpl.View {
+    private val recommendImpl =  RecommendImpl(this)
+    private val loginImpl = LoginImpl(object : LoginImpl.View {
+        override fun getViewContext(): Context {
+            return this@RecommendService
+        }
 
+        override fun onLoginFailed(response: JsonObject) {
+
+        }
+
+        override fun onLoginSuccess(loginInfo: LoginModel) {
+            recommendImpl.mView = this@RecommendService
+            recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.username))
+        }
+    })
     override fun onStartJob(params: JobParameters?): Boolean {
         val lastLaunchTime = defaultSharedPreferences.getLong("last_launch", -1)
         Log.d("onJob", "On")
         if (lastLaunchTime > 0) {
             val relativeTime = System.currentTimeMillis() - lastLaunchTime
             if (relativeTime > 100) {
-//                Thread{
-                val loginUserId = defaultSharedPreferences.getString("user_id", null)
-                val response = WebKit.okClient.getRequest(WebInterface.FINDDATA_URL + loginUserId)?.string()
-                //val model = JsonParser().parse(response).asJsonObject
-                //if (model.get("code").asInt == 200)
-                GlobalScope.launch {
-                    Attributes.loginUserInfo?.apply {
-                        try {
-                            RemoteService.getRecommendData(SimpleRequest(token, username)).execute().body()?.apply {
-                                val data = get("data").asJsonObject
-                                when (get("code").asInt) {
-                                    200 -> {
-                                        token = data.get("newToken").asString
-                                        if (!data.get("content").isJsonNull) {
-                                            data.get("content").toJson().fromJson<Project>().apply {
-                                                val builder = NotificationCompat.Builder(this@RecommendService, "0")
-                                                        .setSmallIcon(R.drawable.ic_favorite_black_24dp)
-                                                        .setContentText(projectTopic)
-                                                        .setContentTitle("推荐项目")
-                                                        .setStyle(NotificationCompat.BigTextStyle()
-                                                                .bigText("由Job发出的通知"))
-                                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                                        .setContentIntent(
-                                                                PendingIntent.getActivity(this@RecommendService,
-                                                                        0, Intent(this@RecommendService, ProjectDetailsActivity::class.java).apply {
-                                                                    putExtra("projectId", projectId)
-                                                                    putExtra("projectTopic", projectTopic)
-                                                                }, PendingIntent.FLAG_UPDATE_CURRENT))
-                                                createNotificationChannel()
-                                                with(NotificationManagerCompat.from(this@RecommendService)) {
-                                                    notify(0, builder.build())
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (e: Exception) {
-
-                        }
-                    }
+                if (Attributes.loginUserInfo == null)
+                    if (defaultSharedPreferences.getBoolean("saved_account",false))
+                    loginImpl.doRequest(LoginRequest(
+                            username = defaultSharedPreferences.getString("username","")!!,
+                            password = defaultSharedPreferences.getString("password","")!!
+                    ))
+                else {
+                    recommendImpl.mView = this
+                    recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.username))
                 }
-//                    "".run {
-//                        Log.d("content",response)
-//
-//                    }
-//                }.start()
+
             }
         }
 
@@ -88,9 +64,42 @@ class RecommendService : JobService() {
     }
 
     override fun onStopJob(params: JobParameters?): Boolean {
+        recommendImpl.detachView()
         return true
     }
 
+    override fun onGetRecommendFailed(jsonObject: JsonObject) {
+    }
+
+    override fun onGetRecommendSuccess(project: Project) {
+        Attributes.loginUserInfo?.run {
+            project.apply {
+                val builder = NotificationCompat.Builder(this@RecommendService, "0")
+                        .setSmallIcon(R.drawable.ic_favorite_black_24dp)
+                        .setContentText(projectTopic)
+                        .setContentTitle("推荐项目")
+                        .setStyle(NotificationCompat.BigTextStyle()
+                                .bigText("由Job发出的通知"))
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(
+                                PendingIntent.getActivity(this@RecommendService,
+                                        0, Intent(this@RecommendService, ProjectDetailsActivity::class.java).apply {
+                                    putExtra("projectId", projectId)
+                                    putExtra("projectTopic", projectTopic)
+                                }, PendingIntent.FLAG_UPDATE_CURRENT))
+                createNotificationChannel()
+                with(NotificationManagerCompat.from(this@RecommendService)) {
+                    notify(0, builder.build().apply {
+                        flags = flags or Notification.FLAG_AUTO_CANCEL
+                    })
+                }
+            }
+        }
+    }
+
+    override fun getViewContext(): Context {
+        return this
+    }
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "推荐"

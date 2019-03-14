@@ -1,6 +1,9 @@
 package com.bigcreate.zyfw.mvp.project
 
+import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.base.code
+import com.bigcreate.zyfw.base.newTokenFromData
 import com.bigcreate.zyfw.models.FilesUploadRequest
 import com.bigcreate.zyfw.mvp.base.BaseMultiPresenterImpl
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
@@ -12,8 +15,11 @@ class UploadProjectMediaImpl(view: View):BaseMultiPresenterImpl<UploadProjectMed
         override fun afterRequestSuccess(data: JsonObject?) {
             mView?.run {
                 data?.apply {
-                    when(get("code").asInt) {
-                        200 -> onUploadImageSuccess()
+                    when(code) {
+                        200 ->  {
+                            Attributes.token = newTokenFromData
+                            onUploadImageSuccess()
+                        }
                         else -> onUploadImageFailed()
                     }
                 }
@@ -21,7 +27,7 @@ class UploadProjectMediaImpl(view: View):BaseMultiPresenterImpl<UploadProjectMed
         }
         override fun backgroundRequest(request: FilesUploadRequest): JsonObject? {
             return request.run {
-                RemoteService.instance.addProjectPicture(parts,token,username,projectId).execute().body()
+                RemoteService.addProjectPicture(parts,token,username,projectId).execute().body()
             }
         }
     }
@@ -30,8 +36,11 @@ class UploadProjectMediaImpl(view: View):BaseMultiPresenterImpl<UploadProjectMed
         override fun afterRequestSuccess(data: JsonObject?) {
             mView?.run {
                 data?.apply {
-                    when(get("code").asInt) {
-                        200 -> onUploadVideoSuccess()
+                    when(code) {
+                        200 -> {
+                            Attributes.token = newTokenFromData
+                            onUploadVideoSuccess()
+                        }
                         else -> onUploadVideoFailed()
                     }
                 }
@@ -40,7 +49,7 @@ class UploadProjectMediaImpl(view: View):BaseMultiPresenterImpl<UploadProjectMed
 
         override fun backgroundRequest(request: FilesUploadRequest): JsonObject? {
             return request.run {
-                RemoteService.instance.addProjectVideo(parts,token,username,projectId).execute().body()
+                RemoteService.addProjectVideo(parts,token,username,projectId).execute().body()
             }
         }
     }

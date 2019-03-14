@@ -8,7 +8,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:fitsSystemWindows="true"
-        android:id="@+id/toolbarAppbarManager"
+        android:id="@+id/toolbarUpdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -20,7 +20,7 @@
         app:title="应用更新" />
 
     <TextView
-        android:id="@+id/textChangelog"
+        android:id="@+id/textChangelogUpdate"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -28,30 +28,30 @@
         android:layout_marginTop="64dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar3"
+        app:layout_constraintBottom_toTopOf="@+id/progressDownloadUpdate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarAppbarManager" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbarUpdate" />
 
     <ProgressBar
         android:visibility="gone"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:id="@+id/progressBar3"
+        android:id="@+id/progressDownloadUpdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:progress="50"
-        app:layout_constraintBottom_toTopOf="@+id/materialButtonDownload"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDownloadUpdate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialButtonDownload"
+        android:id="@+id/buttonDownloadUpdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="立即下载"
+        android:text="@string/downloadNow"
         app:cornerRadius="60dp"
         app:icon="@drawable/ic_file_download_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -59,17 +59,17 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialButtonCancelDownload"
+        android:id="@+id/buttonCancelDownloadUpdate"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:visibility="gone"
-        android:text="取消下载"
+        android:text="@string/cancelDownload"
         app:cornerRadius="60dp"
         app:icon="@drawable/ic_close_black_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/materialButtonDownload"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonDownloadUpdate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

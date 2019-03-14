@@ -2,8 +2,7 @@ package com.bigcreate.zyfw.mvp.user
 
 import com.bigcreate.library.fromJson
 import com.bigcreate.library.toJson
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.SimpleRequest
 import com.bigcreate.zyfw.models.UserInfo
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
@@ -18,8 +17,9 @@ class GetUserInfoImpl(mView: View):BasePresenterImpl<SimpleRequest,JsonObject,Ge
                 if (isJsonNull)
                     onUserInfoIsEmpty()
                 else
-                when(get("code").asInt) {
-                    200 -> onGetUserInfoSuccess(get("data").asJsonObject.get("content").toJson().fromJson<UserInfo>().apply {
+                when(code) {
+                    200 -> onGetUserInfoSuccess(jsonContentFromData.toJson().fromJson<UserInfo>().apply {
+                        Attributes.token = jsonContentFromData.getAsString("token")
                         Attributes.userInfo = this
                     })
                     404 -> onUserInfoIsEmpty()

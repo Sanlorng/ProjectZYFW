@@ -3,14 +3,12 @@ package com.bigcreate.zyfw.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.SearchModel
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.project_item.view.*
-import java.text.SimpleDateFormat
+import kotlinx.android.synthetic.main.item_project_search.view.*
 
 class ProjectListAdapter(val listProject: ArrayList<SearchModel>) : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>() {
     var mListener: ProjectItemClickListener? = null
@@ -24,24 +22,20 @@ class ProjectListAdapter(val listProject: ArrayList<SearchModel>) : RecyclerView
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         listProject[position].apply {
             holder.itemView.run {
-                title_project_item.text = projectTopic
-                address_project_item.text =
-                        "$projectPrincipalName·$projectAddress / $projectIssueTime"
-                content_project_item.text = projectContent
-                number_project_item.text = "$projectPeopleNumbers 人"
+                topicProjectSearchItem.text = projectTopic
+                addressProjectSearchItem.text = context.getString(R.string.secondContentSearchVar,
+                        projectPrincipalName,projectAddress,projectIssueTime)
+                contentProjectSearchItem.text = projectContent
+                numbersProjectSearchItem.text = context.getString(R.string.numberProjectSearchVar,projectPeopleNumbers)
                 projectPictureLinkTwo.apply {
                     if (size >0)
                         Glide.with(context)
                                 .load(get(0))
                                 .centerInside()
-                                .into(image_project_item)
+                                .into(imageProjectSearchItem)
                     else
-                        image_project_item.isVisible = false
+                        imageProjectSearchItem.isVisible = false
                 }
-                        if (position == 0) {
-                            val mLayoutParams = layoutParams as RecyclerView.LayoutParams
-                            mLayoutParams.topMargin = 20
-                        }
                 setOnClickListener {
                     mListener?.onItemClick(position)
                 }
@@ -50,7 +44,7 @@ class ProjectListAdapter(val listProject: ArrayList<SearchModel>) : RecyclerView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.project_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project_search, parent, false)
         return ViewHolder(view)
     }
 

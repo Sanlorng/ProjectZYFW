@@ -12,10 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
-import kotlinx.android.synthetic.main.fragment_projectactionitem_list_dialog.*
-import kotlinx.android.synthetic.main.fragment_projectactionitem_list_dialog_item.view.*
+import kotlinx.android.synthetic.main.fragment_project_details_action.*
+import kotlinx.android.synthetic.main.item_project_details_action.view.*
 
-// TODO: Customize parameter argument names
 const val ARG_ITEM_COUNT = "item_count"
 
 /**
@@ -32,32 +31,31 @@ const val ARG_ITEM_COUNT = "item_count"
 class ProjectActionItemListDialogFragment : BottomSheetDialogFragment() {
     private var mListener: Listener? = null
     private val actionList = ArrayList<ActionItem>()
-    private var type: Int? = 0
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_projectactionitem_list_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_project_details_action, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        listActionDetails.menu.forEach {
+//            it.apply {
+//
+//            }
+//        }
+//        listActionDetails.setCheckedItem(R.id.deleteProjectDetails)
         actionList.clear()
         when (arguments?.getInt(ARG_ITEM_COUNT)) {
             null -> {
             }
             0 -> actionList.apply {
-                add(ActionItem(R.drawable.ic_video_call_black_24dp, "添加视频"))
-                add(ActionItem(R.drawable.ic_add_a_photo_black_24dp, "添加图片"))
-                add(ActionItem(R.drawable.ic_mode_edit_black_24dp, "编辑项目"))
-                add(ActionItem(R.drawable.ic_delete_black_24dp, "删除项目"))
-            }
-            1 -> actionList.apply {
-                if (arguments!!.getBoolean("isFavorite"))
-                    add(ActionItem(R.drawable.ic_star_black_24dp, "收藏项目"))
-                else
-                    add(ActionItem(R.drawable.ic_star_black_24dp, "取消收藏"))
+                add(ActionItem(R.drawable.ic_outline_video_call_24px, "添加视频"))
+                add(ActionItem(R.drawable.ic_outline_add_photo_alternate_24px, "添加图片"))
+                add(ActionItem(R.drawable.ic_outline_edit_24px, "编辑项目"))
+                add(ActionItem(R.drawable.ic_outline_delete_outline_24px, "删除项目"))
             }
         }
-        list.layoutManager = LinearLayoutManager(context)
-        list.adapter = ProjectActionItemAdapter()
+        listActionDetails.layoutManager = LinearLayoutManager(context)
+        listActionDetails.adapter = ProjectActionItemAdapter()
     }
 
     override fun onAttach(context: Context) {
@@ -75,18 +73,14 @@ class ProjectActionItemListDialogFragment : BottomSheetDialogFragment() {
         super.onDetach()
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-    }
-
     interface Listener {
         fun onProjectActionItemClicked(position: Int)
     }
 
     private inner class ViewHolder internal constructor(inflater: LayoutInflater, parent: ViewGroup)
-        : RecyclerView.ViewHolder(inflater.inflate(R.layout.fragment_projectactionitem_list_dialog_item, parent, false)) {
+        : RecyclerView.ViewHolder(inflater.inflate(R.layout.item_project_details_action, parent, false)) {
 
-        internal val text: MaterialButton = itemView.text
+        internal val text: MaterialButton = itemView.buttonActionDetails
 
         init {
             text.setOnClickListener {
@@ -109,7 +103,7 @@ class ProjectActionItemListDialogFragment : BottomSheetDialogFragment() {
                 holder.text.apply {
                     text = actionText
                     icon = context!!.getDrawable(iconId)
-                    if (iconId == R.drawable.ic_delete_black_24dp) {
+                    if (iconId == R.drawable.ic_outline_delete_outline_24px) {
                         iconTint = ContextCompat.getColorStateList(context, R.color.colorAccent)
                         setTextColor(context.getColor(R.color.colorAccent))
                     }
@@ -124,7 +118,6 @@ class ProjectActionItemListDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
 
-        // TODO: Customize parameters
         fun newInstance(type: Int): ProjectActionItemListDialogFragment =
                 ProjectActionItemListDialogFragment().apply {
                     arguments = Bundle().apply {

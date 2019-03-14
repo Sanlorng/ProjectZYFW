@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.UpdateInfo
-import kotlinx.android.synthetic.main.version_item.view.*
+import kotlinx.android.synthetic.main.item_version_history.view.*
 
 class UpdateHistoryListAdapter(val list: List<UpdateInfo>) : RecyclerView.Adapter<UpdateHistoryListAdapter.ViewHolder>() {
     override fun getItemCount(): Int {
@@ -16,9 +16,9 @@ class UpdateHistoryListAdapter(val list: List<UpdateInfo>) : RecyclerView.Adapte
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         list[position].apply {
             holder.itemView.run {
-                versionName.text = this@apply.versionName
-                versionLog.text = this@apply.changelog
-                versionLayout.setOnClickListener {
+                nameVersionHistoryItem.text = this@apply.versionName
+                contentVersionHistoryItem.text = this@apply.changelog
+                layoutVersionHistory.setOnClickListener {
 
                 }
             }
@@ -26,7 +26,7 @@ class UpdateHistoryListAdapter(val list: List<UpdateInfo>) : RecyclerView.Adapte
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.version_item, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_version_history, parent, false))
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)

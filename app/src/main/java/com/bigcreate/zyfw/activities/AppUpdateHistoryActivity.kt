@@ -3,7 +3,7 @@ package com.bigcreate.zyfw.activities
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.UpdateHistoryListAdapter
 import com.bigcreate.zyfw.base.UpdateService
@@ -34,6 +34,6 @@ class AppUpdateHistoryActivity : AppCompatActivity() {
 
             }
         }
-        window.transucentSystemUI(true)
+        window.translucentSystemUI(true)
     }
 }

@@ -1,9 +1,7 @@
 package com.bigcreate.zyfw.mvp.user
 
 import androidx.core.content.edit
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RemoteService
-import com.bigcreate.zyfw.base.defaultSharedPreferences
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
@@ -18,7 +16,6 @@ class LoginImpl(mView: View?) : BasePresenterImpl<LoginRequest, JsonObject, Logi
     override fun afterRequestSuccess(data: JsonObject?) {
         mView?.run {
             data?.apply {
-                val code = this.get("code").asInt
                 when (code) {
                     200 -> {
                         GlobalScope.launch(Dispatchers.IO) {
@@ -28,7 +25,8 @@ class LoginImpl(mView: View?) : BasePresenterImpl<LoginRequest, JsonObject, Logi
                                 putString("password", loginRequest.password)
                             }
                         }
-                        onLoginSuccess(LoginModel(loginRequest.username, loginRequest.password, get("data").asJsonObject.get("newToken").asString))
+                        Attributes.loginUserInfo = LoginModel(loginRequest.username, loginRequest.password, newTokenFromData)
+                        onLoginSuccess(Attributes.loginUserInfo!!)
                     }
                     else -> {
                         onLoginFailed(this@apply)

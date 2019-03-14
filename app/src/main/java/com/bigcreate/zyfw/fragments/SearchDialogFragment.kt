@@ -8,16 +8,17 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.edit
-import androidx.core.view.isVisible
-import androidx.core.view.setMargins
+import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.amap.api.location.AMapLocation
 import com.bigcreate.library.fromJson
 import com.bigcreate.library.toJson
 import com.bigcreate.library.toast
-import com.bigcreate.library.transucentSystemUI
+import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MainActivity
@@ -29,57 +30,70 @@ import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.models.SearchRequest
-import com.bigcreate.zyfw.mvp.app.LocationContract
-import com.bigcreate.zyfw.mvp.app.LocationImpl
+import com.bigcreate.zyfw.mvp.app.AMapLocationImpl
 import com.bigcreate.zyfw.mvp.project.SearchImpl
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.gson.JsonObject
-import com.tencent.map.geolocation.TencentLocation
-import kotlinx.android.synthetic.main.appbar.*
+import kotlinx.android.synthetic.main.layout_search_bar.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
-class SearchDialogFragment : DialogFragment() {
-    var searchKey = ""
-    var location: TencentLocation? = null
-    var searchHistory = ArrayList<Pair<String, Long>>()
+class SearchDialogFragment : DialogFragment(){
+    private var searchKey = ""
+    var location: AMapLocation? = null
+    var isClick = false
+    private var searchHistory = ArrayList<Pair<String, Long>>()
+    private val aMapLocationImpl = AMapLocationImpl(object : AMapLocationImpl.View {
+        override val onceLocation: Boolean
+            get() = false
+
+        override fun onRequestFailed(location: AMapLocation?) {
+
+        }
+
+        override fun onRequestSuccess(location: AMapLocation) {
+            this@SearchDialogFragment.location = location
+            dialog?.apply {
+                inputSearchBar.hint = "搜索 ${location.city}"
+            }
+        }
+
+        override fun getViewContext(): Context {
+            return context!!
+        }
+    })
     private var projectId = -1
-    private val searchRequest = SearchRequest(Attributes.loginUserInfo!!.token, null, null, null)
+    private val searchRequest = SearchRequest("", null, null, null)
     private val searchView = object : SearchImpl.View {
         override fun onSearchFailed(response: JsonObject) {
             context?.toast(response.toJson())
-            progressBarSearch?.isVisible = false
+            progressSearchDialog?.isVisible = false
         }
 
         override fun onSearchFinished(searchResult: ArrayList<SearchModel>) {
-            dialog.apply {
-                GlobalScope.launch {
-                    //                    if (searchMap.containsKey(searchKey))
-//                        searchMap.remove(searchKey)
-//                    searchMap.put(searchKey,System.currentTimeMillis())
-//                    if (searchMap.size>10)
-//                        searchMap.remove(searchMap.keys.first())
-                    searchHistory = ArrayList(searchHistory.filter {
-                        it.first != searchKey
-                    }).apply {
-                        add(0, Pair(searchKey, System.currentTimeMillis()))
-                        if (searchHistory.size > 10)
-                            removeAt(10)
-                    }
-                    showSearchHistory(this@apply)
-                }
-                progressBarSearch.isVisible = false
+            dialog?.apply {
+//                GlobalScope.launch {
+//                    searchHistory = ArrayList(searchHistory.filter {
+//                        it.first != searchKey
+//                    }).apply {
+//                        add(0, Pair(searchKey, System.currentTimeMillis()))
+//                        if (searchHistory.size > 10)
+//                            removeAt(10)
+//                    }
+//                    showSearchHistory(ad)
+                    addSearchHistory()
+//                }
+                progressSearchDialog.isVisible = false
                 searchResult.isEmpty().apply {
                     textSearchEmpty.isVisible = this
                 }
-                searchResultListView.apply {
+                inputSearchBar.clearFocus()
+                listSearchResult.apply {
                     layoutManager = LinearLayoutManager(context)
                     adapter = ProjectListAdapter(searchResult).apply {
                         mListener = object : ProjectListAdapter.ProjectItemClickListener {
                             override fun onItemClick(position: Int) {
+                                isClick = true
                                 startActivityForResult(Intent(context, ProjectDetailsActivity::class.java).apply {
                                     searchResult[position].run {
                                         this@SearchDialogFragment.projectId = projectId
@@ -105,7 +119,7 @@ class SearchDialogFragment : DialogFragment() {
 
         override fun onRequesting() {
             dialog.apply {
-                progressBarSearch.isVisible = true
+                progressSearchDialog?.isVisible = true
             }
 
         }
@@ -115,84 +129,84 @@ class SearchDialogFragment : DialogFragment() {
         }
     }
     private val searchImpl = SearchImpl(searchView)
-    private val locationView = object : LocationContract.View {
-        override fun onLocationPermissionDenied() {
-            context?.toast("位置权限被禁止")
-        }
-
-        override fun onLocationRequestFailed() {
-//            context?.toast("位置信息请求失败")
-        }
-
-        override fun onLocationRequestSuccess(location: TencentLocation) {
-            dialog?.apply {
-                inputTextSearch.hint = getString(R.string.search) + " " + location.city
-            }
-            this@SearchDialogFragment.location = location
-        }
-
-        override fun getViewContext(): Context {
-            return context!!
-        }
-
-        override fun onRequesting() {
-
-        }
-
-        override fun onRequestFinished() {
-        }
-
-    }
-    private val locationImpl = LocationImpl(locationView)
+//    private val locationView = object : LocationContract.View {
+//        override fun onLocationPermissionDenied() {
+//            context?.toast("位置权限被禁止")
+//        }
+//
+//        override fun onLocationRequestFailed() {
+////            context?.toast("位置信息请求失败")
+//        }
+//
+//        override fun onLocationRequestSuccess(location: TencentLocation) {
+//            dialog?.apply {
+//                inputSearchBar.hint = getString(R.string.search) + " " + location.city
+//            }
+//            this@SearchDialogFragment.location = location
+//        }
+//
+//        override fun getViewContext(): Context {
+//            return context!!
+//        }
+//
+//        override fun onRequesting() {
+//
+//        }
+//
+//        override fun onRequestFinished() {
+//        }
+//
+//    }
+//    private val locationImpl = LocationImpl(locationView)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(context!!, R.style.bottomDialog).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.fragment_search_dialog)
             setCanceledOnTouchOutside(true)
-            locationImpl.mView = locationView
+//            locationImpl.mView = locationView
             searchImpl.mView = searchView
-            locationImpl.start()
-            locationImpl.alwaysCall = true
+//            locationImpl.start()
+//            locationImpl.alwaysCall = true
             window?.apply {
                 attributes.gravity = Gravity.TOP
                 attributes.width = WindowManager.LayoutParams.MATCH_PARENT
                 setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
             }
-            toolbar_home.navigationIcon = context.getDrawable(R.drawable.ic_arrow_back_black_24dp)
-            toolbar_home.setNavigationOnClickListener {
-                this@SearchDialogFragment.dismiss()
+            toolbarSearchBar.navigationIcon = context.getDrawable(R.drawable.ic_arrow_back_black_24dp)
+            toolbarSearchBar.setNavigationOnClickListener {
+                this@SearchDialogFragment.onBackPressed()
             }
-            toolbar_home.inflateMenu(R.menu.clean_menu)
-            toolbar_home.menu.findItem(R.id.searchClear).isVisible = false
-            toolbar_home.setOnMenuItemClickListener {
+            toolbarSearchBar.inflateMenu(R.menu.clean_menu)
+            toolbarSearchBar.menu.findItem(R.id.searchClear).isVisible = false
+            toolbarSearchBar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.searchClear -> {
-                        inputTextSearch.editableText.clear()
+                        inputSearchBar.editableText.clear()
                     }
                 }
                 true
             }
             (cardViewAppBarMain.layoutParams as AppBarLayout.LayoutParams).apply {
                 setMargins(context.resources.getDimensionPixelSize(R.dimen.appbar_margin))
-                Log.e("top", topMargin.toString())
-                Log.e("bottom", bottomMargin.toString())
-                Log.e("start", marginStart.toString())
-                Log.e("end", marginEnd.toString())
+//                Log.e("top", topMargin.toString())
+//                Log.e("bottom", bottomMargin.toString())
+//                Log.e("start", marginStart.toString())
+//                Log.e("end", marginEnd.toString())
                 cardViewAppBarMain.layoutParams = this
             }
-            inputTextSearch.isEnabled = true
-            inputTextSearch.isClickable = true
-            inputTextSearch.setOnEditorActionListener { v, actionId, event ->
+            inputSearchBar.isEnabled = true
+            inputSearchBar.isClickable = true
+            inputSearchBar.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                     val city = when {
                         location == null -> null
                         location!!.city == "Unknown" && BuildConfig.DEBUG -> "贺州市"
                         else -> location!!.city
                     }
-                    if (!inputTextSearch.editableText.trimEnd().isEmpty())
+                    if (!inputSearchBar.editableText.trimEnd().isEmpty())
                     searchImpl.doRequest(searchRequest.apply {
-                        searchKey = inputTextSearch.editableText.trimEnd().toString()
-                        token = Attributes.loginUserInfo!!.token
+                        searchKey = inputSearchBar.editableText.trimEnd().toString()
+                        token = Attributes.token
                         projectRegion = city
                         projectTopic = searchKey
                         projectContent = null
@@ -201,114 +215,216 @@ class SearchDialogFragment : DialogFragment() {
                 } else
                     false
             }
-            inputTextSearch.addTextChangedListener {
-                toolbar_home.menu.findItem(R.id.searchClear).isVisible = !it.isNullOrEmpty()
+            inputSearchBar.addTextChangedListener {
+                toolbarSearchBar.menu.findItem(R.id.searchClear).isVisible = !it.isNullOrEmpty()
+            }
+            inputSearchBar.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) {
+                    showSearchHistory(true)
+                    swipeLayoutSearch.isVisible = false
+                }
+                else {
+                    showSearchHistory(false)
+                    swipeLayoutSearch.isVisible = true
+                    context.getSystemService(InputMethodManager::class.java).hideSoftInputFromWindow(v.windowToken,0)
+                }
             }
             swipeLayoutSearch.setOnRefreshListener {
-                if (!inputTextSearch.editableText.trimEnd().isEmpty())
+                if (!inputSearchBar.editableText.trimEnd().isEmpty())
                     searchImpl.doRequest(searchRequest)
                 else
                     swipeLayoutSearch.isRefreshing = false
             }
+            actionClearSearchHistory.setOnClickListener {
+                searchHistory.clear()
+                chipGroupSearchHistory.removeAllViews()
+                showSearchHistory(false)
+            }
             val searchMapString = context.defaultSharedPreferences.getString("searchHistory", null)
             if (searchMapString != null) {
                 Log.e("searchHistory", searchMapString)
-//                searchMap = searchMapString.fromJson<HashMap<String,Long>>()
                 searchHistory = searchMapString.fromJson<ArrayList<Pair<String, Long>>>()
-                showSearchHistory(this@apply)
             }
             val layoutParam = cardViewAppBarMain.layoutParams as AppBarLayout.LayoutParams
             layoutParam.topMargin += context.let {
                 it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
             }
             cardViewAppBarMain.layoutParams = layoutParam
+//            aMapLocationImpl = AMapLocationImpl(object :AMapLocationImpl.View {
+//                override val onceLocation: Boolean
+//                    get() = false
+//
+//                override fun getViewContext(): Context {
+//                    return context
+//                }
+//
+//                override fun onRequestSuccess(location: AMapLocation) {
+//                    inputSearchBar.hint = "搜索 ${location.city}"
+//                }
+//
+//                override fun onRequestFailed(location: AMapLocation?) {
+//
+//                }
+//            })
+            if (BuildConfig.DEBUG)
+                Log.e("onCreateDialog","true")
         }
 
     }
-
     override fun onResume() {
-        dialog.apply {
-            locationImpl.doLocationRequest()
-            inputTextSearch.requestFocus()
-            window?.transucentSystemUI(true)
+        if (BuildConfig.DEBUG)
+            Log.e("onResume","true")
+        dialog?.apply {
+//            locationImpl.doLocationRequest()
+            aMapLocationImpl.startLocation()
+            if (isClick.not())
+                inputSearchBar.requestFocus()
+            window?.translucentSystemUI(true)
+            if (inputSearchBar.hasFocus())
+                showSearchHistory(true)
         }
         super.onResume()
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        if (hidden) {
-//            searchImpl.detachView()
-//            locationImpl.detachView()
-//            context?.defaultSharedPreferences?.edit {
-//                putString("searchHistory",searchMap.toJson())
-//            }
-        }
-        super.onHiddenChanged(hidden)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addSearchHistory()
+        showSearchHistory(true)
     }
-
-    override fun onDismiss(dialog: DialogInterface?) {
+    fun onBackPressed():Boolean {
+        Log.e("onBackPressed",(dialog == null).not().toString())
+        dialog?.apply {
+            Log.e("swipe",swipeLayoutSearch.isVisible.not().toString())
+            return if (inputSearchBar.hasFocus()&&listSearchResult.childCount!=0) {
+    //                showSearchHistory(false)
+    //                swipeLayoutSearch?.isVisible = true
+                if (BuildConfig.DEBUG)
+                    Log.e("focus","true")
+                inputSearchBar.clearFocus()
+                true
+            }else {
+                this@SearchDialogFragment.dismiss()
+                if (BuildConfig.DEBUG)
+                    Log.e("unFocus","true")
+                false
+            }
+        }
+        return false
+    }
+    override fun onDismiss(dialog: DialogInterface) {
         searchImpl.detachView()
-        locationImpl.detachView()
+//        locationImpl.detachView()
+        aMapLocationImpl.stopLocation()
         context?.defaultSharedPreferences?.edit {
             putString("searchHistory", searchHistory.toJson())
         }
+        isClick = false
         super.onDismiss(dialog)
     }
-
-    private fun showSearchHistory(dialog: Dialog) {
-        dialog.apply {
-            searchHistory.apply {
-                val last = when {
-                    size == 0 -> 0
-                    size > 10 -> 9
-                    else -> size - 1
-                }
-                GlobalScope.launch(Dispatchers.Main) {
-                    chipGroupSearchHistory.isVisible = true
-                    chipGroupSearchHistory.removeAllViews()
-                    if (size > 0) {
-                        for (i in 0..last)
-                            chipGroupSearchHistory.addView(
-                                    Chip(context).apply {
-                                        var tempText = get(i).first
-                                        if (tempText.length > 8)
-                                            tempText = tempText.substring(0, 7) + "..."
-                                        text = tempText
-                                        setOnClickListener {
-                                            inputTextSearch.editableText.clear()
-                                            inputTextSearch.editableText.append(get(i).first)
-                                        }
+    private fun addSearchHistory() {
+        if (BuildConfig.DEBUG)
+            Log.e("onSearchKey",searchHistory.size.toString())
+        searchHistory = ArrayList(searchHistory.filter {
+            it.first != searchKey
+        }).apply {
+            if (searchKey.isEmpty().not())
+                add(0, Pair(searchKey, System.currentTimeMillis()))
+            if (size > 10)
+                removeAt(10)
+            dialog?.apply {
+                chipGroupSearchHistory.removeAllViews()
+                if (size > 0)
+                    for (i in 0 until size)
+                        chipGroupSearchHistory.addView(
+                                Chip(context).apply {
+                                    id = i
+                                    var tempText = get(i).first
+                                    if (tempText.length > 8)
+                                        tempText = tempText.substring(0, 7) + "..."
+                                    text = tempText
+                                    setOnClickListener {
+                                        inputSearchBar.editableText.clear()
+                                        inputSearchBar.editableText.append(get(it.id).first)
                                     }
-                            )
-//                        chipGroupSearchHistory.addView(
-//                                Chip(context).apply {
-//                                    text = "清空搜索历史"
-//                                    setOnClickListener {
-//
-//                                    }
-//                                }
-//                        )
-                        clearSearchHistory.setOnClickListener {
-                            searchHistory.clear()
-                            chipGroupSearchHistory.removeAllViews()
-                            searchHistoryLayout.isVisible = false
-                            chipGroupSearchHistory.isVisible = false
-                        }
-                        searchHistoryLayout.isVisible = true
-                    }
-                }
+                                    isCloseIconVisible = true
+                                    setOnCloseIconClickListener {
+                                        searchHistory.removeAt(it.id)
+                                        chipGroupSearchHistory.removeViewAt(it.id)
+                                        for (index in 0 until searchHistory.size)
+                                            chipGroupSearchHistory[index].id = index
+                                    }
+                                }
+                        )
             }
         }
     }
-
+//    private fun showSearchHistory(dialog: Dialog) {
+//        dialog.apply {
+//            searchHistory.apply {
+//                val last = when {
+//                    size == 0 -> 0
+//                    size > 10 -> 9
+//                    else -> size - 1
+//                }
+//                GlobalScope.launch(Dispatchers.Main) {
+//                    chipGroupSearchHistory.isVisible = true
+//                    chipGroupSearchHistory.removeAllViews()
+//                    if (size > 0) {
+//                        for (i in 0..last)
+//                            chipGroupSearchHistory.addView(
+//                                    Chip(context).apply {
+//                                        id = i
+//                                        var tempText = get(i).first
+//                                        if (tempText.length > 8)
+//                                            tempText = tempText.substring(0, 7) + "..."
+//                                        text = tempText
+//                                        setOnClickListener {
+//                                            inputSearchBar.editableText.clear()
+//                                            inputSearchBar.editableText.append(get(i).first)
+//                                        }
+//                                        isCloseIconVisible = true
+//                                        setOnCloseIconClickListener {
+//                                            searchHistory.removeAt(it.id)
+//                                            chipGroupSearchHistory.removeViewAt(it.id)
+//                                        }
+//                                    }
+//                            )
+//                        actionClearSearchHistory.setOnClickListener {
+//                            searchHistory.clear()
+//                            chipGroupSearchHistory.removeAllViews()
+//                            layoutSearchHistory.isVisible = false
+//                            chipGroupSearchHistory.isVisible = false
+//                        }
+//                        layoutSearchHistory.isVisible = true
+//                    }
+//                }
+//            }
+//        }
+//    }
+    private fun showSearchHistory(value: Boolean) {
+        dialog?.apply {
+            if (BuildConfig.DEBUG) {
+                Log.e("isShow",value.toString())
+                Log.e("historyNum",searchHistory.size.toString())
+                Log.e("num",chipGroupSearchHistory.childCount.toString())
+            }
+            if (searchHistory.size!= chipGroupSearchHistory.size && value)
+                addSearchHistory()
+            chipGroupSearchHistory?.isVisible = value
+            layoutSearchHistory?.isVisible = value
+        }
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RequestCode.OPEN_PROJECT && resultCode == ResultCode.OK) {
-            (searchResultListView.adapter as ProjectListAdapter).apply {
-                listProject.remove(listProject.find {
-                    it.projectId == this@SearchDialogFragment.projectId
-                })
-                notifyDataSetChanged()
-                (activity as MainActivity).reSearch()
+        dialog?.apply {
+            inputSearchBar?.clearFocus()
+            if (requestCode == RequestCode.OPEN_PROJECT && resultCode == ResultCode.OK) {
+                (listSearchResult.adapter as ProjectListAdapter).apply {
+                    listProject.remove(listProject.find {
+                        it.projectId == this@SearchDialogFragment.projectId
+                    })
+                    notifyDataSetChanged()
+                    (activity as MainActivity).reSearch()
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -316,7 +432,7 @@ class SearchDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog.window?.apply {
+        dialog?.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
     }

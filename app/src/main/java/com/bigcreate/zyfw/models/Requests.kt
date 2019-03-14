@@ -3,8 +3,6 @@ package com.bigcreate.zyfw.models
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import retrofit2.http.Multipart
 import java.io.File
 
 data class SimpleRequest(var token: String, var username: String)
@@ -32,7 +30,6 @@ data class CreateCommentRequest(
 )
 
 data class CommentListRequest(var token: String, var projectId: String, var pageNum: Int)
-data class ProjectUnFavoriteRequest(var projectId: Int, var username: String, var token: String)
 data class ProjectFavoriteRequest(var projectId: Int, var username: String, var token: String, var projectClassifyId: String)
 data class UpdateInfo(
 

@@ -1,7 +1,6 @@
 package com.bigcreate.zyfw.models
 
 import com.bigcreate.library.transDate
-import java.text.SimpleDateFormat
 
 data class SearchModel(
         val projectId: Int,
@@ -16,4 +15,4 @@ data class SearchModel(
         projectIssueTime = projectIssueTime.transDate("yyyy-MM-dd HH:mm:ss","yyyy.MM.dd")
     }
 }
-data class LoginModel(val username: String, var password: String, var token: String)
+data class LoginModel(var username: String, var password: String, var token: String)

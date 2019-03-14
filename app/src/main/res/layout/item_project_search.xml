@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:id="@+id/layoutProjectSearchItem"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/topicProjectSearchItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textAlignment="textStart"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/imageProjectSearchItem"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="主题" />
+
+    <TextView
+        android:id="@+id/contentProjectSearchItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:maxLines="2"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/imageProjectSearchItem"
+        app:layout_constraintStart_toStartOf="@+id/topicProjectSearchItem"
+        app:layout_constraintTop_toBottomOf="@+id/topicProjectSearchItem"/>
+
+    <TextView
+        android:id="@+id/addressProjectSearchItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/topicProjectSearchItem"
+        app:layout_constraintTop_toBottomOf="@+id/contentProjectSearchItem"
+        tools:text="联系人" />
+
+    <TextView
+        android:id="@+id/numbersProjectSearchItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="bottom"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/topicProjectSearchItem"
+        app:layout_constraintStart_toEndOf="@+id/topicProjectSearchItem"
+        tools:text="100" />
+
+    <ImageView
+        android:contentDescription="@string/projectImage"
+        android:id="@+id/imageProjectSearchItem"
+        android:layout_height="64dp"
+        android:layout_width="120dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,19 +6,15 @@
     android:layout_height="wrap_content">
     <com.google.android.material.appbar.AppBarLayout
         app:elevation="0dp"
-        android:id="@+id/appBarSearch"
+        android:background="#00000000"
+        android:id="@+id/appbarSearchDialog"
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <!--<com.google.android.material.appbar.CollapsingToolbarLayout-->
-            <!--app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
-            <!--app:layout_scrollInterpolator="@android:anim/decelerate_interpolator"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-    <include layout="@layout/appbar"
+    <include layout="@layout/layout_search_bar"
         app:layout_collapseMode="pin"/>
         <LinearLayout
-            android:id="@+id/searchHistoryLayout"
+            android:id="@+id/layoutSearchHistory"
             android:visibility="gone"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -31,13 +27,13 @@
             android:id="@+id/textSearchHistory"
             android:layout_width="wrap_content"
             android:textColor="?attr/colorAccent"
-            android:text="搜索历史"
+            android:text="@string/searchHistory"
             android:layout_height="wrap_content" />
             <TextView
-                android:id="@+id/clearSearchHistory"
+                android:id="@+id/actionClearSearchHistory"
                 android:layout_marginStart="8dp"
                 android:textSize="12sp"
-                android:text="清空"
+                android:text="@string/cleanAll"
                 android:layout_gravity="center_horizontal"
                 android:gravity="start|center"
                 android:layout_width="wrap_content"
@@ -59,12 +55,12 @@
             android:layout_gravity="center_horizontal"
             android:visibility="gone"
             android:layout_marginBottom="8dp"
-            android:id="@+id/progressBarSearch"
+            android:id="@+id/progressSearchDialog"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="没有搜索到相关内容"
+            android:text="@string/searchResultIsEmpty"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
@@ -72,7 +68,6 @@
             android:id="@+id/textSearchEmpty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <!--</com.google.android.material.appbar.CollapsingToolbarLayout>-->
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
@@ -80,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchResultListView"
+        android:id="@+id/listSearchResult"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

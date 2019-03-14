@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/testAvatar" android:title="测试头像"/>
-    <item android:id="@+id/testRecommend" android:title="测试推荐"/>
-    <item android:id="@+id/testDownloadAvatar" android:title="测试下载"/>
-    <item android:id="@+id/testRegister" android:title="测试注册"/>
-    <item android:id="@+id/testAuthLogin" android:title="测试验证"/>
+    <item android:id="@+id/testAvatar" android:title="@string/testAvatar"/>
+    <item android:id="@+id/testRecommend" android:title="@string/testRecommend"/>
+    <item android:id="@+id/testDownloadAvatar" android:title="@string/testDownload"/>
+    <item android:id="@+id/testRegister" android:title="@string/testRegister"/>
+    <item android:id="@+id/testAuthLogin" android:title="@string/testAuthLogin"/>
+    <item android:id="@+id/testDownloadUpdate" android:title="@string/testDownloadUpdate"/>
+    <item android:id="@+id/testChatUI" android:title="@string/testChatUI"/>
+    <item android:id="@+id/testFileProvider" android:title="@string/testOpenInstall"/>
 </menu>

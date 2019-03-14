@@ -1,6 +1,8 @@
 package com.bigcreate.zyfw.models
 
 data class Project(
+    val join: Boolean,
+    val joinedNumber: Int,
     val favorite: Boolean,
     val latitude: Double,
     val longitude: Double,

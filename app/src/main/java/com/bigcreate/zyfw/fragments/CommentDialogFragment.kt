@@ -22,28 +22,28 @@ import com.bigcreate.zyfw.callback.FillTextCallBack
 import com.bigcreate.zyfw.models.CreateCommentRequest
 import com.bigcreate.zyfw.mvp.project.CreateCommentImpl
 import com.google.gson.JsonObject
-import kotlinx.android.synthetic.main.comment_pop.*
+import kotlinx.android.synthetic.main.fragment_comment_dialog.*
 
 class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatcher, CreateCommentImpl.View {
     var fillTextCallBack: FillTextCallBack? = null
     var commentCallBack: CommentCallBack? = null
     private var createCommentImpl = CreateCommentImpl(this)
-    private lateinit var editext: EditText
+    private lateinit var editText: EditText
     lateinit var button: ImageView
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = Dialog(context!!, R.style.bottomDialog)
         dialog.run {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.comment_pop)
+            setContentView(R.layout.fragment_comment_dialog)
             setCanceledOnTouchOutside(true)
             window?.run {
                 attributes.gravity = Gravity.BOTTOM
                 attributes.width = WindowManager.LayoutParams.MATCH_PARENT
             }
-            button_comment.setOnClickListener(this@CommentDialogFragment)
-            editext = editText_comment
-            button = button_comment
-            editText_comment.addTextChangedListener(this@CommentDialogFragment)
+            sendCommentDialog.setOnClickListener(this@CommentDialogFragment)
+            editText = inputCommentDialog
+            button = sendCommentDialog
+            inputCommentDialog.addTextChangedListener(this@CommentDialogFragment)
             window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
         return dialog
@@ -51,38 +51,38 @@ class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatche
 
     override fun onHiddenChanged(hidden: Boolean) {
         if (hidden.not()) {
-            editext.text.clear()
-            editext.text.append(fillTextCallBack?.getTextContent())
+            editText.text.clear()
+            editText.text.append(fillTextCallBack?.getTextContent())
         }
         super.onHiddenChanged(hidden)
     }
 
     override fun onResume() {
-        editext.text.clear()
-        editext.text.append(fillTextCallBack?.getTextContent())
-        if (editext.text.toString().isEmpty()) {
+        editText.text.clear()
+        editText.text.append(fillTextCallBack?.getTextContent())
+        if (editText.text.toString().isEmpty()) {
             button.isEnabled = false
             button.setColorFilter(ContextCompat.getColor(context!!, R.color.color737373))
         } else {
             button.isEnabled = true
             button.setColorFilter(ContextCompat.getColor(context!!, R.color.colorAccent))
         }
-        editext.requestFocus()
+        editText.requestFocus()
         super.onResume()
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
-        fillTextCallBack?.setTextContent(editext.text.toString())
+    override fun onDismiss(dialog: DialogInterface) {
+        fillTextCallBack?.setTextContent(editText.text.toString())
         super.onDismiss(dialog)
     }
 
     override fun onClick(v: View?) {
         if (v != null) when (v.id) {
-            R.id.button_comment -> {
+            R.id.sendCommentDialog -> {
                 val projectId = fillTextCallBack!!.getProjectId()
                 Attributes.loginUserInfo?.run {
                     createCommentImpl.doRequest(CreateCommentRequest(
-                            comment = editext.text.toString(),
+                            comment = editText.text.toString(),
                             projectId = projectId,
                             token = token,
                             username = username
@@ -97,7 +97,7 @@ class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatche
     }
 
     override fun onCreateCommentSuccess(jsonObject: JsonObject) {
-        editext.text.clear()
+        editText.text.clear()
         context?.toast("评论成功")
         dismiss()
         commentCallBack?.commentSuccess()

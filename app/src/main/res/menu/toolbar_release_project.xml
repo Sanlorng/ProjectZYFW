@@ -3,13 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/releaseCreateProject"
-        android:icon="@drawable/ic_send_black_24dp"
-        android:title="发布"
-        android:iconTint="@color/colorAccent"
-        app:showAsAction="always"/>
+        android:icon="@drawable/ic_outline_send_24px"
+        android:title="@string/launch_project"
+        app:showAsAction="ifRoom"/>
     <item
         android:icon="@drawable/ic_done_black_24dp"
         android:id="@+id/releaseEditProjectDone"
-        android:title="完成"
-        app:showAsAction="always"/>
+        android:title="@string/done"
+        app:showAsAction="ifRoom"/>
 </menu>

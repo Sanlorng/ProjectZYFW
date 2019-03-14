@@ -2,6 +2,8 @@ package com.bigcreate.zyfw.mvp.user
 
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.base.code
+import com.bigcreate.zyfw.base.newTokenFromData
 import com.bigcreate.zyfw.models.FileUploadRequest
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
 import com.bigcreate.zyfw.models.UpdateInfoRequest
@@ -13,16 +15,14 @@ import kotlinx.coroutines.Job
 import java.io.File
 
 class UserInfoImpl(mView: View?) : BaseMultiPresenterImpl<UserInfoImpl.View>(mView) {
-    private var initJob: Job? = null
-    private var updateJob: Job? = null
-    private var avatarJob: Job? = null
     private val initInter = object : PresenterInter<InitPersonInfoRequest, JsonObject> {
         override fun afterRequestSuccess(data: JsonObject?) {
             mView?.run {
                 data?.apply {
-                    Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
-                    when (get("code").asInt) {
-                        200 -> onInitUserInfoSuccess(this@apply)
+                    when (code) {
+                        200 -> onInitUserInfoSuccess(this@apply).apply {
+                            Attributes.token = newTokenFromData
+                        }
                         else -> onInitUserInfoFailed(this@apply)
                     }
                 }
@@ -38,9 +38,10 @@ class UserInfoImpl(mView: View?) : BaseMultiPresenterImpl<UserInfoImpl.View>(mVi
         override fun afterRequestSuccess(data: JsonObject?) {
             mView?.run {
                 data?.apply {
-                    Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
-                    when (get("code").asInt) {
-                        200 -> onUpdateUserInfoSuccess(this@apply)
+                    when (code) {
+                        200 -> onUpdateUserInfoSuccess(this@apply).apply {
+                            Attributes.token = newTokenFromData
+                        }
                         else -> onUpdateUserInfoFailed(this@apply)
                     }
                 }
@@ -56,9 +57,9 @@ class UserInfoImpl(mView: View?) : BaseMultiPresenterImpl<UserInfoImpl.View>(mVi
         override fun afterRequestSuccess(data: JsonObject?) {
             mView?.run {
                 data?.apply {
-                    when (get("code").asInt) {
+                    when (code) {
                         200 -> onSetupAvatarSuccess().apply {
-                            Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
+                            Attributes.token = newTokenFromData
                         }
                         else -> onSetupAvatarFailed()
                     }

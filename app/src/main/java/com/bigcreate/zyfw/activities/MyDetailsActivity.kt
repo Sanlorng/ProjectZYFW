@@ -2,24 +2,19 @@ package com.bigcreate.zyfw.activities
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.bigcreate.library.startActivity
-import com.bigcreate.library.transucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.models.UserInfo
 import com.bigcreate.zyfw.mvp.user.GetUserInfoImpl
 import kotlinx.android.synthetic.main.activity_my_details.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MyDetailsActivity : AuthLoginActivity(),GetUserInfoImpl.View {
     private val getUserInfoImpl = GetUserInfoImpl(this)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun setContentView() {
         setContentView(R.layout.activity_my_details)
+    }
+
+    override fun afterCheckLoginSuccess() {
         setSupportActionBar(toolbarMyDetails)
         toolbarMyDetails.setNavigationOnClickListener {
             finish()
@@ -29,7 +24,6 @@ class MyDetailsActivity : AuthLoginActivity(),GetUserInfoImpl.View {
             setDisplayHomeAsUpEnabled(true)
         }
     }
-
     override fun getViewContext(): Context {
         return this
     }
@@ -43,7 +37,7 @@ class MyDetailsActivity : AuthLoginActivity(),GetUserInfoImpl.View {
     }
 
     override fun onUserInfoIsEmpty() {
-        startActivityForResult(Intent(this@MyDetailsActivity, SignUpActivity::class.java).apply {
+        startActivityForResult(Intent(this@MyDetailsActivity, RegisterActivity::class.java).apply {
                 type = "setupInfo"
         }, RequestCode.SETUP_USER_INFO)
 

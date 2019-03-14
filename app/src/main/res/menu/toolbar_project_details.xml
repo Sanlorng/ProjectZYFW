@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:title="编辑"
-        android:visible="false"
-        android:id="@+id/projectDetailsAction"
-        android:icon="@drawable/ic_mode_edit_black_24dp"
-        app:showAsAction="always"/>
-    <item android:title="收藏"
+    <item android:title="@string/favorite"
         android:id="@+id/projectDetailsFavorite"
         android:icon="@drawable/ic_star_border_black_24dp"
         android:checkable="true"
         android:checked="false"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
+    <item android:title="@string/edit"
+        android:visible="false"
+        android:id="@+id/projectDetailsAction"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        app:showAsAction="ifRoom"/>
 </menu>

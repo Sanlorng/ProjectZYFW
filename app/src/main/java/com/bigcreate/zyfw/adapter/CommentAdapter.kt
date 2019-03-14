@@ -22,9 +22,9 @@ class CommentAdapter(private val CommentList: List<Comment>) : RecyclerView.Adap
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = CommentList[position]
         item.run {
-            holder.itemView.findViewById<TextView>(R.id.textView_nick_comment).text = userNick
-            holder.itemView.findViewById<TextView>(R.id.textView_time_comment).text = commentTime
-            holder.itemView.findViewById<TextView>(R.id.textView_content_comment).text = comment
+            holder.itemView.findViewById<TextView>(R.id.textNickCommentItem).text = userNick
+            holder.itemView.findViewById<TextView>(R.id.textTimeCommentItem).text = commentTime
+            holder.itemView.findViewById<TextView>(R.id.textContentCommentItem).text = comment
         }
     }
 

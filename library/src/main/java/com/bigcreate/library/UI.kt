@@ -2,20 +2,28 @@ package com.bigcreate.library
 
 import android.annotation.TargetApi
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
+import android.util.TypedValue
 import android.view.*
 import android.widget.EditText
 import android.widget.Toast
-import androidx.annotation.ColorInt
 import androidx.annotation.ColorLong
 import androidx.annotation.ColorRes
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.DrawableCompat
+import java.io.File
 import java.lang.Exception
 
 /**
@@ -63,10 +71,10 @@ fun Window.fitSystemLayout(){
     this.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
 }
-fun Window.transucentSystemUI(){
-    this.transucentSystemUI(false)
+fun Window.translucentSystemUI(){
+    this.translucentSystemUI(false)
 }
-fun Window.transucentSystemUI(light: Boolean){
+fun Window.translucentSystemUI(light: Boolean){
     val enable = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("status_bar_mask",false)
     this.statusBarColor = if (enable)
         context.getColor(R.color.statusbarColor)
@@ -104,8 +112,10 @@ fun Window.setFullTruncentStatusBar(){
 fun Intent.startBy(context:Context?){
     context?.startActivity(this)
 }
-fun Context.startActivity(cls:Class<*>){
-    startActivity(Intent(this,cls))
+fun Context.startActivity(cls:Class<*>):Intent{
+    val intent = Intent(this,cls)
+    startActivity(intent)
+    return intent
 }
 
 fun Window.openStatusBarMask(enable:Boolean){
@@ -122,7 +132,7 @@ fun Window.openStatusBarMask(enable:Boolean){
     }
 }
 
-fun Window.defaultStatusBarMask(value: Boolean){
+fun Window.defaultStatusBarMask(){
     PreferenceManager.getDefaultSharedPreferences(context).getBoolean("status_bar_mask",true)
 }
 fun Window.setStatusBarMask(value: Boolean){
@@ -132,22 +142,33 @@ fun Window.setStatusBarMask(value: Boolean){
         context.getColor(R.color.zeroColor)
 }
 fun Context.dialog(title:String, content:String,posButton:String,posListener:DialogInterface.OnClickListener){
-    val dialog = AlertDialog.Builder(this)
-    dialog.setTitle(title)
-    dialog.setMessage(content)
-    dialog.setCancelable(true)
-    dialog.setPositiveButton(posButton,posListener)
-    dialog.show()
+    androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(content)
+            .setCancelable(true)
+            .setPositiveButton(posButton,posListener)
+            .create().apply {
+                setDefaultStyle(TypedValue().run {
+                    theme.resolveAttribute(R.attr.colorAccent,this,true)
+                    data
+                })
+            }.show()
 }
 
 fun Context.dialog(title:String, content:String,posButton:String,posListener:DialogInterface.OnClickListener,negButton:String, negListener:DialogInterface.OnClickListener){
-    val dialog = AlertDialog.Builder(this)
-    dialog.setTitle(title)
-    dialog.setMessage(content)
-    dialog.setCancelable(true)
-    dialog.setPositiveButton(posButton,posListener)
-    dialog.setNegativeButton(negButton,negListener)
-    dialog.show()
+
+    androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(content)
+            .setCancelable(true)
+            .setPositiveButton(posButton,posListener)
+            .setNegativeButton(negButton,negListener)
+            .create().apply {
+                setDefaultStyle(TypedValue().run {
+                    theme.resolveAttribute(R.attr.colorAccent,this,true)
+                    data
+                })
+            }.show()
 }
 
 fun String.isEmpty():Boolean{
@@ -181,12 +202,41 @@ get() {
     return visibility == View.VISIBLE
 }
 
-fun Context.notification(){
-
-}
 
 fun MenuItem.setIconTint(@ColorLong id: Int){
     icon = icon.apply {
         DrawableCompat.setTint(this, id)
     }
 }
+
+fun androidx.appcompat.app.AlertDialog.setDefaultStyle(color:Int){
+    val array = arrayOf(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE,
+            androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL,
+            androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+    array.forEach {
+        getButton(it)?.apply {
+            background = ColorDrawable(Color.parseColor("#00000000"))
+            setTextColor(color)
+        }
+    }
+}
+
+fun Context.startInstallApp(file: File) {
+    Intent(Intent.ACTION_VIEW).apply {
+        if (BuildConfig.DEBUG)
+            Log.e("startInstallApp","true")
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val apkUri = FileProvider.getUriForFile(this@startInstallApp, packageName+ ".file.provider",file)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            setDataAndType(apkUri,"application/vnd.android.package-archive")
+            Log.e("uri",apkUri.path)
+        } else {
+            setDataAndType(Uri.fromFile(file),"application/vnd.android.package-archive")
+        }
+        if (BuildConfig.DEBUG)
+            Log.e("startActivity","true")
+        startActivity(this)
+    }
+}
+

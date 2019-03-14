@@ -2,8 +2,7 @@ package com.bigcreate.zyfw.mvp.project
 
 import com.bigcreate.library.fromJson
 import com.bigcreate.library.toJson
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.models.SearchRequest
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
@@ -16,10 +15,10 @@ class SearchImpl(mView: View?) : BasePresenterImpl<SearchRequest, JsonObject, Se
     override fun afterRequestSuccess(data: JsonObject?) {
         mView?.run {
             data?.apply {
-                Attributes.loginUserInfo!!.token = get("data").asJsonObject.get("newToken").asString
-                when (get("code").asInt) {
+                when (code) {
                     200 -> {
-                        onSearchFinished(get("data").asJsonObject.get("content").asJsonObject.get("list").toJson().fromJson<ArrayList<SearchModel>>())
+                        Attributes.token = jsonData.newToken
+                        onSearchFinished(jsonContentFromData.get("list").toJson().fromJson<ArrayList<SearchModel>>())
                     }
                     else -> {
                         onSearchFailed(this@apply)

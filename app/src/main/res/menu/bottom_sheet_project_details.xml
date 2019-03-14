@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/addVideoProjectDetails"
+        android:icon="@drawable/ic_outline_video_call_24px"
+        android:title="@string/addVideo"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/addPhotoProjectDetails"
+        android:icon="@drawable/ic_outline_add_photo_alternate_24px"
+        app:showAsAction="ifRoom"
+        android:title="@string/addImage"/>
+    <item
+        android:id="@+id/editProjectDetails"
+        android:icon="@drawable/ic_outline_edit_24px"
+        android:title="@string/editProject"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/deleteProjectDetails"
+        android:icon="@drawable/ic_outline_delete_outline_24px"
+        android:title="@string/deleteProject"
+        app:showAsAction="ifRoom"/>
+</menu>

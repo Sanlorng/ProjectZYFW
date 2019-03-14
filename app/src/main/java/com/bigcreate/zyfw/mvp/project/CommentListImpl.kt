@@ -1,9 +1,6 @@
 package com.bigcreate.zyfw.mvp.project
 
-import com.bigcreate.library.fromJson
-import com.bigcreate.library.toJson
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.Comment
 import com.bigcreate.zyfw.models.CommentListRequest
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
@@ -15,11 +12,11 @@ class CommentListImpl(mView: View?) :
     override fun afterRequestSuccess(data: JsonObject?) {
         mView?.run {
             data?.apply {
-                val content = get("data").asJsonObject
-                when (get("code").asInt) {
+                val content = jsonData
+                when (code) {
                     200 -> {
-                        Attributes.loginUserInfo!!.token = content.get("newToken").asString
-                        onGetCommentListSuccess(content.get("content").asJsonObject.get("list").asJsonArray.toJson().fromJson<List<Comment>>())
+                        Attributes.token = content.newToken
+                        onGetCommentListSuccess(content.getAsObject("list"))
                     }
                     else -> onGetCommentListFailed(this@apply)
                 }

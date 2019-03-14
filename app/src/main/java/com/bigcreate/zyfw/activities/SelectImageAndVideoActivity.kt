@@ -3,15 +3,12 @@ package com.bigcreate.zyfw.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bigcreate.library.getPath
 import com.bigcreate.library.setIconTint
 import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
@@ -32,7 +29,7 @@ import kotlinx.android.synthetic.main.activity_select_image_and_video.*
 import java.io.File
 
 class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.View {
-    var action = SelectListAdapter.Action("")
+    private var action = SelectListAdapter.Action("")
     private val list = ArrayList<SelectListAdapter.Model>().apply {
         add(action)
     }
@@ -53,11 +50,13 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
                     .into(img)
         }
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun setContentView() {
         setContentView(R.layout.activity_select_image_and_video)
+    }
+    override fun afterCheckLoginSuccess() {
         dialog = androidx.appcompat.app.AlertDialog.Builder(this@SelectImageAndVideoActivity)
-                .setView(R.layout.process_wait)
+                .setView(R.layout.layout_process_upload)
                 .setCancelable(false)
                 .create()
         setSupportActionBar(toolbarSelect)
@@ -70,27 +69,21 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
         }
         listSelectItem.layoutManager = GridLayoutManager(this,5)
         BoxingMediaLoader.getInstance().init(boxImpl)
-        imageConfig.needCamera(R.drawable.ic_add_a_photo_black_24dp)
+        imageConfig
         listSelectItem.adapter = SelectListAdapter(list).apply {
             onItemClickListener = object : SelectListAdapter.OnItemClickListener {
                 override fun onItemClick() {
                     if (intent.type == "image")
-//                        startActivityForResult(Intent(Intent.ACTION_GET_CONTENT).apply {
-//                            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*")
-//                        },RequestCode.SELECT_IMAGE)
-                    Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
-                            .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_IMAGE)
+                        Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
+                                .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_IMAGE)
                     else
-//                        startActivityForResult(Intent(Intent.ACTION_GET_CONTENT).apply {
-//                            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"video/*")
-//                        },RequestCode.SELECT_VIDEO)
                         Boxing.of(videoConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
                                 .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_VIDEO)
                 }
             }
         }
+        listSelectItem.itemAnimator = DefaultItemAnimator()
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Boxing.getResult(data)?.apply {
             when {
@@ -130,7 +123,6 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
                     }
                     R.id.uploadSelectedItem -> {
                         intent.getStringExtra("projectId").apply {
-                            Attributes.loginUserInfo?.apply {
                                 if (intent.type == "image")
                                 uploadProjectMediaImpl.doUploadImage(
                                         FilesUploadRequest(list.run {
@@ -152,7 +144,6 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
                                                 listFile
                                             },token,username,this@run))
                             }
-                        }
                     }
                 }
             }

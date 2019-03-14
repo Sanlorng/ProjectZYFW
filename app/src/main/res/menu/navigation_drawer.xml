@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/loginItemsNavigation">
+        <item android:id="@+id/accountSettingsNavigation"
+            android:icon="@drawable/ic_person_outline_black_24dp"
+            android:title="@string/account_settings"/>
+        <item android:title="@string/launch_project"
+            android:id="@+id/startReleaseProjectNavigation"
+            android:icon="@drawable/ic_add_black_24dp" />
+        <item android:title="@string/favoriteProject"
+            android:id="@+id/userFavoriteNavigation"
+            android:icon="@drawable/ic_star_border_black_24dp" />
+        <item android:title="@string/joinedProject"
+            android:id="@+id/userJoinedNavigation"
+            android:icon="@drawable/ic_favorite_border_black_24dp" />
+    </group>
+    <!--<item android:id="@+id/loginItemsNavigation">-->
+        <!--<menu>-->
 
-    <item android:title="@string/launch_project"
-        android:id="@+id/launch_project_menu"
-        android:icon="@drawable/ic_add_black_24dp" />
-    <item android:id="@+id/account_setting_menu"
-        android:icon="@drawable/ic_person_black_24dp"
-        android:title="@string/account_settings"/>
+        <!--</menu>-->
+    <!--</item>-->
     <item android:title="@string/app" android:visible="true">
     <menu>
         <item android:title="@string/settings"
             android:id="@+id/setting_menu"
-            android:icon="@drawable/ic_settings_black_24dp"/>
-        <item android:title="接口测试"
+            android:icon="@drawable/ic_outline_settings_24px"/>
+        <item android:title="@string/interfaceTest"
             android:id="@+id/testInterface"
-            android:icon="@drawable/ic_build_black_24dp"/>
+            android:icon="@drawable/ic_outline_build_24px"/>
     </menu>
     </item>
 </menu>
