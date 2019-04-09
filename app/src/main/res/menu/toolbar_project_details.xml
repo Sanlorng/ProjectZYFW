@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:title="加入项目"
+        android:id="@+id/projectDetailsJoin"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        app:showAsAction="always"/>
     <item android:title="@string/favorite"
         android:id="@+id/projectDetailsFavorite"
         android:icon="@drawable/ic_star_border_black_24dp"
         android:checkable="true"
         android:checked="false"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
+    <!--<item android:title="@string/comment"-->
+        <!--android:id="@+id/projectDetailsComment"-->
+        <!--android:icon="@drawable/ic_outline_comment_24px"-->
+        <!--app:showAsAction="ifRoom"/>-->
+    <item android:title="群聊"
+        android:id="@+id/projectDetailsGroupChat"
+        android:icon="@drawable/ic_outline_group_24px"
+        app:showAsAction="always"/>
     <item android:title="@string/edit"
         android:visible="false"
         android:id="@+id/projectDetailsAction"
         android:icon="@drawable/ic_more_vert_black_24dp"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 </menu>

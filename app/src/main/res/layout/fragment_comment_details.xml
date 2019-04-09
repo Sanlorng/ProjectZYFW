@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/swipeLayoutCommentDetails"
-        app:layout_constraintBottom_toTopOf="@id/cardCommentDetails"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
@@ -23,34 +23,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardCommentDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardElevation="1dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" >
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:id="@+id/buttonShowCommentDialog"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:gravity="start|center"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:hint="@string/writeSomething"
-        android:clickable="false"
-        android:textColor="#919191"
-        app:cornerRadius="0dp"
-        app:icon="@drawable/ic_outline_comment_24px"
-        app:iconPadding="16dp"
-        app:iconTint="#919191"
-        app:rippleColor="#00000000"/>
-    </com.google.android.material.card.MaterialCardView>
+    <!--<com.google.android.material.card.MaterialCardView-->
+        <!--android:id="@+id/cardCommentDetails"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:cardElevation="1dp"-->
+        <!--android:clickable="true"-->
+        <!--android:focusable="true"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent" >-->
+    <!--<com.google.android.material.button.MaterialButton-->
+        <!--style="@style/Widget.MaterialComponents.Button.TextButton"-->
+        <!--android:id="@+id/buttonShowCommentDialog"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:background="?attr/selectableItemBackgroundBorderless"-->
+        <!--android:gravity="start|center"-->
+        <!--android:paddingStart="16dp"-->
+        <!--android:paddingEnd="16dp"-->
+        <!--android:hint="@string/writeSomething"-->
+        <!--android:clickable="false"-->
+        <!--android:textColor="#919191"-->
+        <!--app:cornerRadius="0dp"-->
+        <!--app:icon="@drawable/ic_outline_comment_24px"-->
+        <!--app:iconPadding="16dp"-->
+        <!--app:iconTint="#919191"-->
+        <!--app:rippleColor="#00000000"/>-->
+    <!--</com.google.android.material.card.MaterialCardView>-->
 
     <include
         layout="@layout/layout_loading"

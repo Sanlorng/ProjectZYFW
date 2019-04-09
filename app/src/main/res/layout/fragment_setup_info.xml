@@ -233,7 +233,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/quickLocale"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Chip"
-                        app:chipIcon="@drawable/ic_place_black_24dp"
+                        app:chipIcon="@drawable/ic_outline_place_24px"
                         app:layout_constraintStart_toStartOf="@+id/layoutAddressSetupInfo"
                         app:layout_constraintTop_toBottomOf="@+id/layoutAddressSetupInfo" />
 
@@ -249,7 +249,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_account_circle_black_24dp" />
+                        app:srcCompat="@drawable/ic_outline_account_circle_24px" />
 
                     <TextView
                         android:layout_marginTop="8dp"

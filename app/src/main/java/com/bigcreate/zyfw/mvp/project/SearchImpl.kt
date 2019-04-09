@@ -5,6 +5,7 @@ import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.models.SearchRequest
+import com.bigcreate.zyfw.models.SearchResponse
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 import com.google.gson.JsonObject
@@ -18,7 +19,7 @@ class SearchImpl(mView: View?) : BasePresenterImpl<SearchRequest, JsonObject, Se
                 when (code) {
                     200 -> {
                         Attributes.token = jsonData.newToken
-                        onSearchFinished(jsonContentFromData.get("list").toJson().fromJson<ArrayList<SearchModel>>())
+                        onSearchFinished(jsonData.getAsObject("content"))
                     }
                     else -> {
                         onSearchFailed(this@apply)
@@ -29,7 +30,7 @@ class SearchImpl(mView: View?) : BasePresenterImpl<SearchRequest, JsonObject, Se
     }
 
     interface View : BaseNetworkView {
-        fun onSearchFinished(searchResult: ArrayList<SearchModel>)
+        fun onSearchFinished(searchResponse: SearchResponse)
         fun onSearchFailed(response: JsonObject)
     }
 }

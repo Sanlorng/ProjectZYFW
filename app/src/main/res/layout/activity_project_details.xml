@@ -37,7 +37,7 @@
                 <TextView
                     android:id="@+id/textProjectTitle"
                     android:maxLines="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorAccent"
                     android:textSize="20sp" />
@@ -60,8 +60,46 @@
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.viewpager.widget.ViewPager
-        app:layout_behavior="com.bigcreate.zyfw.callback.PinnedBottomBehavior"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:id="@+id/viewPagerDetails"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+    </androidx.viewpager.widget.ViewPager>
+
+    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
+        <!--android:src="@drawable/ic_favorite_border_black_24dp"-->
+        <!--android:id="@+id/buttonJoinProjectDetails"-->
+        <!--app:backgroundTint="@color/colorPrimary"-->
+        <!--android:foregroundTint="@color/colorPrimary"-->
+        <!--app:layout_anchor="@id/bottomAppBarDetails"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+    <com.google.android.material.bottomappbar.BottomAppBar
+        app:contentInsetStart="0dp"
+        app:fabAlignmentMode="center"
+        app:hideOnScroll="true"
+        android:id="@+id/bottomAppBarDetails"
+        style="@style/Widget.MaterialComponents.BottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" >
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:id="@+id/buttonShowCommentDialog"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="start|center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:hint="@string/writeSomething"
+            android:clickable="false"
+            android:textColor="#919191"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/ic_outline_comment_24px"
+            app:iconPadding="16dp"
+            app:iconTint="#919191"
+            app:rippleColor="#00000000"/>
+    </com.google.android.material.bottomappbar.BottomAppBar>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

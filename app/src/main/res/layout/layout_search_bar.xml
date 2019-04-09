@@ -35,11 +35,16 @@
             android:imeOptions="actionSearch"
             android:background="#00ffffff"/>
         <TextView
+            android:drawableStart="@drawable/ic_search_black_24dp"
+            android:drawablePadding="16dp"
             android:text="@string/search"
+            android:drawableTint="@android:color/secondary_text_dark"
             android:id="@+id/hintSearchBar"
             android:visibility="gone"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:textSize="16sp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:textColor="@android:color/secondary_text_dark"
             android:gravity="center_vertical"
             android:layout_width="match_parent"

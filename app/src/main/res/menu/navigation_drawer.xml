@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:id="@+id/loginItemsNavigation">
-        <item android:id="@+id/accountSettingsNavigation"
-            android:icon="@drawable/ic_person_outline_black_24dp"
-            android:title="@string/account_settings"/>
-        <item android:title="@string/launch_project"
-            android:id="@+id/startReleaseProjectNavigation"
-            android:icon="@drawable/ic_add_black_24dp" />
+        <!--<item android:id="@+id/accountSettingsNavigation"-->
+            <!--android:icon="@drawable/ic_person_outline_black_24dp"-->
+            <!--android:title="@string/account_settings"/>-->
+        <!--<item android:title="@string/launch_project"-->
+            <!--android:id="@+id/startReleaseProjectNavigation"-->
+            <!--android:icon="@drawable/ic_add_black_24dp" />-->
         <item android:title="@string/favoriteProject"
             android:id="@+id/userFavoriteNavigation"
             android:icon="@drawable/ic_star_border_black_24dp" />

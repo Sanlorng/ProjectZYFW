@@ -3,6 +3,7 @@ package com.bigcreate.zyfw.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
@@ -10,10 +11,12 @@ import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
 import com.bigcreate.zyfw.mvp.user.LoginImpl
+import com.bigcreate.zyfw.service.CheckUpdateService
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_launch.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class LaunchActivity : AppCompatActivity(), LoginImpl.View {
     private val presenter = LoginImpl(this)
@@ -21,6 +24,12 @@ class LaunchActivity : AppCompatActivity(), LoginImpl.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
         window.translucentSystemUI(true)
+        try {
+            Log.e("startService","true")
+            startService(Intent(this,CheckUpdateService::class.java))
+        }catch (e:Exception) {
+            e.printStackTrace()
+        }
         when {
             hasLoginInfo -> {
                 GlobalScope.launch {

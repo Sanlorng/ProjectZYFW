@@ -42,14 +42,14 @@ class TestInterfaceActivity : AppCompatActivity() {
                 R.id.testRecommend -> {
                     GlobalScope.launch {
                         Attributes.loginUserInfo?.run {
-                            RemoteService.getRecommendData(SimpleRequest(token, username)).execute()
+                            RemoteService.getRecommendData(SimpleRequest(token, userId)).execute()
                         }
                     }
                 }
                 R.id.testDownloadAvatar -> {
                     GlobalScope.launch {
                         Attributes.loginUserInfo?.run {
-                            RemoteService.instance.getUserAvatar(SimpleRequest(token, username)).execute().body()?.byteStream()?.apply {
+                            RemoteService.instance.getUserAvatar(SimpleRequest(token, userId)).execute().body()?.byteStream()?.apply {
                                 val file = File(applicationContext.externalCacheDir!!.absolutePath + "me_avatar.jpg")
                                 val buffer = ByteArray(1024)
                                 val out = file.outputStream()

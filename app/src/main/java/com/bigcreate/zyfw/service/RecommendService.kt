@@ -37,7 +37,7 @@ class RecommendService : JobService(),RecommendImpl.View {
 
         override fun onLoginSuccess(loginInfo: LoginModel) {
             recommendImpl.mView = this@RecommendService
-            recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.username))
+            recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.userId))
         }
     })
     override fun onStartJob(params: JobParameters?): Boolean {
@@ -54,7 +54,7 @@ class RecommendService : JobService(),RecommendImpl.View {
                     ))
                 else {
                     recommendImpl.mView = this
-                    recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.username))
+                    recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.userId))
                 }
 
             }
@@ -79,7 +79,7 @@ class RecommendService : JobService(),RecommendImpl.View {
                         .setContentText(projectTopic)
                         .setContentTitle("推荐项目")
                         .setStyle(NotificationCompat.BigTextStyle()
-                                .bigText("由Job发出的通知"))
+                                .bigText(projectTopic))
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setContentIntent(
                                 PendingIntent.getActivity(this@RecommendService,

@@ -35,8 +35,8 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
     }
     private val uploadProjectMediaImpl = UploadProjectMediaImpl(this)
     private lateinit var dialog:AlertDialog
-    val imageConfig = BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
-    val videoConfig = BoxingConfig(BoxingConfig.Mode.VIDEO)
+    lateinit var imageConfig:BoxingConfig
+    lateinit var videoConfig:BoxingConfig
     private val boxImpl = object : IBoxingMediaLoader {
         override fun displayRaw(img: ImageView, absPath: String, width: Int, height: Int, callback: IBoxingCallback?) {
             Glide.with(this@SelectImageAndVideoActivity)
@@ -69,7 +69,8 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
         }
         listSelectItem.layoutManager = GridLayoutManager(this,5)
         BoxingMediaLoader.getInstance().init(boxImpl)
-        imageConfig
+        imageConfig = BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
+        videoConfig = BoxingConfig(BoxingConfig.Mode.VIDEO)
         listSelectItem.adapter = SelectListAdapter(list).apply {
             onItemClickListener = object : SelectListAdapter.OnItemClickListener {
                 override fun onItemClick() {

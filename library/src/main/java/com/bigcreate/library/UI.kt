@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.fragment.app.Fragment
 import java.io.File
 import java.lang.Exception
 
@@ -35,6 +36,8 @@ fun Window.statusBarTransucent(){
 }
 
 fun Window.statusBarLight(light: Boolean){
+    if (BuildConfig.DEBUG)
+        Log.e("light",light.toString())
     var ui = this.decorView.systemUiVisibility
     ui = if (light)
         ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -238,5 +241,13 @@ fun Context.startInstallApp(file: File) {
             Log.e("startActivity","true")
         startActivity(this)
     }
+}
+
+fun Fragment.toast(str: String) {
+    context?.toast(str)
+}
+
+fun Fragment.startActivity(clz: Class<*>) {
+    context?.startActivity(clz)
 }
 

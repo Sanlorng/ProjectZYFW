@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:text="接口"
+    android:background="?attr/selectableItemBackground"
+    android:drawablePadding="16dp"
+    android:padding="16dp"
+    android:gravity="center"
+    android:singleLine="true"
+    tools:drawableTop="@drawable/ic_favorite_border_black_24dp">
+
+</TextView>

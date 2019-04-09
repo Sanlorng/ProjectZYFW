@@ -5,10 +5,10 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
-data class SimpleRequest(var token: String, var username: String)
+data class SimpleRequest(var token: String, var userId: Int)
 data class LoginRequest(var username: String, var password: String)
 data class IsSetupInfoRequest(var token: String, var username: String)
-data class RegisterRequest(var username: String, var password: String, var code: String)
+data class RegisterRequest(var username: String, var password: String, var idNumber: String, var code: String)
 data class InitPersonInfoRequest(var username: String, var userNick: String, var userSexCode: Int,
                                  var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String)
 
@@ -30,7 +30,7 @@ data class CreateCommentRequest(
 )
 
 data class CommentListRequest(var token: String, var projectId: String, var pageNum: Int)
-data class ProjectFavoriteRequest(var projectId: Int, var username: String, var token: String, var projectClassifyId: String)
+data class ProjectFavoriteRequest(var projectId: Int, var projectUserId: Int, var token: String, var projectClassifyId: String)
 data class UpdateInfo(
 
         var updateId: Int? = 1,
@@ -52,9 +52,7 @@ data class UpdateInfo(
         var label: String = ""
 )
 
-data class RestResult<T>(val message: String, val code: Int) {
-    val data: T? = null
-}
+data class RestResult<T>(val message: String, val code: Int,val data: T)
 
 class FileUploadRequest(file: File, token: String, username: String) {
     var part: MultipartBody.Part

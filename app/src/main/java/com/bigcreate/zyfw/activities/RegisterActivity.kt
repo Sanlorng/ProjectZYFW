@@ -18,7 +18,7 @@ class RegisterActivity : AppCompatActivity() {
         val type = intent.type
         fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction?.run {
-            if (type != null && type == "setupInfo")
+            if (type != null &&( type == "setupInfo")||type=="updateInfo")
                 replace(R.id.containerRegister, SetupInfoFragment())
             else
                 replace(R.id.containerRegister, SignUpFragment())

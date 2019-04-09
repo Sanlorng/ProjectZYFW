@@ -80,15 +80,18 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        activity?.intent?.putExtra("type", "setupInfo")
-        val isSetup = activity?.intent?.getStringExtra("type")
+        val isSetup = activity?.intent?.type
+//        val isEditMode = activity?.intent?.getBooleanExtra("isEditMode",false).valueOrNotNull
         if (isSetup == null || isSetup != "setupInfo") {
             appCompactActivity?.run {
                 setSupportActionBar(toolbarSetupInfo)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
             toolbarSetupInfo.setNavigationOnClickListener {
-                fragmentManager!!.popBackStack()
+                if (isSetup == null)
+                    fragmentManager!!.popBackStack()
+                else
+                    activity?.finish()
             }
         }
         toolbarSetupInfo.requestApplyInsets()
@@ -102,14 +105,11 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
                     .start(this,RequestCode.SELECT_IMAGE)
         }
         layoutPhoneSetupInfo.editText?.append(Attributes.username)
-        chipGroupGenderTypeSetupInfo.setOnCheckedChangeListener { chipGroup, i ->
+        chipGroupGenderTypeSetupInfo.setOnCheckedChangeListener { _, i ->
             Log.e("check", chipGroupGenderTypeSetupInfo.checkedChipId.toString())
             Log.e("i", i.toString())
         }
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
-            layoutPhoneSetupInfo.autofillHints?.set(0, value = Attributes.loginUserInfo!!.username)
-        else
-            layoutPhoneSetupInfo.editText?.append(Attributes.username)
+        layoutPhoneSetupInfo.editText?.append(Attributes.username)
         buttonSubmitSetupInfo.setOnClickListener {
             Log.d("click", "click ok")
             if (layoutNickSetupInfo.editText!!.isEmpty() || layoutAddressSetupInfo.editText!!.isEmpty() ||

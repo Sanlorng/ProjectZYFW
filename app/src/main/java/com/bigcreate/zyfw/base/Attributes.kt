@@ -9,6 +9,16 @@ import com.bigcreate.zyfw.models.UserInfo
 import com.google.gson.JsonObject
 
 object Attributes {
+    private val listeners = HashMap<String,((newCity: String) -> Unit)>()
+    var AppCity = "桂林市"
+    set(value) {
+        if (field != value) {
+            field = value
+            listeners.forEach {
+                it.value.invoke(value)
+            }
+        }
+    }
     var loginUserInfo: LoginModel? = null
     var token
     get() = loginUserInfo!!.token
@@ -23,8 +33,24 @@ object Attributes {
     set(value) {
         loginUserInfo!!.password = value
     }
+    var userId
+        get() = loginUserInfo!!.userId
+        set(value) {
+            loginUserInfo!!.userId = value
+        }
     var userInfo: UserInfo? = null
-    var userImg: String? = null
+    var userImg
+        get() = userInfo!!.userHeadPictureLink
+        set(value) {
+            userInfo!!.userHeadPictureLink = value
+        }
+    fun addCityListener(tag: String, value: ((newCity: String) -> Unit)) {
+        listeners[tag] = value
+        value.invoke(AppCity)
+    }
+    fun removeCityListener(tag: String) {
+        listeners.remove(tag)
+    }
 }
 
 val Context.hasLoginInfo: Boolean

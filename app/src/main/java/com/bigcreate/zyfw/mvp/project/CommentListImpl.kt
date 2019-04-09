@@ -3,6 +3,7 @@ package com.bigcreate.zyfw.mvp.project
 import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.Comment
 import com.bigcreate.zyfw.models.CommentListRequest
+import com.bigcreate.zyfw.models.ProjectCommentResponse
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 import com.google.gson.JsonObject
@@ -16,7 +17,7 @@ class CommentListImpl(mView: View?) :
                 when (code) {
                     200 -> {
                         Attributes.token = content.newToken
-                        onGetCommentListSuccess(content.getAsObject("list"))
+                        onGetCommentListSuccess(content.getAsObject("content"))
                     }
                     else -> onGetCommentListFailed(this@apply)
                 }
@@ -26,7 +27,7 @@ class CommentListImpl(mView: View?) :
 
     override fun backgroundRequest(request: CommentListRequest): JsonObject? = RemoteService.getProjectComments(request).execute().body()
     interface View : BaseNetworkView {
-        fun onGetCommentListSuccess(list: List<Comment>)
+        fun onGetCommentListSuccess(commentResponse: ProjectCommentResponse)
         fun onGetCommentListFailed(jsonObject: JsonObject)
     }
 }

@@ -5,6 +5,7 @@ import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
 import com.bigcreate.library.toast
+import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 import com.bigcreate.zyfw.mvp.base.BaseView
 
@@ -81,6 +82,9 @@ class AMapLocationImpl(view: View):BasePresenterImpl<Void,AMapLocation,AMapLocat
     inner class LocationListener:AMapLocationListener {
         override fun onLocationChanged(p0: AMapLocation?) {
             location = p0
+            p0?.apply {
+                Attributes.AppCity = city
+            }
             judgeLocation(p0)
         }
     }

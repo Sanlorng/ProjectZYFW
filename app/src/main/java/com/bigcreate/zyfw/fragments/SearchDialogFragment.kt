@@ -30,6 +30,7 @@ import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.models.SearchRequest
+import com.bigcreate.zyfw.models.SearchResponse
 import com.bigcreate.zyfw.mvp.app.AMapLocationImpl
 import com.bigcreate.zyfw.mvp.project.SearchImpl
 import com.google.android.material.appbar.AppBarLayout
@@ -70,7 +71,7 @@ class SearchDialogFragment : DialogFragment(){
             progressSearchDialog?.isVisible = false
         }
 
-        override fun onSearchFinished(searchResult: ArrayList<SearchModel>) {
+        override fun onSearchFinished(searchResponse: SearchResponse) {
             dialog?.apply {
 //                GlobalScope.launch {
 //                    searchHistory = ArrayList(searchHistory.filter {
@@ -84,24 +85,26 @@ class SearchDialogFragment : DialogFragment(){
                     addSearchHistory()
 //                }
                 progressSearchDialog.isVisible = false
-                searchResult.isEmpty().apply {
+                searchResponse.list.isEmpty().apply {
                     textSearchEmpty.isVisible = this
                 }
                 inputSearchBar.clearFocus()
                 listSearchResult.apply {
                     layoutManager = LinearLayoutManager(context)
-                    adapter = ProjectListAdapter(searchResult).apply {
-                        mListener = object : ProjectListAdapter.ProjectItemClickListener {
-                            override fun onItemClick(position: Int) {
-                                isClick = true
-                                startActivityForResult(Intent(context, ProjectDetailsActivity::class.java).apply {
-                                    searchResult[position].run {
-                                        this@SearchDialogFragment.projectId = projectId
-                                        putExtra("position", position)
-                                        putExtra("projectId", projectId)
-                                        putExtra("projectTopic", projectTopic)
-                                    }
-                                }, RequestCode.OPEN_PROJECT)
+                    searchResponse.list.apply {
+                        adapter = ProjectListAdapter(this).apply {
+                            mListener = object : ProjectListAdapter.ProjectItemClickListener {
+                                override fun onItemClick(position: Int) {
+                                    isClick = true
+                                    startActivityForResult(Intent(context, ProjectDetailsActivity::class.java).apply {
+                                        get(position).run {
+                                            this@SearchDialogFragment.projectId = projectId
+                                            putExtra("position", position)
+                                            putExtra("projectId", projectId)
+                                            putExtra("projectTopic", projectTopic)
+                                        }
+                                    }, RequestCode.OPEN_PROJECT)
+                                }
                             }
                         }
                     }
@@ -196,7 +199,7 @@ class SearchDialogFragment : DialogFragment(){
             }
             inputSearchBar.isEnabled = true
             inputSearchBar.isClickable = true
-            inputSearchBar.setOnEditorActionListener { v, actionId, event ->
+            inputSearchBar.setOnEditorActionListener { _, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                     val city = when {
                         location == null -> null
@@ -423,7 +426,7 @@ class SearchDialogFragment : DialogFragment(){
                         it.projectId == this@SearchDialogFragment.projectId
                     })
                     notifyDataSetChanged()
-                    (activity as MainActivity).reSearch()
+//                    (activity as MainActivity).reSearch()
                 }
             }
         }

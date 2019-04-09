@@ -2,7 +2,7 @@
 <com.google.android.material.button.MaterialButton style="@style/Widget.MaterialComponents.Button.TextButton"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:icon="@drawable/ic_place_black_24dp"
+    tools:icon="@drawable/ic_outline_place_24px"
     android:id="@+id/buttonActionDetails"
     android:gravity="start|center"
     app:iconTint="#757575"

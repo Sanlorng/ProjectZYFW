@@ -54,9 +54,9 @@ class DetailsFragment : Fragment(), DetailsImpl.View,JoinProjectImpl.View {
         swipeLayoutProjectDetails.setOnRefreshListener {
             presenter.doRequest(GetProjectRequest(Attributes.token,projectId!!))
         }
-        buttonJoinProjectDetails.setOnClickListener {
-            joinPresenter.doRequest(GetProjectRequest(Attributes.token,projectId!!))
-        }
+//        buttonJoinProjectDetails.setOnClickListener {
+//            joinPresenter.doRequest(GetProjectRequest(Attributes.token,projectId!!))
+//        }
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -91,7 +91,7 @@ class DetailsFragment : Fragment(), DetailsImpl.View,JoinProjectImpl.View {
                 projectVideoLinkTwo.forEach {
                     add(DetailsMediaAdapter.Video(it))
                 }
-                buttonJoinProjectDetails.isVisible = !join
+//                buttonJoinProjectDetails.isVisible = !join
 
                 listDetailMedia.layoutManager = LinearLayoutManager(context!!)
                 listDetailMedia.adapter = DetailsMediaAdapter(this)

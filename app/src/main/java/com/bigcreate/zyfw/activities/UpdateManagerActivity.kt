@@ -13,6 +13,7 @@ import com.bigcreate.library.dialog
 import com.bigcreate.library.setIconTint
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.translucentSystemUI
+import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.startInstallPermissionSettingActivity
@@ -100,7 +101,7 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
                 dialog("请求安装权限",
                         "Android O以上版本需要额外的权限才能安装，请授予权限",
                         "跳转到权限授予界面",
-                        DialogInterface.OnClickListener { dialog, which ->
+                        DialogInterface.OnClickListener { _, _ ->
                             startInstallPermissionSettingActivity()
                         })
             }

@@ -134,9 +134,9 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
             // perform the user login attempt.
             showProgress(true)
             if (isForgetPass)
-                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr, inputValidCodeRegister.text.toString()))
+                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr,"", inputValidCodeRegister.text.toString()))
             else
-                presenter.doRegister(RegisterRequest(emailStr, passwordStr, inputValidCodeRegister.text.toString()))
+                presenter.doRegister(RegisterRequest(emailStr, passwordStr,inputIdentifyRegister.text.toString(), inputValidCodeRegister.text.toString()))
         }
         buttonSubmitRegister.isEnabled = true
     }

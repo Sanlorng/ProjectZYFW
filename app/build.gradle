@@ -76,14 +76,15 @@ android {
 }
 final String annotation_version = "1.0.2"
 final String preference_version = "1.1.0-alpha04"
-final String material_version = "1.1.0-alpha04"
+final String material_version = "1.1.0-alpha05"
+final String navigation_ktx_version = "2.0.0"
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
     implementation "androidx.appcompat:appcompat:1.0.2"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
-    implementation 'androidx.core:core-ktx:1.1.0-alpha04'
+    implementation 'androidx.core:core-ktx:1.1.0-alpha05'
     implementation "android.arch.paging:runtime:1.0.1"
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.work:work-runtime-ktx:1.0.0"
@@ -93,6 +94,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'org.litepal.android:kotlin:3.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
@@ -109,4 +111,6 @@ dependencies {
     implementation 'com.bilibili:boxing-impl:1.0.4'
     implementation 'com.amap.api:location:latest.integration'
     implementation 'com.amap.api:search:latest.integration'
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_ktx_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_ktx_version"
 }

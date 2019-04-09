@@ -19,6 +19,7 @@ import com.bigcreate.zyfw.callback.CommentCallBack
 import com.bigcreate.zyfw.callback.FillTextCallBack
 import com.bigcreate.zyfw.models.Comment
 import com.bigcreate.zyfw.models.CommentListRequest
+import com.bigcreate.zyfw.models.ProjectCommentResponse
 import com.bigcreate.zyfw.mvp.project.CommentListImpl
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_comment_details.*
@@ -60,15 +61,15 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
     }
 
 
-    fun marginHeight(height: Int) {
-        cardCommentDetails?.apply {
-            if (layoutPara == null)
-                layoutPara = layoutParams as ConstraintLayout.LayoutParams
-            layoutPara?.bottomMargin = height
-            layoutParams = layoutPara
-            Log.e("marginHeight", height.toString())
-        }
-    }
+//    fun marginHeight(height: Int) {
+//        cardCommentDetails?.apply {
+//            if (layoutPara == null)
+//                layoutPara = layoutParams as ConstraintLayout.LayoutParams
+//            layoutPara?.bottomMargin = height
+//            layoutParams = layoutPara
+//            Log.e("marginHeight", height.toString())
+//        }
+//    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         swipeLayoutCommentDetails.setOnRefreshListener {
@@ -84,14 +85,14 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
                 commentCallBack = this@CommentsFragment
             }
         }
-        buttonShowCommentDialog.setOnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-                job.await().show(childFragmentManager, "commentDialog")
-            }
-        }
-        swipeLayoutCommentDetails.apply {
-            setPadding(paddingLeft,paddingTop,paddingRight,paddingBottom+cardCommentDetails.height)
-        }
+//        buttonShowCommentDialog.setOnClickListener {
+//            GlobalScope.launch(Dispatchers.Main) {
+//                job.await().show(childFragmentManager, "commentDialog")
+//            }
+//        }
+//        swipeLayoutCommentDetails.apply {
+//            setPadding(paddingLeft,paddingTop,paddingRight,paddingBottom+cardCommentDetails.height)
+//        }
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -105,14 +106,14 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
         layoutLoading.isVisible = true
     }
 
-    override fun onGetCommentListSuccess(list: List<Comment>) {
-        if (list.isEmpty()) {
+    override fun onGetCommentListSuccess(commentResponse: ProjectCommentResponse) {
+        if (commentResponse.list.isEmpty()) {
             textLoading.text = "没有评论"
             progressLoading.isVisible = false
             layoutLoading.isVisible = true
         }
         swipeLayoutCommentDetails.isRefreshing = false
-        listCommentsDetails.adapter = CommentAdapter(list.reversed())
+        listCommentsDetails.adapter = CommentAdapter(commentResponse.list.reversed())
         listCommentsDetails.layoutManager = LinearLayoutManager(context!!)
     }
 
@@ -138,11 +139,12 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
     }
 
     override fun getTextContent(): CharSequence {
-        return buttonShowCommentDialog.text
+//        return buttonShowCommentDialog.text
+        return ""
     }
 
     override fun setTextContent(content: CharSequence) {
-        buttonShowCommentDialog.text = content
+//        buttonShowCommentDialog.text = content
     }
 
     override fun getProjectId(): String {
@@ -154,7 +156,6 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
             commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = this, pageNum = 1))
         }
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

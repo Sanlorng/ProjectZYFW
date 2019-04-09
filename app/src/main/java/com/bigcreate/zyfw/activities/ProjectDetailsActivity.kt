@@ -8,8 +8,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import com.bigcreate.library.toJson
 import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
@@ -18,6 +21,9 @@ import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.ResultCode
+import com.bigcreate.zyfw.callback.CommentCallBack
+import com.bigcreate.zyfw.callback.FillTextCallBack
+import com.bigcreate.zyfw.fragments.CommentDialogFragment
 import com.bigcreate.zyfw.fragments.CommentsFragment
 import com.bigcreate.zyfw.fragments.DetailsFragment
 import com.bigcreate.zyfw.fragments.ProjectActionItemListDialogFragment
@@ -26,13 +32,14 @@ import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.models.ProjectFavoriteRequest
 import com.bigcreate.zyfw.mvp.project.DetailsImpl
 import com.bigcreate.zyfw.mvp.project.FavoriteProjectImpl
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.JsonObject
 import com.tencent.mapsdk.raster.model.LatLng
 import com.tencent.mapsdk.raster.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_project_details.*
 import kotlinx.coroutines.*
 
-class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectActionItemListDialogFragment.Listener, FavoriteProjectImpl.View {
+class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectActionItemListDialogFragment.Listener, FavoriteProjectImpl.View,CommentCallBack,FillTextCallBack {
     private var project: Project? = null
     private var projectId = -1
     private lateinit var fragmentJob: Deferred<DetailsImpl.View>
@@ -43,16 +50,50 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
     private var favoriteProjectImpl = FavoriteProjectImpl(this)
     private var isFavoriteRequest = false
     private var projectType = -1
-    private lateinit var favoriteIcon: Deferred<MenuItem>
-    private lateinit var actionIcon: Deferred<MenuItem>
+    private var commentText = ""
+//    private lateinit var favoriteIcon: Deferred<MenuItem>
+    private lateinit var commentJob: Deferred<CommentDialogFragment>
     private lateinit var bottomJob: Deferred<ProjectActionItemListDialogFragment>
-
+    private lateinit var viewPagerFragments : List<Fragment>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mapProjectDetails.onCreate(savedInstanceState)
     }
     override fun setContentView() {
         setContentView(R.layout.activity_project_details)
+        bottomAppBarDetails.inflateMenu(R.menu.toolbar_project_details)
+        bottomAppBarDetails.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.projectDetailsAction -> GlobalScope.launch(Dispatchers.Main) {
+                    bottomJob.await().show(supportFragmentManager, "bottomSheet")
+                }
+                R.id.projectDetailsGroupChat -> startActivity(Intent(this,ChatActivity::class.java).apply {
+
+                })
+
+                R.id.projectDetailsFavorite -> {
+                    isFavoriteRequest = true
+                    Attributes.loginUserInfo?.apply {
+                        val request = ProjectFavoriteRequest(
+                                projectId = projectId,
+                                projectUserId = userId,
+                                token = token,
+                                projectClassifyId = projectType.toString()
+                        )
+                        if (bottomAppBarDetails.menu.findItem(R.id.projectDetailsFavorite).isChecked.not())
+                            favoriteProjectImpl.doFavoriteProject(request)
+                        else
+                            favoriteProjectImpl.doUnFavoriteProject(request)
+                    }
+                }
+            }
+            true
+        }
+        buttonShowCommentDialog.setOnClickListener {
+            GlobalScope.launch(Dispatchers.Main) {
+                commentJob.await().show(supportFragmentManager, "commentDialog")
+            }
+        }
     }
     override fun afterCheckLoginSuccess() {
         setSupportActionBar(toolbarProjectDetails)
@@ -64,9 +105,10 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
         projectName = intent.getStringExtra("projectTopic")
         textProjectTitle.text = projectName
         fragmentJob = GlobalScope.async(Dispatchers.Main) {
-            FragmentAdapter(supportFragmentManager, listOf(DetailsFragment.newInstance(projectId.toString(), ""), CommentsFragment.newInstance(projectId.toString(), ""))).let {
-                commentsFragment = it.list[1] as CommentsFragment
-                commentsFragment?.marginHeight(appbarHeight)
+            viewPagerFragments = listOf(DetailsFragment.newInstance(projectId.toString(), ""), CommentsFragment.newInstance(projectId.toString(), ""))
+            FragmentAdapter(supportFragmentManager, viewPagerFragments).let {
+//                commentsFragment = it.list[1] as CommentsFragment
+//                commentsFragment?.marginHeight(appbarHeight)
                 viewPagerDetails.adapter = it
                 tabProjectDetails.setupWithViewPager(viewPagerDetails)
                 it.list[0] as DetailsImpl.View
@@ -74,6 +116,13 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
         }
         bottomJob = GlobalScope.async(Dispatchers.Main) {
             ProjectActionItemListDialogFragment.newInstance(0)
+        }
+
+        commentJob = GlobalScope.async(Dispatchers.Main) {
+            CommentDialogFragment().apply {
+                commentCallBack = this@ProjectDetailsActivity
+                fillTextCallBack = this@ProjectDetailsActivity
+            }
         }
 
         Attributes.loginUserInfo?.run {
@@ -93,8 +142,27 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    override fun commentSuccess() {
+        if (viewPagerDetails.currentItem == 1)
+            if (viewPagerFragments[1] is CommentCallBack)
+                (viewPagerFragments[1] as CommentCallBack).commentSuccess()
+    }
+
+    override fun getProjectId(): String {
+        return projectId.toString()
+    }
+
+    override fun getTextContent(): CharSequence {
+        return buttonShowCommentDialog.text
+    }
+
+    override fun setTextContent(content: CharSequence) {
+        buttonShowCommentDialog.text = content
+    }
     override fun onGetDetailsFailed(jsonObject: JsonObject) {
         GlobalScope.launch(Dispatchers.Main) { fragmentJob.await().onGetDetailsFailed(jsonObject) }
+        bottomAppBarDetails.isVisible = false
+//        buttonJoinProjectDetails.isVisible = false
         toast(jsonObject.toJson())
     }
 
@@ -104,24 +172,56 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
             projectType = projectTypeId
             GlobalScope.launch(Dispatchers.Main) {
                 fragmentJob.await().onGetDetailsSuccess(project)
-                if (Attributes.username == username)
-                    actionIcon.await().apply {
-                        isVisible = true
-                        icon = icon.apply {
-                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
-                        }
+//                val menu = bottomAppBarDetails.menu
+//                if (Attributes.username == username) {
+//                    favoriteIcon.await().isVisible = true
+//                    menu.findItem(R.id.projectDetailsAction).isVisible = true
+//                    menu.findItem(R.id.projectDetailsFavorite).isVisible = false
+//                }else {
+//                    favoriteIcon.await().isVisible = false
+//                    menu.findItem(R.id.projectDetailsFavorite).isVisible = true
+//                }
+//                if (join) {
+//                    buttonJoinProjectDetails.isVisible = false
+//                }
+
+                bottomAppBarDetails.menu.apply {
+                    findItem(R.id.projectDetailsAction).isVisible = Attributes.username == username
+                    findItem(R.id.projectDetailsJoin).apply {
+                        isChecked = join
+                        icon = if (join)
+                            getDrawable(R.drawable.ic_favorite_black_24dp)?.apply {
+                                setTint(getColor(R.color.colorAccent))
+                            } else
+                            getDrawable(R.drawable.ic_favorite_border_black_24dp)
                     }
-                favoriteIcon.await().apply {
-                    icon = if (favorite)
-                        getDrawable(R.drawable.ic_star_black_24dp)!!.apply {
-                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
-                        }
-                    else
-                        getDrawable(R.drawable.ic_star_border_black_24dp)!!.apply {
-                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
-                        }
-                    isChecked = favorite
+                    findItem(R.id.projectDetailsFavorite).apply {
+                        isChecked = favorite
+                        icon = if (favorite)
+                            getDrawable(R.drawable.ic_star_black_24dp)?.apply {
+                                setTint(getColor(R.color.colorAccent))
+                            } else
+                            getDrawable(R.drawable.ic_star_border_black_24dp)
+                    }
                 }
+//                if (Attributes.username == username)
+//                    actionIcon.await().apply {
+//                        isVisible = true
+//                        icon = icon.apply {
+//                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
+//                        }
+//                    }
+//                favoriteIcon.await().apply {
+//                    icon = if (favorite)
+//                        getDrawable(R.drawable.ic_star_black_24dp)!!.apply {
+//                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
+//                        }
+//                    else
+//                        getDrawable(R.drawable.ic_star_border_black_24dp)!!.apply {
+//                            DrawableCompat.setTint(this, getColor(R.color.colorAccent))
+//                        }
+//                    isChecked = favorite
+//                }
             }
             mapProjectDetails.map.addMarker(
                     MarkerOptions()
@@ -165,7 +265,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
 
     override fun onFavoriteProjectSuccess() {
         GlobalScope.launch(Dispatchers.Main) {
-            favoriteIcon.await().apply {
+            bottomAppBarDetails.menu.findItem(R.id.projectDetailsFavorite).apply {
                 isChecked = true
                 icon = getDrawable(R.drawable.ic_star_black_24dp)?.apply {
                     DrawableCompat.setTint(this,getColor(R.color.colorAccent))
@@ -180,25 +280,23 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
 
     override fun onUnFavoriteProjectSuccess() {
         GlobalScope.launch(Dispatchers.Main) {
-            favoriteIcon.await().apply {
+            bottomAppBarDetails.menu.findItem(R.id.projectDetailsFavorite).apply {
                 isChecked = false
-                icon = getDrawable(R.drawable.ic_star_border_black_24dp)?.apply {
-                    DrawableCompat.setTint(this,getColor(R.color.colorAccent))
-                }
+                icon = getDrawable(R.drawable.ic_star_border_black_24dp)
             }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_project_details, menu)
-        menu?.apply {
-            favoriteIcon = GlobalScope.async(Dispatchers.Main) {
-                findItem(R.id.projectDetailsFavorite)
-            }
-            actionIcon = GlobalScope.async(Dispatchers.Main) {
-                findItem(R.id.projectDetailsAction)
-            }
-        }
+//        menuInflater.inflate(R.menu.toolbar_project_details, menu)
+//        menu?.apply {
+//            forEach {
+//                it.isVisible = it.itemId == R.id.projectDetailsFavorite
+//            }
+//            favoriteIcon = GlobalScope.async(Dispatchers.Main) {
+//                findItem(R.id.projectDetailsFavorite)
+//            }
+//        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -207,18 +305,16 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
             null -> {
             }
             R.id.projectDetailsAction -> {
-                GlobalScope.launch(Dispatchers.Main) {
-                    bottomJob.await().show(supportFragmentManager, "bottomSheet")
-                }
+
             }
             R.id.projectDetailsFavorite -> {
                 isFavoriteRequest = true
                 Attributes.loginUserInfo?.apply {
                     val request = ProjectFavoriteRequest(
                             projectId = projectId,
-                            projectClassifyId = projectType.toString(),
-                            username = username,
-                            token = token
+                            projectUserId = userId,
+                            token = token,
+                            projectClassifyId = projectType.toString()
                     )
                     if (item.isChecked.not())
                         favoriteProjectImpl.doFavoriteProject(request)
@@ -257,9 +353,9 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
                 putExtra("projectId", projectId)
                 putExtra("projectInfo", project.toJson())
             }, RequestCode.EDIT_PROJECT)
-            R.drawable.ic_outline_delete_outline_24px -> AlertDialog.Builder(this)
+            R.drawable.ic_outline_delete_outline_24px -> MaterialAlertDialogBuilder(this)
                     .setTitle("删除项目")
-                    .setPositiveButton("确定") { dialog, which ->
+                    .setPositiveButton("确定") { _, _ ->
                         try {
                             GlobalScope.launch {
                                 RemoteService.deleteProject(
