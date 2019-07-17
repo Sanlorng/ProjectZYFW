@@ -1,9 +1,13 @@
 package com.bigcreate.zyfw.activities
 
+import android.app.Service
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -12,92 +16,56 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bigcreate.library.WebKit
 import com.bigcreate.library.fromJson
 import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.models.ChatMessage
-import com.bigcreate.zyfw.models.SendType
-import com.google.android.material.appbar.AppBarLayout
+import com.bigcreate.zyfw.models.MessageType
+import com.bigcreate.zyfw.service.MessageService
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import okhttp3.Request
-import okhttp3.Response
 import okhttp3.WebSocket
-import okhttp3.WebSocketListener
-import okio.ByteString
-import java.nio.charset.Charset
 import java.util.*
 
-class ChatActivity : AuthLoginActivity() {
+class ChatActivity : AuthLoginActivity(){
     private val chatMessages = ArrayList<ChatMessage>()
     private var unreadMessage = 0
-    private var webSocketLink = "${WebInterface.WS_URL}0/%s/0"
-    private var sendType = SendType.GLOBAL
+    private var sendType = MessageType.SINGLE
+    private var chatId = 0
     private lateinit var socketClient:WebSocket
+    private var binder : MessageService.MessageBinder? = null
+    private val messageTag = "messageDetails"
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            binder = service as MessageService.MessageBinder
+            binder?.addOnMessageReceiveListener(messageTag) {
+                onNewMessage(it)
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            binder?.removeAllListener(messageTag)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(toolbarChat)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = "聊天"
-
-        val layoutParam = toolbarChat.layoutParams as AppBarLayout.LayoutParams
-//        layoutParam.topMargin += let {
-//            it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
-//        }
+        val layoutParam = toolbarChat.layoutParams as ViewGroup.MarginLayoutParams
         layoutParam.height += let {
             it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
         }
         toolbarChat.layoutParams = layoutParam
-        toolbarChat.requestApplyInsets()
         toolbarChat.title = "聊天"
         toolbarChat.setNavigationOnClickListener {
             finish()
         }
+        chatId = intent.getIntExtra("chatId",0)
 
-        initChatType(intent.getStringExtra("type"))
         buttonSendChat.isEnabled = false
-        Log.e("webLink",webSocketLink)
-        GlobalScope.launch {
-            socketClient = WebKit.okClient.newWebSocket(Request.Builder()
-                .url(webSocketLink)
-                .build(), object : WebSocketListener() {
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                Log.e("message",text)
-                runOnUiThread {
-                    onNewMessage(text)
-                }
-                super.onMessage(webSocket, text)
-            }
-
-            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-                Log.e("message",bytes.string(Charset.defaultCharset()))
-                super.onMessage(webSocket, bytes)
-            }
-
-                override fun onOpen(webSocket: WebSocket, response: Response) {
-                    Log.e("onOpen","true")
-                    super.onOpen(webSocket, response)
-                }
-
-                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                    Log.e("onFailure","true")
-                    t.printStackTrace()
-                    super.onFailure(webSocket, t, response)
-                }
-
-                override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                    Log.e("onClosing","true")
-                    super.onClosing(webSocket, code, reason)
-                }
-
-                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                    Log.e("onClosed","true")
-                    super.onClosed(webSocket, code, reason)
-                }
-        }) }
+        bindService(Intent(this,MessageService::class.java), connection,Service.BIND_AUTO_CREATE)
 
         listChatHistory.layoutManager = LinearLayoutManager(this).apply {
             stackFromEnd = true
@@ -108,20 +76,21 @@ class ChatActivity : AuthLoginActivity() {
     }
 
     //WebSocket接受到新消息时的处理
-    private fun onNewMessage(json : String){
-        val message = json.fromJson<ChatMessage>()
-        chatMessages.add(message)
-        unreadMessage++
-        if (unreadMessage>0)
+    private fun onNewMessage(message: ChatMessage){
+        if (message.receiveUserId == chatId || message.sendUserId == chatId) {
+            chatMessages.add(message)
+            unreadMessage++
+            if (unreadMessage > 0)
                 textUnreadChat.apply {
-                    text = getString(R.string.countMessageVar,unreadMessage)
+                    text = getString(R.string.countMessageVar, unreadMessage)
                     isVisible = true
                 }
 
-        listChatHistory.adapter?.notifyItemInserted(chatMessages.lastIndex)
-        val manager = listChatHistory.layoutManager as LinearLayoutManager
-        if (manager.findLastVisibleItemPosition()==chatMessages.lastIndex-1||message.username == Attributes.username)
-            listChatHistory.scrollToPosition(chatMessages.lastIndex)
+            listChatHistory.adapter?.notifyItemInserted(chatMessages.lastIndex)
+            val manager = listChatHistory.layoutManager as LinearLayoutManager
+            if (manager.findLastVisibleItemPosition() == chatMessages.lastIndex - 1 || message.sendUserId == Attributes.userId)
+                listChatHistory.scrollToPosition(chatMessages.lastIndex)
+        }
     }
     override fun afterCheckLoginSuccess() {
         initListener()
@@ -132,24 +101,15 @@ class ChatActivity : AuthLoginActivity() {
     }
 
     override fun onDestroy() {
-        socketClient.close(1000,"destroy")
         super.onDestroy()
     }
-    private fun initChatType(sendType: String?) {
-        when(sendType) {
-            SendType.GLOBAL -> webSocketLink = webSocketLink.format(Attributes.username)
-            SendType.PROJECT -> {}
-            null -> {
 
-            }
-            else -> finish()
-        }
-    }
     private fun initListener() {
         //发送点击监听
         buttonSendChat.setOnClickListener {
-            val str = ChatMessage(inputMessageChat.text.toString(),0,sendType, "",Attributes.username).toJson()
-            socketClient.send(str)
+            val str = ChatMessage(inputMessageChat.text.toString(),chatId,Attributes.userId,"",sendType == MessageType.SINGLE,chatId)
+//            socketClient.send(str)
+            binder?.sendMessage(str)
             inputMessageChat.text.clear()
         }
         //输入监听
@@ -214,7 +174,7 @@ class ChatActivity : AuthLoginActivity() {
         }
 
         override fun getItemViewType(position: Int): Int {
-            return if (chatMessages[position].username!=Attributes.loginUserInfo?.username) R.layout.item_message_chat_left else R.layout.item_message_chat_right
+            return if (chatMessages[position].sendUserId!=Attributes.userId) R.layout.item_message_chat_left else R.layout.item_message_chat_right
         }
 
     }

@@ -1,5 +1,6 @@
 package com.bigcreate.zyfw.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,12 @@ import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ChatActivity
 import com.bigcreate.zyfw.models.MessageHeader
+import kotlinx.android.synthetic.main.item_message_header.view.*
 
 /**
  * Create by Sanlorng on 2018/4/16
  */
-class MessageListAdapter(private val messageMap: HashMap<String, MessageHeader>) : RecyclerView.Adapter<MessageListAdapter.ViewHolder>() {
+class MessageListAdapter(private val messageMap: ArrayList<MessageHeader>) : RecyclerView.Adapter<MessageListAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         init {
@@ -26,8 +28,16 @@ class MessageListAdapter(private val messageMap: HashMap<String, MessageHeader>)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemView.setOnClickListener {
-            it.context.startActivity(ChatActivity::class.java)
+        holder.itemView.run {
+            messageMap[position].apply {
+                hintMessageItem.text = message
+                setOnClickListener {
+                    val intent = Intent(context,ChatActivity::class.java)
+                    intent.putExtra("chatId",this.id)
+                    context.startActivity(intent)
+                }
+            }
+
         }
     }
 

@@ -16,6 +16,33 @@ data class SearchModel(
     }
 }
 data class CountAndPictureModel(val volunteerCount: Int, val WheelPicture:List<String>)
+data class ProjectListCommentResponse(
+    val content: ProjectListCommentContent,
+    val newToken: String
+)
+
+data class ProjectListCommentContent(
+    val endRow: Int,
+    val firstPage: Int,
+    val hasNextPage: Boolean,
+    val hasPreviousPage: Boolean,
+    val isFirstPage: Boolean,
+    val isLastPage: Boolean,
+    val lastPage: Int,
+    val list: List<Comment>,
+    val navigateFirstPage: Int,
+    val navigateLastPage: Int,
+    val navigatePages: Int,
+    val navigatepageNums: List<Int>,
+    val nextPage: Int,
+    val pageNum: Int,
+    val pageSize: Int,
+    val pages: Int,
+    val prePage: Int,
+    val size: Int,
+    val startRow: Int,
+    val total: Int
+)
 
 data class LoginModel(var username: String, var password: String, var token: String, var userId: Int)
 data class test(
@@ -35,3 +62,84 @@ data class City(
     val area: List<String>,
     val name: String
 )
+
+data class ExploreListResponse(
+    val content: ExploreContent,
+    val newToken: String
+)
+
+data class ExploreContent(
+    val endRow: Int,
+    val firstPage: Int,
+    val hasNextPage: Boolean,
+    val hasPreviousPage: Boolean,
+    val isFirstPage: Boolean,
+    val isLastPage: Boolean,
+    val lastPage: Int,
+    val list: List<ExploreItem>,
+    val navigateFirstPage: Int,
+    val navigateLastPage: Int,
+    val navigatePages: Int,
+    val navigatepageNums: List<Int>,
+    val nextPage: Int,
+    val pageNum: Int,
+    val pageSize: Int,
+    val pages: Int,
+    val prePage: Int,
+    val size: Int,
+    val startRow: Int,
+    val total: Int
+)
+
+data class PageListResponse<T>(
+        val content: PageContent<T>,
+        val newToken: String
+)
+data class PageContent<T>(
+        val endRow: Int,
+        val firstPage: Int,
+        val hasNextPage: Boolean,
+        val hasPreviousPage: Boolean,
+        val isFirstPage: Boolean,
+        val isLastPage: Boolean,
+        val lastPage: Int,
+        val list: List<T>,
+        val navigateFirstPage: Int,
+        val navigateLastPage: Int,
+        val navigatePages: Int,
+        val navigatepageNums: List<Int>,
+        val nextPage: Int,
+        val pageNum: Int,
+        val pageSize: Int,
+        val pages: Int,
+        val prePage: Int,
+        val size: Int,
+        val startRow: Int,
+        val total: Int
+)
+
+data class ExploreItem(
+    val dyContent: String,
+    val dyId: Int,
+    val dyOneLink: Any,
+    val dyReleaseTime: String,
+    val dyReleaseUserId: Int,
+    val dynamicPicture: List<DynamicPicture>,
+    val favorite: Boolean,
+    val praise: Boolean,
+    val userInfoByPart: UserInfoByPart
+)
+
+data class UserInfoByPart(
+    val userHeadPictureLink: String,
+    val userId: Int,
+    val userNick: String
+)
+
+data class DynamicPicture(
+    val dyPictureId: Int,
+    val dyPictureOneLink: Any,
+    val dyPictureTwoLink: String
+)
+
+

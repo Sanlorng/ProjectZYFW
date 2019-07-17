@@ -14,6 +14,7 @@ import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.ResultCode
+import com.bigcreate.zyfw.base.paddingStatusBar
 import com.bigcreate.zyfw.models.CreateProjectRequest
 import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.models.UpdateProjectRequest
@@ -44,6 +45,7 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
     override fun afterCheckLoginSuccess() {
         setSupportActionBar(toolbarReleaseProject)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbarReleaseProject.paddingStatusBar()
         toolbarReleaseProject.setNavigationOnClickListener {
             dialog("提示", "你确认退出项目编辑页面吗，这将丢失你已写好的内容",
                     "确认", DialogInterface.OnClickListener { _, _ -> finish() },

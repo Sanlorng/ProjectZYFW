@@ -14,14 +14,14 @@
     app:strokeWidth="1dp"
     app:cardElevation="1dp"
     app:cardCornerRadius="8dp">
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarSearchBar"
         android:layout_height="48dp"
+        android:minHeight="48dp"
         android:layout_width="match_parent"
         app:layout_collapseMode="pin"
         app:contentInsetStart="0dp"
-        app:contentInsetStartWithNavigation="0dp"
-        android:background="#00ffffff">
+        app:contentInsetStartWithNavigation="0dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputSearchBar"
             android:layout_width="match_parent"
@@ -49,5 +49,5 @@
             android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.MaterialToolbar>
 </com.google.android.material.card.MaterialCardView>

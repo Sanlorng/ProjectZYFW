@@ -5,6 +5,7 @@ package com.bigcreate.zyfw.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
@@ -101,8 +102,12 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
         toolbarProjectDetails.setNavigationOnClickListener {
             finish()
         }
-        projectId = intent.getIntExtra("projectId", -1)
-        projectName = intent.getStringExtra("projectTopic")
+        intent?.data?.pathSegments?.forEachIndexed { index, s ->
+            Log.e("aaaaaaa","$index is $s")
+        }
+        Log.e("uri","${intent.data?.toString()}")
+        projectId = intent?.data?.lastPathSegment?.toInt()?:-1
+        projectName = intent.type?.split("/")?.last()
         textProjectTitle.text = projectName
         fragmentJob = GlobalScope.async(Dispatchers.Main) {
             viewPagerFragments = listOf(DetailsFragment.newInstance(projectId.toString(), ""), CommentsFragment.newInstance(projectId.toString(), ""))

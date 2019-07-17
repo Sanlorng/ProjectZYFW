@@ -7,14 +7,17 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.FragmentAdapter
 import com.bigcreate.zyfw.fragments.MyFavoriteFragment
 import com.bigcreate.zyfw.fragments.MyJoinFragment
+import com.bigcreate.zyfw.fragments.MyReleasedFragment
 import kotlinx.android.synthetic.main.activity_fav_and_join.*
 
 class FavAndJoinActivity : AuthLoginActivity() {
 
     override fun afterCheckLoginSuccess() {
         val position = intent.getIntExtra("favOrJoin",0)
+        viewpagerFavAndJoin.offscreenPageLimit = 3
         viewpagerFavAndJoin.adapter = FragmentAdapter(supportFragmentManager, listOf(
-                MyFavoriteFragment.newInstance("",""),MyJoinFragment.newInstance("","")
+                MyReleasedFragment.newInstance("","")
+                ,MyJoinFragment.newInstance("",""),MyFavoriteFragment.newInstance("","")
         ))
         tabLayoutFavAndJoin.setupWithViewPager(viewpagerFavAndJoin)
         viewpagerFavAndJoin.currentItem = position

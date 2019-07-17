@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -44,6 +45,7 @@ class CitySelectFragment : DialogFragment() {
     private val titleFormat = "选择：%s -> %s"
     private var city = ""
     private var province = ""
+    private var selectBackgroundDrawable: Drawable? = null
     // TODO: Rename method, update argument and hook method into UI event
     fun onButtonPressed(uri: Uri) {
     }
@@ -83,6 +85,11 @@ class CitySelectFragment : DialogFragment() {
             provinceListCitySelected.apply {
                 setPadding(paddingLeft,paddingTop + height,paddingRight,paddingBottom)
             }
+            val typedValue = TypedValue()
+            context.theme.resolveAttribute(R.attr.colorPrimary,typedValue,true)
+            val attr = context.theme.obtainStyledAttributes(typedValue.resourceId, intArrayOf(R.attr.colorPrimary))
+            selectBackgroundDrawable = attr.getDrawable(0)?.constantState?.newDrawable()
+            selectBackgroundDrawable?.alpha = (0.6f * 255).toInt()
             var cityJson = ""
             try {
                 val inputStream = context.assets.open("cityList.json")
@@ -148,8 +155,8 @@ class CitySelectFragment : DialogFragment() {
                 list[position].apply {
                     text = name
                     maxEms = 5
-                    background = if (position == selectedPosition) ColorDrawable(Color.parseColor("#00000000"))
-                    else ColorDrawable(Color.parseColor("#1C000000"))
+                    background = if (position == selectedPosition) selectBackgroundDrawable
+                    else ColorDrawable(Color.parseColor("#00000000"))
                     setOnClickListener {
                         selectedPosition = position
                         dialog?.apply {
@@ -213,6 +220,13 @@ class CitySelectFragment : DialogFragment() {
             })
         }
     }
+
+//
+//  { "name": "钓鱼岛", "city":[
+//
+//    {"name":"是", "area":["中国的"]}
+//
+//  ]}
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

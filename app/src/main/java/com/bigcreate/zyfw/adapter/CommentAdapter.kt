@@ -1,14 +1,17 @@
 package com.bigcreate.zyfw.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.Comment
 
-class CommentAdapter(private val CommentList: List<Comment>) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
+class CommentAdapter :PagedListAdapter<Comment,CommentAdapter.ViewHolder>(diff) {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         init {
 
@@ -20,15 +23,23 @@ class CommentAdapter(private val CommentList: List<Comment>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = CommentList[position]
-        item.run {
+        getItem(position)?.run {
+            Log.e("item",comment)
             holder.itemView.findViewById<TextView>(R.id.textNickCommentItem).text = userNick
             holder.itemView.findViewById<TextView>(R.id.textTimeCommentItem).text = commentTime
             holder.itemView.findViewById<TextView>(R.id.textContentCommentItem).text = comment
         }
     }
 
-    override fun getItemCount(): Int {
-        return CommentList.size
+    companion object {
+        private val diff = object : DiffUtil.ItemCallback<Comment>() {
+            override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean {
+                return oldItem.comment == newItem.comment
+            }
+
+            override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
+                return  oldItem.userNick == newItem.userNick && oldItem.commentTime == newItem.commentTime
+            }
+        }
     }
 }

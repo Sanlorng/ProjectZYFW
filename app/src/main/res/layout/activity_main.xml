@@ -16,6 +16,7 @@
             <!--android:layout_height="match_parent"/>-->
     <androidx.viewpager.widget.ViewPager
         app:layout_behavior="@string/appbar_string"
+        android:paddingBottom="?attr/actionBarSize"
         android:id="@+id/viewpagerMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -28,7 +29,6 @@
 
     <!--</FrameLayout>-->
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            style="@style/Widget.MaterialComponents.BottomNavigationView"
             app:menu="@menu/bottom_navigation_main"
             app:labelVisibilityMode="labeled"
             app:itemRippleColor="@color/colorAccent"

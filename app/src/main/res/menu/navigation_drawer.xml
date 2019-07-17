@@ -7,6 +7,7 @@
         <!--<item android:title="@string/launch_project"-->
             <!--android:id="@+id/startReleaseProjectNavigation"-->
             <!--android:icon="@drawable/ic_add_black_24dp" />-->
+        <item android:title="" android:id="@+id/userReleasedNavigation" />
         <item android:title="@string/favoriteProject"
             android:id="@+id/userFavoriteNavigation"
             android:icon="@drawable/ic_star_border_black_24dp" />

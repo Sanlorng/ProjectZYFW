@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -13,6 +15,9 @@ import androidx.core.content.edit
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amap.api.location.AMapLocation
 import com.bigcreate.library.fromJson
@@ -21,18 +26,15 @@ import com.bigcreate.library.toast
 import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.activities.MainActivity
-import com.bigcreate.zyfw.activities.ProjectDetailsActivity
 import com.bigcreate.zyfw.adapter.ProjectListAdapter
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RequestCode
-import com.bigcreate.zyfw.base.ResultCode
-import com.bigcreate.zyfw.base.defaultSharedPreferences
+import com.bigcreate.zyfw.base.*
+import com.bigcreate.zyfw.datasource.ProjectListDataSource
 import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.models.SearchRequest
 import com.bigcreate.zyfw.models.SearchResponse
 import com.bigcreate.zyfw.mvp.app.AMapLocationImpl
 import com.bigcreate.zyfw.mvp.project.SearchImpl
+import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.gson.JsonObject
@@ -44,6 +46,7 @@ class SearchDialogFragment : DialogFragment(){
     var location: AMapLocation? = null
     var isClick = false
     private var searchHistory = ArrayList<Pair<String, Long>>()
+    private lateinit var networkStateViewModel: NetworkStateViewModel
     private val aMapLocationImpl = AMapLocationImpl(object : AMapLocationImpl.View {
         override val onceLocation: Boolean
             get() = false
@@ -64,7 +67,7 @@ class SearchDialogFragment : DialogFragment(){
         }
     })
     private var projectId = -1
-    private val searchRequest = SearchRequest("", null, null, null)
+    private val searchRequest = SearchRequest("", null, null, null,1)
     private val searchView = object : SearchImpl.View {
         override fun onSearchFailed(response: JsonObject) {
             context?.toast(response.toJson())
@@ -84,31 +87,31 @@ class SearchDialogFragment : DialogFragment(){
 //                    showSearchHistory(ad)
                     addSearchHistory()
 //                }
-                progressSearchDialog.isVisible = false
-                searchResponse.list.isEmpty().apply {
-                    textSearchEmpty.isVisible = this
-                }
-                inputSearchBar.clearFocus()
-                listSearchResult.apply {
-                    layoutManager = LinearLayoutManager(context)
-                    searchResponse.list.apply {
-                        adapter = ProjectListAdapter(this).apply {
-                            mListener = object : ProjectListAdapter.ProjectItemClickListener {
-                                override fun onItemClick(position: Int) {
-                                    isClick = true
-                                    startActivityForResult(Intent(context, ProjectDetailsActivity::class.java).apply {
-                                        get(position).run {
-                                            this@SearchDialogFragment.projectId = projectId
-                                            putExtra("position", position)
-                                            putExtra("projectId", projectId)
-                                            putExtra("projectTopic", projectTopic)
-                                        }
-                                    }, RequestCode.OPEN_PROJECT)
-                                }
-                            }
-                        }
-                    }
-                }
+//                progressSearchDialog.isVisible = false
+//                searchResponse.list.isEmpty().apply {
+//                    textSearchEmpty.isVisible = this
+//                }
+//                inputSearchBar.clearFocus()
+//                listSearchResult.apply {
+//                    layoutManager = LinearLayoutManager(context)
+//                    searchResponse.list.apply {
+//                        adapter = ProjectListAdapter(this).apply {
+//                            mListener = object : ProjectListAdapter.ProjectItemClickListener {
+//                                override fun onItemClick(position: Int) {
+//                                    isClick = true
+//                                    startActivityForResult(Intent(context, ProjectDetailsActivity::class.java).apply {
+//                                        get(position).run {
+//                                            this@SearchDialogFragment.projectId = projectId
+//                                            putExtra("position", position)
+//                                            putExtra("projectId", projectId)
+//                                            putExtra("projectTopic", projectTopic)
+//                                        }
+//                                    }, RequestCode.OPEN_PROJECT)
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
             }
         }
 
@@ -163,6 +166,17 @@ class SearchDialogFragment : DialogFragment(){
 //    private val locationImpl = LocationImpl(locationView)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(context!!, R.style.bottomDialog).apply {
+            networkStateViewModel = ViewModelProviders.of(this@SearchDialogFragment).get(NetworkStateViewModel::class.java)
+            networkStateViewModel.state.observe(this@SearchDialogFragment, Observer {
+                when(it.status) {
+                    Status.SUCCESS -> showProgress(false)
+                    Status.FAILED -> {
+                        showProgress(false)
+                        toast(it.msg)
+                    }
+                    Status.RUNNING -> showProgress(true)
+                }
+            })
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.fragment_search_dialog)
             setCanceledOnTouchOutside(true)
@@ -207,13 +221,14 @@ class SearchDialogFragment : DialogFragment(){
                         else -> location!!.city
                     }
                     if (!inputSearchBar.editableText.trimEnd().isEmpty())
-                    searchImpl.doRequest(searchRequest.apply {
+                    searchRequest.apply {
                         searchKey = inputSearchBar.editableText.trimEnd().toString()
                         token = Attributes.token
                         projectRegion = city
                         projectTopic = searchKey
                         projectContent = null
-                    })
+                        reSearch()
+                    }
                     true
                 } else
                     false
@@ -234,7 +249,7 @@ class SearchDialogFragment : DialogFragment(){
             }
             swipeLayoutSearch.setOnRefreshListener {
                 if (!inputSearchBar.editableText.trimEnd().isEmpty())
-                    searchImpl.doRequest(searchRequest)
+                    reSearch()
                 else
                     swipeLayoutSearch.isRefreshing = false
             }
@@ -248,11 +263,11 @@ class SearchDialogFragment : DialogFragment(){
                 Log.e("searchHistory", searchMapString)
                 searchHistory = searchMapString.fromJson<ArrayList<Pair<String, Long>>>()
             }
-            val layoutParam = cardViewAppBarMain.layoutParams as AppBarLayout.LayoutParams
-            layoutParam.topMargin += context.let {
-                it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
-            }
-            cardViewAppBarMain.layoutParams = layoutParam
+//            val layoutParam = cardViewAppBarMain.layoutParams as AppBarLayout.LayoutParams
+//            layoutParam.topMargin += context.let {
+//                it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
+//            }
+//            cardViewAppBarMain.layoutParams = layoutParam
 //            aMapLocationImpl = AMapLocationImpl(object :AMapLocationImpl.View {
 //                override val onceLocation: Boolean
 //                    get() = false
@@ -273,6 +288,33 @@ class SearchDialogFragment : DialogFragment(){
                 Log.e("onCreateDialog","true")
         }
 
+    }
+
+    private fun showProgress(boolean: Boolean) {
+
+    }
+    private fun reSearch() {
+        searchRequest.projectRegion = Attributes.AppCity
+        dialog?.apply {
+
+            searchRequest.projectTopic = inputSearchBar?.editableText?.trim().toString()
+            listSearchResult.layoutManager = LinearLayoutManager(context)
+            listSearchResult.adapter = ProjectListAdapter().apply {
+                submitList(PagedList.Builder<Int, SearchModel>(ProjectListDataSource(searchRequest,
+                        networkStateViewModel.state),
+                        PagedList.Config.Builder()
+                                .setPageSize(10)
+                                .setPrefetchDistance(20)
+                                .build())
+                        .setNotifyExecutor {
+                            Handler(Looper.getMainLooper()).post(it)
+                        }
+                        .setFetchExecutor {
+                            Attributes.backgroundExecutors.execute(it)
+                        }.build())
+            }
+            listSearchResult.isVisible = true
+        }
     }
     override fun onResume() {
         if (BuildConfig.DEBUG)
@@ -421,15 +463,8 @@ class SearchDialogFragment : DialogFragment(){
         dialog?.apply {
             inputSearchBar?.clearFocus()
             if (requestCode == RequestCode.OPEN_PROJECT && resultCode == ResultCode.OK) {
-                (listSearchResult.adapter as ProjectListAdapter).apply {
-                    listProject.remove(listProject.find {
-                        it.projectId == this@SearchDialogFragment.projectId
-                    })
-                    notifyDataSetChanged()
-//                    (activity as MainActivity).reSearch()
                 }
             }
-        }
         super.onActivityResult(requestCode, resultCode, data)
     }
 

@@ -3,12 +3,15 @@ package com.bigcreate.zyfw.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.MediaController
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.Project
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_project_details_header.view.*
 import kotlinx.android.synthetic.main.item_project_details_image.view.*
+import kotlinx.android.synthetic.main.item_project_details_video.view.*
 
 class DetailsMediaAdapter(private val listMedia:ArrayList<Model>): RecyclerView.Adapter<DetailsMediaAdapter.ViewHolder>() {
     inner class ViewHolder(view: View):RecyclerView.ViewHolder(view)
@@ -28,7 +31,8 @@ class DetailsMediaAdapter(private val listMedia:ArrayList<Model>): RecyclerView.
                     }
 
                     is Video -> {
-
+                        videoProjectMedia.setVideoURI(path.toUri())
+                        videoProjectMedia.setMediaController(MediaController(context))
                     }
 
                     is Header -> project.run {

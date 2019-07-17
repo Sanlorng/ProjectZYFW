@@ -5,6 +5,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
+data class TokenRequest(var token: String)
+data class PageRequest(var token: String, var pageNum: Int)
 data class SimpleRequest(var token: String, var userId: Int)
 data class LoginRequest(var username: String, var password: String)
 data class IsSetupInfoRequest(var token: String, var username: String)
@@ -13,7 +15,7 @@ data class InitPersonInfoRequest(var username: String, var userNick: String, var
                                  var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String)
 
 data class UpdateInfoRequest(var username: String, var userAddress: String, var userPhone: String)
-data class SearchRequest(var token: String, var projectRegion: String?, var projectTopic: String?, var projectContent: String?)
+data class SearchRequest(var token: String, var projectRegion: String?, var projectTopic: String?, var projectContent: String?, var pageNum: Int)
 data class CreateProjectRequest(var projectTopic: String, var projectContent: String, var projectRegion: String,
                                 var projectAddress: String, var latitude: Double, var longitude: Double, var projectPrincipalName: String, var projectPrincipalPhone: String, var projectPeopleNumbers: String,
                                 var username: String, var token: String, var projectTypeId: Int)
@@ -64,6 +66,26 @@ class FileUploadRequest(file: File, token: String, username: String) {
         part = MultipartBody.Part.createFormData("file", file.name, RequestBody.create(type, file))
         this.token = RequestBody.create(type, token)
         this.username = RequestBody.create(type, username)
+    }
+}
+
+class PublishExploreRequest(files: List<File>, token: String, dyContent: String) {
+    var parts = ArrayList<MultipartBody.Part>()
+    //    var part : MultipartBody
+    var token: RequestBody
+    var dyContent: RequestBody
+    init {
+
+        val type = MediaType.parse("multipart/form-data")
+//        val builder = MultipartBody.Builder()
+        files.forEach {
+            parts.add(MultipartBody.Part.createFormData("file", it.name, RequestBody.create(type, it)))
+//            builder.addFormDataPart("file",it.name, RequestBody.create(type,it))
+        }
+//        part = builder.build()
+//        part = MultipartBody.Part.createFormData("file",file.name, RequestBody.create(type, file))
+        this.token = RequestBody.create(type, token)
+        this.dyContent = RequestBody.create(type, dyContent)
     }
 }
 

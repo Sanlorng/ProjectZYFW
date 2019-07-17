@@ -104,7 +104,6 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
                     .withIntent(context!!,BoxingActivity::class.java)
                     .start(this,RequestCode.SELECT_IMAGE)
         }
-        layoutPhoneSetupInfo.editText?.append(Attributes.username)
         chipGroupGenderTypeSetupInfo.setOnCheckedChangeListener { _, i ->
             Log.e("check", chipGroupGenderTypeSetupInfo.checkedChipId.toString())
             Log.e("i", i.toString())

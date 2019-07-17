@@ -7,11 +7,11 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.item_select_image.view.*
+import kotlinx.android.synthetic.main.layout_item_select.view.*
 
-class SelectListAdapter(val list:ArrayList<Model>): RecyclerView.Adapter<SelectListAdapter.ViewHolder>() {
+class SelectListAdapter(val list:ArrayList<Model>,var onItemClickListener:((Int) -> Unit)? = null): RecyclerView.Adapter<SelectListAdapter.ViewHolder>() {
     inner class ViewHolder(view: View):RecyclerView.ViewHolder(view)
-    var onItemClickListener:OnItemClickListener? = null
+
     override fun getItemCount(): Int {
         return list.count()
     }
@@ -23,20 +23,21 @@ class SelectListAdapter(val list:ArrayList<Model>): RecyclerView.Adapter<SelectL
                     0, 1 -> {
                         Glide.with(context)
                                 .load(path)
-                                .into(imageSelectItem)
-                        cancelSelectItem.setOnClickListener {
+                                .centerCrop()
+                                .into(itemSelectedImage)
+                        cancelImage.setOnClickListener {
                             list.removeAt(position)
-                            notifyDataSetChanged()
+                            notifyItemRemoved(position)
                         }
-                        cancelSelectItem.isVisible = true
+                        cancelImage.isVisible = true
                     }
                     else -> {
                         Glide.with(context)
                                 .load(R.drawable.ic_add_black_48dp)
-                                .into(imageSelectItem)
-                        cancelSelectItem.isVisible = false
-                        imageSelectItem.setOnClickListener {
-                            onItemClickListener?.onItemClick()
+                                .into(itemSelectedImage)
+                        cancelImage.isVisible = false
+                        setOnClickListener {
+                            onItemClickListener?.invoke(position)
                         }
                     }
                 }
@@ -46,7 +47,7 @@ class SelectListAdapter(val list:ArrayList<Model>): RecyclerView.Adapter<SelectL
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_select_image,parent,false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_item_select,parent,false))
     }
 
     override fun getItemViewType(position: Int): Int {

@@ -1,18 +1,30 @@
 package com.bigcreate.zyfw.base
 
 import android.content.Context
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.updatePadding
 import com.bigcreate.library.fromJson
 import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.UserInfo
 import com.google.gson.JsonObject
+import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 object Attributes {
+    object Action {
+        const val OPEN_PROJECT = "${BuildConfig.APPLICATION_ID}.OPEN_PROJECT"
+    }
+    const val authority = "content://${BuildConfig.APPLICATION_ID}"
+    const val authorityProject = "$authority/project/%s"
+    val backgroundExecutors: ExecutorService = Executors.newFixedThreadPool(5)
     private val listeners = HashMap<String,((newCity: String) -> Unit)>()
     var AppCity = "桂林市"
     set(value) {
-        if (field != value) {
+        if (field != value && value.isNotEmpty()) {
             field = value
             listeners.forEach {
                 it.value.invoke(value)
@@ -66,6 +78,7 @@ object RequestCode {
     const val SELECT_IMAGE = 7
     const val SELECT_VIDEO = 8
     const val INSTALL_PERMISSION = 9
+    const val PUBLISH_EXPLORE = 10
 }
 
 object ResultCode {
@@ -105,6 +118,19 @@ fun JsonObject.getAsInt(key: String): Int {
     return get(key).asInt
 }
 
+fun View.stickHeight() {
+
+    measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED)
+    layoutParams = layoutParams.apply {
+        height = measuredHeight
+    }
+}
+
+fun View.paddingStatusBar() {
+    updatePadding(top = let {
+        it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
+    })
+}
 inline fun <reified T>JsonObject.toObject():T {
     return toJson().fromJson<T>()
 }

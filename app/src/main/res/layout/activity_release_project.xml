@@ -6,14 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".activities.ReleaseProjectActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:fitsSystemWindows="true"
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarReleaseProject"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
         app:title="@string/launch_project"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

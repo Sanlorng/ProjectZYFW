@@ -1,26 +1,39 @@
 package com.bigcreate.zyfw.fragments
 
 import android.annotation.SuppressLint
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
+import android.app.Service
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.*
 import android.util.Log
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MainActivity
 import com.bigcreate.zyfw.adapter.MessageListAdapter
+import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.models.ChatMessage
 import com.bigcreate.zyfw.models.MessageHeader
+import com.bigcreate.zyfw.service.MessageService
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.fragment_message.*
 import kotlinx.android.synthetic.main.layout_search_bar.*
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.Comparator
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,8 +52,21 @@ class MessageFragment : Fragment(),MainActivity.ChildFragment{
     private var param1: String? = null
     private var param2: String? = null
     private val success = 1
-    private var messageList = HashMap<String, MessageHeader>()
+    private var messageMap = HashMap<Int,MessageHeader>()
+	private val messageList = ArrayList<MessageHeader>()
+	private var binder: MessageService.MessageBinder? =null
+	private var messageTag = "MessageFragment"
+	private var connection = object : ServiceConnection {
+		override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+			binder = service as MessageService.MessageBinder
+			binder?.addOnMessageReceiveListener(messageTag) {
+				onNewMessage(it)
+			}
+		}
 
+		override fun onServiceDisconnected(name: ComponentName?) {
+		}
+	}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +84,7 @@ class MessageFragment : Fragment(),MainActivity.ChildFragment{
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val layoutParam = cardViewAppBarMain.layoutParams as AppBarLayout.LayoutParams
+        val layoutParam = cardViewAppBarMain.layoutParams as ViewGroup.MarginLayoutParams
         layoutParam.topMargin += context?.let {
             it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
         }?:0
@@ -73,41 +99,55 @@ class MessageFragment : Fragment(),MainActivity.ChildFragment{
                             getIdentifier("status_bar_height", "dimen", "android")),
                     paddingRight,paddingBottom)
         }
-        initHashSet()
+
+//        initHashSet()
         textMessage.visibility = View.GONE
+	    hintSearchBar.isVisible = true
+	    inputSearchBar.isVisible = false
+		listMessage.itemAnimator = DefaultItemAnimator()
         listMessage.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         listMessage.adapter = MessageListAdapter(messageList)
         listMessage.layoutManager = LinearLayoutManager(context)
-        if (BuildConfig.DEBUG)
-            Log.e("onActivityCreate","Message")
+		context?.bindService(Intent(context!!,MessageService::class.java),connection, Service.BIND_AUTO_CREATE)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (BuildConfig.DEBUG)
-            Log.e("onHiddenChanged","Message")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hintSearchBar.isVisible = true
         inputSearchBar.isVisible = false
-        if (BuildConfig.DEBUG)
-            Log.e("onViewCreate","Message")
     }
 
-    override fun getUserVisibleHint(): Boolean {
-        if (BuildConfig.DEBUG)
-            Log.e("onUserVisibleHintCreate","Message")
-        return super.getUserVisibleHint()
-    }
 
     override fun onStart() {
         super.onStart()
-        if (BuildConfig.DEBUG)
-            Log.e("onStart","Message")
     }
+	fun onNewMessage(message: ChatMessage) {
+		var item = messageMap[message.chatId]
+		Log.e("xxxxx",message.toJson())
+		if (item != null) {
+			item.message = message.msg
+//			item.time = SimpleDateFormat("yyyy.MM.dd hh:mm:ss", Locale.getDefault()).parse(message.time).time
+			val index = messageList.indexOf(item)
+			if (index == 0) {
+				listMessage?.adapter?.notifyItemChanged(0)
+			}else {
+				messageList.removeAt(index)
+				listMessage?.adapter?.notifyItemRemoved(index)
+				messageList.add(0,item)
+				listMessage?.adapter?.notifyItemInserted(0)
+			}
+		}else {
+			item = MessageHeader(message.chatId,message.msg,0)
+			messageMap[message.chatId] = item
+			messageList.add(0,item)
+			listMessage?.adapter?.notifyItemInserted(0)
+		}
 
+	}
     override fun onLoginSuccess() {
 
     }
@@ -142,13 +182,4 @@ class MessageFragment : Fragment(),MainActivity.ChildFragment{
                 }
     }
 
-
-    private fun initHashSet() {
-        for (i in 1..20)
-            messageList[i.toString()] = MessageHeader()
-        textMessage.visibility = View.GONE
-        listMessage.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        listMessage.adapter = MessageListAdapter(messageList)
-        listMessage.layoutManager = LinearLayoutManager(context)
-    }
 }

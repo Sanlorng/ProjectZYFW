@@ -41,6 +41,8 @@
         </LinearLayout>
     <com.google.android.material.chip.ChipGroup
         app:layout_collapseMode="parallax"
+        app:itemSpacing="4dp"
+        app:chipSpacing="4dp"
         android:visibility="gone"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"

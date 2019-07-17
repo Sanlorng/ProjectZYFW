@@ -4,23 +4,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.paging.PagedList
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.models.SearchModel
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_project_search.view.*
 
-class ProjectListAdapter(val listProject: ArrayList<SearchModel>) : RecyclerView.Adapter<ProjectListAdapter.ViewHolder>() {
-    var mListener: ProjectItemClickListener? = null
-
+class ProjectListAdapter(private val listener:((Int,SearchModel ) -> Unit)? = null) : PagedListAdapter<SearchModel,ProjectListAdapter.ViewHolder>(diff) {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    override fun getItemCount(): Int {
-        return listProject.size
-    }
+
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        listProject[position].apply {
+        getItem(position)?.apply {
             holder.itemView.run {
                 topicProjectSearchItem.text = projectTopic
                 addressProjectSearchItem.text = context.getString(R.string.secondContentSearchVar,
@@ -37,7 +36,7 @@ class ProjectListAdapter(val listProject: ArrayList<SearchModel>) : RecyclerView
                         imageProjectSearchItem.isVisible = false
                 }
                 setOnClickListener {
-                    mListener?.onItemClick(position)
+                    listener?.invoke(position,this@apply)
                 }
             }
         }
@@ -48,7 +47,16 @@ class ProjectListAdapter(val listProject: ArrayList<SearchModel>) : RecyclerView
         return ViewHolder(view)
     }
 
-    interface ProjectItemClickListener {
-        fun onItemClick(position: Int)
+
+    companion object {
+        private val diff = object : DiffUtil.ItemCallback<SearchModel>() {
+            override fun areContentsTheSame(oldItem: SearchModel, newItem: SearchModel): Boolean {
+                return oldItem.projectContent == newItem.projectContent
+            }
+
+            override fun areItemsTheSame(oldItem: SearchModel, newItem: SearchModel): Boolean {
+                return oldItem.projectId == newItem.projectId
+            }
+        }
     }
 }

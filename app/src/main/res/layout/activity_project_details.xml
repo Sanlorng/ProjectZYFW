@@ -5,7 +5,6 @@
     android:layout_height="match_parent">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarProjectDetails"
-        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
@@ -13,8 +12,8 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="360dp"
-            android:background="@color/colorPrimary"
-            app:contentScrim="@color/colorPrimary"
+            android:background="?attr/colorOnPrimary"
+            app:contentScrim="?attr/colorOnPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:layout_scrollInterpolator="@android:anim/decelerate_interpolator"
             app:statusBarScrim="@color/zeroColor"
@@ -26,22 +25,25 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"/>
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbarProjectDetails"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme"
+                android:background="#00000000"
+                android:elevation="0dp"
                 app:title="  "
+                android:fitsSystemWindows="true"
                 app:layout_collapseMode="pin">
 
                 <TextView
                     android:id="@+id/textProjectTitle"
                     android:maxLines="1"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:textColor="?attr/colorAccent"
                     android:textSize="20sp" />
-            </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabProjectDetails"

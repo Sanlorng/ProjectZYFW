@@ -71,17 +71,14 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
         BoxingMediaLoader.getInstance().init(boxImpl)
         imageConfig = BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
         videoConfig = BoxingConfig(BoxingConfig.Mode.VIDEO)
-        listSelectItem.adapter = SelectListAdapter(list).apply {
-            onItemClickListener = object : SelectListAdapter.OnItemClickListener {
-                override fun onItemClick() {
-                    if (intent.type == "image")
-                        Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
-                                .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_IMAGE)
-                    else
-                        Boxing.of(videoConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
-                                .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_VIDEO)
-                }
-            }
+        listSelectItem.adapter = SelectListAdapter(list) {
+            if (intent.type == "image")
+                Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
+                        .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_IMAGE)
+            else
+                Boxing.of(videoConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
+                        .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_VIDEO)
+
         }
         listSelectItem.itemAnimator = DefaultItemAnimator()
     }

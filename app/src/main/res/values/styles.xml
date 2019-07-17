@@ -1,6 +1,35 @@
 <resources>
 
     <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense</item>
+<!--        <item name="hintTextAppearance">@style/TextAppearance.AppCompat.Small</item>-->
+        <item name="colorPrimaryDark">?attr/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="colorControlNormal">?attr/colorPrimary</item>
+        <item name="toolbarStyle">@style/toolBar</item>
+        <item name="actionBarStyle">@style/toolBar</item>
+        <item name="actionBarTheme">@style/toolBar</item>
+        <item name="appBarLayoutStyle">@style/appBar</item>
+
+    </style>
+    
+<!--    <style name=""-->
+
+    <style name="toolBar" parent="Widget.MaterialComponents.Toolbar.Primary" >
+        <item name="android:contentInsetStart">0dp</item>
+        <item name="android:background">?attr/colorOnPrimary</item>
+        <item name="titleTextColor">?attr/colorPrimary</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="elevation">4dp</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+    <style name="appBar" parent="Widget.MaterialComponents.AppBarLayout.Primary" >
+        <item name="android:background">?attr/colorOnPrimary</item>
+<!--        <item name="android:colorBackground">?attr/colorOnPrimary</item>-->
+    </style>
     <style name="baseStyle.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <!--<item name="colorPrimary">@color/colorPrimary</item>-->
@@ -12,11 +41,16 @@
     <style name="AppTheme.Light" parent="baseStyle.Light">
         <!-- Customize your theme here. -->
         <item name="android:windowContentTransitions">true</item>
+<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
+<!--        <item name="colorOnPrimary">@color/colorAccent</item>-->
         <item name="actionBarTheme">@style/actionbar</item>
-        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="toolbarStyle">@style/toolbar</item>
         <item name="buttonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
-        <!--<item name="alertDialogStyle">@style/dialogTheme</item>-->
-        <!--<item name="toolbarStyle">@style/actionbar</item>-->
+        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.AppBarLayout.Primary</item>
+        <item name="tabStyle">@style/Widget.MaterialComponents.TabLayout</item>
+    </style>
+    <style name="toolbar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary" >
+        <item name="android:elevation">0dp</item>
     </style>
     <style name="actionbar" parent="baseStyle.Light">
         <item name="android:contentInsetStart">0dp</item>
@@ -24,12 +58,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:textColorPrimary">?attr/colorAccent</item>
         <item name="colorControlNormal">?attr/colorAccent</item>
-        <!--<item name="android:background">@color/colorPrimary</item>-->
+        <item name="android:colorControlNormal">?attr/colorAccent</item>
         <item name="colorOnBackground">@color/colorAccent</item>
-        <!--<item name="android:textColorSecondary">?attr/colorAccent</item>-->
         <item name="android:elevation">4dp</item>
-        <item name="android:tint">?attr/colorAccent</item>
-        <!--<item name="actionBarPopupTheme">@style/actionBarPopupTheme</item>-->
+    </style>
+    <style name="bottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_nav_item_fix</item>
+        <item name="itemTextColor">@color/bottom_nav_item_fix</item>
     </style>
     <style name="bottomDialog" parent="AppTheme.Light">
         <item name="android:layout_width">match_parent</item>

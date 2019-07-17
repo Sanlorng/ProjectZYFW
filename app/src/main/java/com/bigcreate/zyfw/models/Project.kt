@@ -24,7 +24,13 @@ data class Project(
     val token: String?,
     val username: String
 )
+
 data class SearchResponse(
+    val content: SearchContent,
+    val newToken: String
+)
+
+data class SearchContent(
     val endRow: Int,
     val firstPage: Int,
     val hasNextPage: Boolean,
@@ -32,7 +38,7 @@ data class SearchResponse(
     val isFirstPage: Boolean,
     val isLastPage: Boolean,
     val lastPage: Int,
-    val list: ArrayList<SearchModel>,
+    val list: List<SearchModel>,
     val navigateFirstPage: Int,
     val navigateLastPage: Int,
     val navigatePages: Int,
@@ -47,6 +53,30 @@ data class SearchResponse(
     val total: Int
 )
 
+data class X(
+    val favorite: Any,
+    val join: Any,
+    val joinedNumber: Int,
+    val latitude: Double,
+    val longitude: Double,
+    val pageNum: Int,
+    val projectAddress: String,
+    val projectContent: String,
+    val projectId: Int,
+    val projectIssueTime: String,
+    val projectPeopleNumbers: String,
+    val projectPictureLink: Any,
+    val projectPictureLinkTwo: List<Any>,
+    val projectPrincipalName: String,
+    val projectPrincipalPhone: String,
+    val projectRegion: String,
+    val projectTopic: String,
+    val projectTypeId: Int,
+    val projectVideoLink: Any,
+    val projectVideoLinkTwo: List<Any>,
+    val token: Any,
+    val username: String
+)
 //data class Project(
 //        val latitude: Double,
 //        val longitude: Double,

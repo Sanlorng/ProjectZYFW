@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import java.lang.Exception
 
@@ -36,8 +37,6 @@ fun Window.statusBarTransucent(){
 }
 
 fun Window.statusBarLight(light: Boolean){
-    if (BuildConfig.DEBUG)
-        Log.e("light",light.toString())
     var ui = this.decorView.systemUiVisibility
     ui = if (light)
         ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -160,18 +159,20 @@ fun Context.dialog(title:String, content:String,posButton:String,posListener:Dia
 
 fun Context.dialog(title:String, content:String,posButton:String,posListener:DialogInterface.OnClickListener,negButton:String, negListener:DialogInterface.OnClickListener){
 
-    androidx.appcompat.app.AlertDialog.Builder(this)
+    MaterialAlertDialogBuilder(this)
             .setTitle(title)
             .setMessage(content)
             .setCancelable(true)
             .setPositiveButton(posButton,posListener)
             .setNegativeButton(negButton,negListener)
-            .create().apply {
-                setDefaultStyle(TypedValue().run {
-                    theme.resolveAttribute(R.attr.colorAccent,this,true)
-                    data
-                })
-            }.show()
+            .create()
+            .show()
+//            .create().apply {
+//                setDefaultStyle(TypedValue().run {
+//                    theme.resolveAttribute(R.attr.colorAccent,this,true)
+//                    data
+//                })
+//            }.show()
 }
 
 fun String.isEmpty():Boolean{

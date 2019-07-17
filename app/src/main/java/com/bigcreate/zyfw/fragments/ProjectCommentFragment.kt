@@ -3,6 +3,8 @@ package com.bigcreate.zyfw.fragments
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,21 +12,29 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.library.toJson
+import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.CommentAdapter
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.Status
 import com.bigcreate.zyfw.callback.CommentCallBack
 import com.bigcreate.zyfw.callback.FillTextCallBack
+import com.bigcreate.zyfw.datasource.CommentListDataSource
 import com.bigcreate.zyfw.models.Comment
 import com.bigcreate.zyfw.models.CommentListRequest
 import com.bigcreate.zyfw.models.ProjectCommentResponse
 import com.bigcreate.zyfw.mvp.project.CommentListImpl
+import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_comment_details.*
 import kotlinx.android.synthetic.main.layout_loading.*
 import kotlinx.coroutines.*
+import java.util.concurrent.Executors
 
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,6 +51,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, CommentCallBack {
 
+    private val background = Executors.newFixedThreadPool(5)
+    private lateinit var networkStateViewModel: NetworkStateViewModel
     private var projectId: String? = null
     private var param2: String? = null
     private var layoutPara: ConstraintLayout.LayoutParams? = null
@@ -72,13 +84,25 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
 //    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        networkStateViewModel = ViewModelProviders.of(this).get(NetworkStateViewModel::class.java)
+        networkStateViewModel.state.observe(this, Observer {
+            when(it.status) {
+                Status.SUCCESS -> showProgress(false)
+                Status.FAILED -> {
+                    showProgress(false)
+                    toast(it.msg)
+                }
+                Status.RUNNING -> showProgress(true)
+            }
+        })
+        progressLoading.isVisible = false
+        layoutLoading.isVisible = false
+        swipeLayoutCommentDetails.isRefreshing = false
         swipeLayoutCommentDetails.setOnRefreshListener {
-            if (projectId!= null)
-            commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = projectId!!, pageNum = 1))
+            refreshList()
+//            commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = projectId!!, pageNum = 1))
         }
-        projectId?.run {
-            commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = this, pageNum = 1))
-        }
+
         job = GlobalScope.async(Dispatchers.Main) {
             CommentDialogFragment().apply {
                 fillTextCallBack = this@CommentsFragment
@@ -96,6 +120,27 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
         super.onActivityCreated(savedInstanceState)
     }
 
+    private fun refreshList() {
+        projectId?.run {
+            listCommentsDetails.adapter = CommentAdapter().apply {
+                submitList(PagedList.Builder<Int,Comment>(CommentListDataSource(CommentListRequest(token = Attributes.token, projectId = projectId!!, pageNum = 1),
+                        networkStateViewModel.state),PagedList.Config
+                        .Builder()
+                        .setPageSize(20)
+                        .setPrefetchDistance(40)
+                        .build())
+                        .setFetchExecutor {
+                            background.execute(it)
+                        }
+                        .setNotifyExecutor {
+                            Handler(Looper.getMainLooper()).post(it)
+                        }
+                        .build())
+            }
+            listCommentsDetails.layoutManager = LinearLayoutManager(context!!)
+//            commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = this, pageNum = 1))
+        }
+    }
     override fun getViewContext(): Context {
         return context!!
     }
@@ -113,7 +158,7 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
             layoutLoading.isVisible = true
         }
         swipeLayoutCommentDetails.isRefreshing = false
-        listCommentsDetails.adapter = CommentAdapter(commentResponse.list.reversed())
+        listCommentsDetails.adapter = CommentAdapter()
         listCommentsDetails.layoutManager = LinearLayoutManager(context!!)
     }
 

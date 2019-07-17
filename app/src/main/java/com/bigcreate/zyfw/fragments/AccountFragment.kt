@@ -52,12 +52,15 @@ class AccountFragment : Fragment(),MainActivity.ChildFragment {
     })
 
     private val menuList: ArrayList<MenuListAdapter.MenuItem> = arrayListOf(
-            MenuListAdapter.MenuItem(R.id.userFavoriteNavigation,
-                    R.drawable.ic_star_border_black_24dp,
-                    R.string.favoriteProject),
+            MenuListAdapter.MenuItem(R.id.userReleasedNavigation,
+                    R.drawable.ic_outline_send_24px,
+                    R.string.releasedProject),
             MenuListAdapter.MenuItem(R.id.userJoinedNavigation,
                     R.drawable.ic_favorite_border_black_24dp,
                     R.string.joinedProject),
+            MenuListAdapter.MenuItem(R.id.userFavoriteNavigation,
+                    R.drawable.ic_star_border_black_24dp,
+                    R.string.favoriteProject),
             MenuListAdapter.MenuItem(R.id.setting_menu,
                     R.drawable.ic_outline_settings_24px,
                     R.string.settings)).also {
@@ -112,10 +115,13 @@ class AccountFragment : Fragment(),MainActivity.ChildFragment {
                     R.id.setting_menu -> startActivity(SettingsActivity::class.java)
                     R.id.testInterface -> startActivity(TestInterfaceActivity::class.java)
                     R.id.userFavoriteNavigation -> startActivity(Intent(context!!,FavAndJoinActivity::class.java).apply {
-                        putExtra("favOrJoin",0)
+                        putExtra("favOrJoin",2)
                     })
                     R.id.userJoinedNavigation -> startActivity(Intent(context!!,FavAndJoinActivity::class.java).apply {
                         putExtra("favOrJoin",1)
+                    })
+                    R.id.userReleasedNavigation -> startActivity(Intent(context!!,FavAndJoinActivity::class.java).apply {
+                        putExtra("favOrJoin",0)
                     })
                 }
             }
