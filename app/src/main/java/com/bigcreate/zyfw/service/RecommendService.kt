@@ -24,8 +24,8 @@ import com.bigcreate.zyfw.mvp.project.RecommendImpl
 import com.bigcreate.zyfw.mvp.user.LoginImpl
 import com.google.gson.JsonObject
 
-class RecommendService : JobService(),RecommendImpl.View {
-    private val recommendImpl =  RecommendImpl(this)
+class RecommendService : JobService(), RecommendImpl.View {
+    private val recommendImpl = RecommendImpl(this)
     private val loginImpl = LoginImpl(object : LoginImpl.View {
         override fun getViewContext(): Context {
             return this@RecommendService
@@ -40,6 +40,7 @@ class RecommendService : JobService(),RecommendImpl.View {
             recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.userId))
         }
     })
+
     override fun onStartJob(params: JobParameters?): Boolean {
         val lastLaunchTime = defaultSharedPreferences.getLong("last_launch", -1)
         Log.d("onJob", "On")
@@ -47,15 +48,15 @@ class RecommendService : JobService(),RecommendImpl.View {
             val relativeTime = System.currentTimeMillis() - lastLaunchTime
             if (relativeTime > 100) {
                 if (Attributes.loginUserInfo == null)
-                    if (defaultSharedPreferences.getBoolean("saved_account",false))
-                    loginImpl.doRequest(LoginRequest(
-                            username = defaultSharedPreferences.getString("username","")!!,
-                            password = defaultSharedPreferences.getString("password","")!!
-                    ))
-                else {
-                    recommendImpl.mView = this
-                    recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.userId))
-                }
+                    if (defaultSharedPreferences.getBoolean("saved_account", false))
+                        loginImpl.doRequest(LoginRequest(
+                                username = defaultSharedPreferences.getString("username", "")!!,
+                                password = defaultSharedPreferences.getString("password", "")!!
+                        ))
+                    else {
+                        recommendImpl.mView = this
+                        recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.userId))
+                    }
 
             }
         }
@@ -100,6 +101,7 @@ class RecommendService : JobService(),RecommendImpl.View {
     override fun getViewContext(): Context {
         return this
     }
+
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "推荐"

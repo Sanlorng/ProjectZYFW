@@ -1,19 +1,17 @@
 package com.bigcreate.zyfw.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_image_view.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 class ImageViewActivity : AppCompatActivity() {
 
@@ -40,13 +38,13 @@ class ImageViewActivity : AppCompatActivity() {
                 viewPagerImageView.transitionName = imageList[position]
             }
         })
-        viewPagerImageView.setCurrentItem(intent.getIntExtra("position",0),false)
+        viewPagerImageView.setCurrentItem(intent.getIntExtra("position", 0), false)
         startPostponedEnterTransition()
     }
 
-    inner class ViewPagerAdapter:PagerAdapter() {
+    inner class ViewPagerAdapter : PagerAdapter() {
         override fun getCount(): Int {
-            Log.e("size","${imageList.size}")
+            Log.e("size", "${imageList.size}")
             return imageList.size
         }
 
@@ -56,7 +54,7 @@ class ImageViewActivity : AppCompatActivity() {
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             return ImageView(container.context).apply {
-                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT)
+                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 Glide.with(context)
                         .load(imageList[position])
                         .into(this)

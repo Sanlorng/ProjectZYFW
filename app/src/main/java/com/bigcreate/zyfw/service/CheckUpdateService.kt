@@ -19,10 +19,10 @@ import com.bigcreate.zyfw.models.RestResult
 import com.bigcreate.zyfw.models.UpdateInfo
 import com.bigcreate.zyfw.mvp.app.UpdateImpl
 
-class CheckUpdateService : Service(),UpdateImpl.View {
+class CheckUpdateService : Service(), UpdateImpl.View {
     private val updateImpl = UpdateImpl(this)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.e("startCheckUpdate","true")
+        Log.e("startCheckUpdate", "true")
         updateImpl.doRequest(packageName)
         return super.onStartCommand(intent, flags, startId)
     }
@@ -68,6 +68,7 @@ class CheckUpdateService : Service(),UpdateImpl.View {
         super.onDestroy()
         updateImpl.detachView()
     }
+
     override fun onBind(intent: Intent?): IBinder? {
         return Binder()
     }

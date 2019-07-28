@@ -6,27 +6,26 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
-import kotlinx.coroutines.*
-
 import com.bigcreate.zyfw.R
 import kotlinx.android.synthetic.main.layout_loop_view_pager.view.*
+import kotlinx.coroutines.*
 
-class LoopViewPager: LinearLayout {
+class LoopViewPager : LinearLayout {
     private var loopController: Job? = null
     var showTitle = true
-    set(value) {
-        titleLoopViewPager?.isVisible = value
-        field = value
-    }
+        set(value) {
+            titleLoopViewPager?.isVisible = value
+            field = value
+        }
     var adapter: LoopViewPagerAdapter? = null
         set(value) {
             field = value
             mLoopViewPager.adapter = field
             mLoopViewPager.setCurrentItem(1, false)
             if (showTitle)
-            titleLoopViewPager.text = value?.run {
-                getTitle(transPosition(mLoopViewPager.currentItem))
-            }
+                titleLoopViewPager.text = value?.run {
+                    getTitle(transPosition(mLoopViewPager.currentItem))
+                }
             onResume()
         }
     /*
@@ -34,11 +33,12 @@ class LoopViewPager: LinearLayout {
     */
     var loopTime = 5000L
 
-    constructor(context: Context): super(context)
-    constructor(context: Context, attrs: AttributeSet): super (context, attrs)
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int): super (context, attrs, defStyle)
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
     constructor(context: Context, attrs: AttributeSet, defStyleAttrs: Int, defStyleRes: Int)
-            : super (context, attrs, defStyleAttrs, defStyleRes)
+            : super(context, attrs, defStyleAttrs, defStyleRes)
+
     init {
 //        if (layoutParams == null)
 //            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT,1080)
@@ -47,7 +47,7 @@ class LoopViewPager: LinearLayout {
 //                width = LayoutParams.MATCH_PARENT
 //                height = 1080
 //            }
-        LayoutInflater.from(context).inflate(R.layout.layout_loop_view_pager,this)
+        LayoutInflater.from(context).inflate(R.layout.layout_loop_view_pager, this)
         titleLoopViewPager.background.alpha = 204
         mLoopViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             private var curPosition = -1
@@ -59,11 +59,11 @@ class LoopViewPager: LinearLayout {
 //                    Log.e("IDLE",curPosition.toString())
                     adapter?.apply {
                         if (curPosition == 0)
-                            mLoopViewPager.setCurrentItem( getDataCount() ,false)
+                            mLoopViewPager.setCurrentItem(getDataCount(), false)
                         else if (curPosition == getDataCount() + 1)
-                            mLoopViewPager.setCurrentItem(1,false)
+                            mLoopViewPager.setCurrentItem(1, false)
                         if (showTitle)
-                        titleLoopViewPager.text = getTitle(transPosition(curPosition))
+                            titleLoopViewPager.text = getTitle(transPosition(curPosition))
                     }
                 }
             }
@@ -118,7 +118,7 @@ class LoopViewPager: LinearLayout {
      */
     fun onResume() {
 //        Log.e("loopController adapter","${loopController == null} ${adapter != null}")
-        if (loopController == null&&adapter!= null)
+        if (loopController == null && adapter != null)
             loopController = GlobalScope.launch {
                 while (true) {
                     delay(loopTime)
@@ -141,6 +141,7 @@ class LoopViewPager: LinearLayout {
         super.onAttachedToWindow()
         onResume()
     }
+
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         onStop()

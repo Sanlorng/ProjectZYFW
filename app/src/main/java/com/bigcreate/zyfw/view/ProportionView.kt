@@ -2,7 +2,6 @@ package com.bigcreate.zyfw.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.bigcreate.zyfw.R
@@ -57,15 +56,15 @@ open class ProportionView : ViewGroup {
                         marginVertical = params.topMargin + params.bottomMargin
                     }
                     val childWidthMS =
-                        getChildExactlyMeasureSpec(
-                            Math.max(0, width - marginHorizontal - paddingHorizontal),
-                            params.width
-                        )
+                            getChildExactlyMeasureSpec(
+                                    Math.max(0, width - marginHorizontal - paddingHorizontal),
+                                    params.width
+                            )
                     val childHeightMS =
-                        getChildExactlyMeasureSpec(
-                            Math.max(0, height - marginVertical - paddingVertical),
-                            params.height
-                        )
+                            getChildExactlyMeasureSpec(
+                                    Math.max(0, height - marginVertical - paddingVertical),
+                                    params.height
+                            )
                     child.measure(childWidthMS, childHeightMS)
                 }
                 setMeasuredDimension(width, height)
@@ -86,15 +85,15 @@ open class ProportionView : ViewGroup {
                             marginVertical = params.topMargin + params.bottomMargin
                         }
                         val childWidthMS =
-                            getChildExactlyMeasureSpec(
-                                Math.max(0, width - marginHorizontal - paddingHorizontal),
-                                params.width
-                            )
+                                getChildExactlyMeasureSpec(
+                                        Math.max(0, width - marginHorizontal - paddingHorizontal),
+                                        params.width
+                                )
                         val childHeightMS =
-                            getChildExactlyMeasureSpec(
-                                Math.max(0, height - marginVertical - paddingVertical),
-                                params.height
-                            )
+                                getChildExactlyMeasureSpec(
+                                        Math.max(0, height - marginVertical - paddingVertical),
+                                        params.height
+                                )
                         child.measure(childWidthMS, childHeightMS)
                     }
                     setMeasuredDimension(width, height)
@@ -118,14 +117,14 @@ open class ProportionView : ViewGroup {
                 }
                 var childWidthMS: Int
                 childWidthMS =
-                    if (params.width == ViewGroup.LayoutParams.MATCH_PARENT || params.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
-                        View.MeasureSpec.makeMeasureSpec(
-                            Math.max(0, width - marginHorizontal - paddingHorizontal),
-                            View.MeasureSpec.AT_MOST
-                        )
-                    } else {
-                        View.MeasureSpec.makeMeasureSpec(params.width, View.MeasureSpec.EXACTLY)
-                    }
+                        if (params.width == ViewGroup.LayoutParams.MATCH_PARENT || params.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                            View.MeasureSpec.makeMeasureSpec(
+                                    Math.max(0, width - marginHorizontal - paddingHorizontal),
+                                    View.MeasureSpec.AT_MOST
+                            )
+                        } else {
+                            View.MeasureSpec.makeMeasureSpec(params.width, View.MeasureSpec.EXACTLY)
+                        }
 
                 var childHeightMS = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
 
@@ -138,9 +137,9 @@ open class ProportionView : ViewGroup {
                 setMeasuredDimension(width, height)
 
                 childWidthMS =
-                    getChildExactlyMeasureSpec(Math.max(0, width - marginHorizontal - paddingHorizontal), params.width)
+                        getChildExactlyMeasureSpec(Math.max(0, width - marginHorizontal - paddingHorizontal), params.width)
                 childHeightMS =
-                    getChildExactlyMeasureSpec(Math.max(0, height - marginVertical - paddingVertical), params.height)
+                        getChildExactlyMeasureSpec(Math.max(0, height - marginVertical - paddingVertical), params.height)
 
                 child.measure(childWidthMS, childHeightMS)
 

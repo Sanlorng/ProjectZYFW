@@ -8,6 +8,7 @@ class SettingsActivity : AuthLoginActivity() {
     override fun setContentView() {
         setContentView(R.layout.activity_settings)
     }
+
     override fun afterCheckLoginSuccess() {
         setSupportActionBar(toolbarSettings)
         toolbarSettings.setNavigationOnClickListener {

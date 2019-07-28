@@ -5,38 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.FavAndJoinActivity">
+
     <com.google.android.material.appbar.AppBarLayout
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <com.google.android.material.appbar.MaterialToolbar
-        app:contentInsetStart="0dp"
-        app:contentInsetStartWithNavigation="0dp"
-        android:id="@+id/toolbarFavAndJoin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.tabs.TabLayout
-            app:tabIndicatorFullWidth="false"
-            app:tabMode="scrollable"
-            android:background="#00000000"
-            app:tabSelectedTextColor="@color/colorAccent"
-            app:tabIndicatorColor="@color/colorAccent"
-            app:tabRippleColor="@color/colorAccent"
-            android:id="@+id/tabLayoutFavAndJoin"
+
+        <com.google.android.material.appbar.MaterialToolbar
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            android:id="@+id/toolbarFavAndJoin"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:minHeight="?attr/actionBarSize">
-            <com.google.android.material.tabs.TabItem
-                android:text="xxxxxxx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <com.google.android.material.tabs.TabItem
-                android:text="xxxxxxx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.tabs.TabLayout>
-    </com.google.android.material.appbar.MaterialToolbar>
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabLayout
+                app:tabIndicatorFullWidth="false"
+                app:tabMode="scrollable"
+                android:background="#00000000"
+                app:tabSelectedTextColor="@color/colorAccent"
+                app:tabIndicatorColor="@color/colorAccent"
+                app:tabRippleColor="@color/colorAccent"
+                android:id="@+id/tabLayoutFavAndJoin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="?attr/actionBarSize">
+
+                <com.google.android.material.tabs.TabItem
+                    android:text="@string/testChat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:text="@string/testChat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.tabs.TabLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.viewpager.widget.ViewPager
         app:layout_behavior="@string/appbar_string"
         android:id="@+id/viewpagerFavAndJoin"

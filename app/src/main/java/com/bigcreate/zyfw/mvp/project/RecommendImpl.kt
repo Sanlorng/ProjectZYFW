@@ -11,13 +11,13 @@ import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 import com.google.gson.JsonObject
 
-class RecommendImpl(view: View):BasePresenterImpl<SimpleRequest,JsonObject,RecommendImpl.View>(view) {
+class RecommendImpl(view: View) : BasePresenterImpl<SimpleRequest, JsonObject, RecommendImpl.View>(view) {
 
     override fun afterRequestSuccess(data: JsonObject?) {
         mView?.run {
             data?.apply {
                 val content = jsonContentFromData
-                when(code) {
+                when (code) {
                     200 -> {
                         if (!content.isJsonNull)
                             onGetRecommendSuccess(content.toJson().fromJson<Project>())
@@ -33,7 +33,8 @@ class RecommendImpl(view: View):BasePresenterImpl<SimpleRequest,JsonObject,Recom
     override fun backgroundRequest(request: SimpleRequest): JsonObject? {
         return RemoteService.getRecommendData(request).execute().body()
     }
-    interface View:BaseNetworkView {
+
+    interface View : BaseNetworkView {
         fun onGetRecommendSuccess(project: Project)
         fun onGetRecommendFailed(jsonObject: JsonObject)
     }

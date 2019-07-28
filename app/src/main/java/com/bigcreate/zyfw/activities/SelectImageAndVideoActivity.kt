@@ -28,15 +28,15 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_select_image_and_video.*
 import java.io.File
 
-class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.View {
+class SelectImageAndVideoActivity : AuthLoginActivity(), UploadProjectMediaImpl.View {
     private var action = SelectListAdapter.Action("")
     private val list = ArrayList<SelectListAdapter.Model>().apply {
         add(action)
     }
     private val uploadProjectMediaImpl = UploadProjectMediaImpl(this)
-    private lateinit var dialog:AlertDialog
-    lateinit var imageConfig:BoxingConfig
-    lateinit var videoConfig:BoxingConfig
+    private lateinit var dialog: AlertDialog
+    lateinit var imageConfig: BoxingConfig
+    lateinit var videoConfig: BoxingConfig
     private val boxImpl = object : IBoxingMediaLoader {
         override fun displayRaw(img: ImageView, absPath: String, width: Int, height: Int, callback: IBoxingCallback?) {
             Glide.with(this@SelectImageAndVideoActivity)
@@ -54,6 +54,7 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
     override fun setContentView() {
         setContentView(R.layout.activity_select_image_and_video)
     }
+
     override fun afterCheckLoginSuccess() {
         dialog = androidx.appcompat.app.AlertDialog.Builder(this@SelectImageAndVideoActivity)
                 .setView(R.layout.layout_process_upload)
@@ -67,21 +68,22 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
             setDisplayHomeAsUpEnabled(true)
             title = if (intent.type == "image") "选择图片" else "选择视频"
         }
-        listSelectItem.layoutManager = GridLayoutManager(this,5)
+        listSelectItem.layoutManager = GridLayoutManager(this, 5)
         BoxingMediaLoader.getInstance().init(boxImpl)
         imageConfig = BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
         videoConfig = BoxingConfig(BoxingConfig.Mode.VIDEO)
         listSelectItem.adapter = SelectListAdapter(list) {
             if (intent.type == "image")
-                Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
-                        .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_IMAGE)
+                Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity, BoxingActivity::class.java)
+                        .start(this@SelectImageAndVideoActivity, RequestCode.SELECT_IMAGE)
             else
-                Boxing.of(videoConfig).withIntent(this@SelectImageAndVideoActivity,BoxingActivity::class.java)
-                        .start(this@SelectImageAndVideoActivity,RequestCode.SELECT_VIDEO)
+                Boxing.of(videoConfig).withIntent(this@SelectImageAndVideoActivity, BoxingActivity::class.java)
+                        .start(this@SelectImageAndVideoActivity, RequestCode.SELECT_VIDEO)
 
         }
         listSelectItem.itemAnimator = DefaultItemAnimator()
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Boxing.getResult(data)?.apply {
             when {
@@ -108,7 +110,7 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_select_image,menu)
+        menuInflater.inflate(R.menu.toolbar_select_image, menu)
         menu?.findItem(R.id.uploadSelectedItem)?.setIconTint(getColor(R.color.colorAccent))
         return true
     }
@@ -121,27 +123,27 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
                     }
                     R.id.uploadSelectedItem -> {
                         intent.getStringExtra("projectId").apply {
-                                if (intent.type == "image")
+                            if (intent.type == "image")
                                 uploadProjectMediaImpl.doUploadImage(
                                         FilesUploadRequest(list.run {
                                             val listFile = ArrayList<File>()
                                             forEach {
                                                 if (it !is SelectListAdapter.Action)
-                                            listFile.add(File(it.path))
-                                    }
-                                    listFile
-                                },token,username,this@run))
-                                else
-                                    uploadProjectMediaImpl.doUploadVideo(
-                                            FilesUploadRequest(list.run {
-                                                val listFile = ArrayList<File>()
-                                                forEach {
-                                                    if (it !is SelectListAdapter.Action)
-                                                        listFile.add(File(it.path))
-                                                }
-                                                listFile
-                                            },token,username,this@run))
-                            }
+                                                    listFile.add(File(it.path))
+                                            }
+                                            listFile
+                                        }, token, username, this@run))
+                            else
+                                uploadProjectMediaImpl.doUploadVideo(
+                                        FilesUploadRequest(list.run {
+                                            val listFile = ArrayList<File>()
+                                            forEach {
+                                                if (it !is SelectListAdapter.Action)
+                                                    listFile.add(File(it.path))
+                                            }
+                                            listFile
+                                        }, token, username, this@run))
+                        }
                     }
                 }
             }
@@ -177,9 +179,11 @@ class SelectImageAndVideoActivity : AuthLoginActivity(),UploadProjectMediaImpl.V
         super.onRequestFinished()
         showProgress(false)
     }
+
     override fun getViewContext(): Context {
         return this
     }
+
     override fun onDestroy() {
         uploadProjectMediaImpl.detachView()
         super.onDestroy()

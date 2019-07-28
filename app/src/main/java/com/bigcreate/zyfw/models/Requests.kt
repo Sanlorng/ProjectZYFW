@@ -5,6 +5,13 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
+data class CrashLog(
+        val versionName: String,
+        val packageName: String,
+        val versionCode: String,
+        val crashString: String
+)
+
 data class TokenRequest(var token: String)
 data class PageRequest(var token: String, var pageNum: Int)
 data class SimpleRequest(var token: String, var userId: Int)
@@ -54,7 +61,7 @@ data class UpdateInfo(
         var label: String = ""
 )
 
-data class RestResult<T>(val message: String, val code: Int,val data: T)
+data class RestResult<T>(val message: String, val code: Int, val data: T)
 
 class FileUploadRequest(file: File, token: String, username: String) {
     var part: MultipartBody.Part
@@ -74,6 +81,7 @@ class PublishExploreRequest(files: List<File>, token: String, dyContent: String)
     //    var part : MultipartBody
     var token: RequestBody
     var dyContent: RequestBody
+
     init {
 
         val type = MediaType.parse("multipart/form-data")
@@ -91,10 +99,11 @@ class PublishExploreRequest(files: List<File>, token: String, dyContent: String)
 
 class FilesUploadRequest(files: List<File>, token: String, username: String, projectId: String) {
     var parts = ArrayList<MultipartBody.Part>()
-//    var part : MultipartBody
+    //    var part : MultipartBody
     var token: RequestBody
     var username: RequestBody
     var projectId: RequestBody
+
     init {
 
         val type = MediaType.parse("multipart/form-data")
@@ -107,6 +116,6 @@ class FilesUploadRequest(files: List<File>, token: String, username: String, pro
 //        part = MultipartBody.Part.createFormData("file",file.name, RequestBody.create(type, file))
         this.token = RequestBody.create(type, token)
         this.username = RequestBody.create(type, username)
-        this.projectId = RequestBody.create(type,projectId)
+        this.projectId = RequestBody.create(type, projectId)
     }
 }

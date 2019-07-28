@@ -31,7 +31,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class DetailsFragment : Fragment(), DetailsImpl.View,JoinProjectImpl.View {
+class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
     private var projectId: String? = null
     private var param2: String? = null
     private val presenter = DetailsImpl(this)
@@ -52,7 +52,7 @@ class DetailsFragment : Fragment(), DetailsImpl.View,JoinProjectImpl.View {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         swipeLayoutProjectDetails.setOnRefreshListener {
-            presenter.doRequest(GetProjectRequest(Attributes.token,projectId!!))
+            presenter.doRequest(GetProjectRequest(Attributes.token, projectId!!))
         }
 //        buttonJoinProjectDetails.setOnClickListener {
 //            joinPresenter.doRequest(GetProjectRequest(Attributes.token,projectId!!))
@@ -65,12 +65,12 @@ class DetailsFragment : Fragment(), DetailsImpl.View,JoinProjectImpl.View {
     }
 
     override fun onJoinRequestSuccess(join: Boolean) {
-        presenter.doRequest(GetProjectRequest(Attributes.token,projectId!!))
+        presenter.doRequest(GetProjectRequest(Attributes.token, projectId!!))
     }
 
     override fun onGetDetailsFailed(jsonObject: JsonObject) {
         context?.toast("获取失败")
-        if (swipeLayoutProjectDetails.isRefreshing&&activity is DetailsImpl.View)
+        if (swipeLayoutProjectDetails.isRefreshing && activity is DetailsImpl.View)
             (activity as DetailsImpl.View).onGetDetailsFailed(jsonObject)
         swipeLayoutProjectDetails.isRefreshing = false
 //        testShowInfo.text = "获取失败\n${jsonObject.toJson()}"
@@ -83,21 +83,21 @@ class DetailsFragment : Fragment(), DetailsImpl.View,JoinProjectImpl.View {
                 add(DetailsMediaAdapter.Header("").apply {
                     this.project = project
                 })
-                if(projectPictureLinkTwo.isNotEmpty())
-                projectPictureLinkTwo.forEach {
-                    add(DetailsMediaAdapter.Image(it))
-                }
                 if (projectPictureLinkTwo.isNotEmpty())
-                projectVideoLinkTwo.forEach {
-                    add(DetailsMediaAdapter.Video(it))
-                }
+                    projectPictureLinkTwo.forEach {
+                        add(DetailsMediaAdapter.Image(it))
+                    }
+                if (projectPictureLinkTwo.isNotEmpty())
+                    projectVideoLinkTwo.forEach {
+                        add(DetailsMediaAdapter.Video(it))
+                    }
 //                buttonJoinProjectDetails.isVisible = !join
 
                 listDetailMedia.layoutManager = LinearLayoutManager(context!!)
                 listDetailMedia.adapter = DetailsMediaAdapter(this)
             }
         }
-        if (swipeLayoutProjectDetails.isRefreshing&&activity is DetailsImpl.View)
+        if (swipeLayoutProjectDetails.isRefreshing && activity is DetailsImpl.View)
             (activity as DetailsImpl.View).onGetDetailsSuccess(project)
         swipeLayoutProjectDetails.isRefreshing = false
     }
@@ -112,7 +112,7 @@ class DetailsFragment : Fragment(), DetailsImpl.View,JoinProjectImpl.View {
 
     override fun onRequesting() {
         if (swipeLayoutProjectDetails.isRefreshing.not())
-        layoutLoading?.isVisible = true
+            layoutLoading?.isVisible = true
     }
 
     override fun onRequestFinished() {
@@ -124,6 +124,7 @@ class DetailsFragment : Fragment(), DetailsImpl.View,JoinProjectImpl.View {
         presenter.detachView()
         joinPresenter.detachView()
     }
+
     companion object {
         /**
          * Use this factory method to create a new instance of

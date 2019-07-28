@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
@@ -15,6 +16,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.translucentSystemUI
+import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MyDetailsActivity
 import com.bigcreate.zyfw.activities.UpdateManagerActivity
@@ -57,7 +59,7 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
     override fun onUpdateCheckSuccess(updateInfo: UpdateInfo) {
         var currentCode = 0L
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
-            currentCode = context!!.packageManager.getPackageInfo(context!!.packageName, PackageManager.GET_CONFIGURATIONS).versionCode.toLong()
+            currentCode = BuildConfig.VERSION_CODE.toLong()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             currentCode = context!!.packageManager.getPackageInfo(context!!.packageName, PackageManager.GET_CONFIGURATIONS).longVersionCode
         if (updateInfo.versionCode.toLong() > currentCode) {
@@ -91,11 +93,12 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
         }
         findPreference<Preference>("Notification")?.setOnPreferenceClickListener {
             val intent = Intent()
-            if (Build.VERSION.SDK_INT > 25) {
-                intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context!!.packageName)
-                intent.putExtra(Settings.EXTRA_CHANNEL_ID, context!!.applicationInfo.uid)
-            }
+            //SDK 26
+
+            intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context!!.packageName)
+            intent.putExtra(Settings.EXTRA_CHANNEL_ID, context!!.applicationInfo.uid)
+
             intent.putExtra("app_package", context!!.packageName)
             intent.putExtra("app_uid", context!!.applicationInfo.uid)
             startActivity(intent)
@@ -109,6 +112,14 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
         findPreference<Preference>("category_account")?.isVisible = false
         findPreference<Preference>("appUpdate")?.setOnPreferenceClickListener {
             context?.startActivity(UpdateManagerActivity::class.java)
+            true
+        }
+        findPreference<SwitchPreference>("switch_night_mode")?.setOnPreferenceChangeListener { preference, newValue ->
+            if (newValue as Boolean) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
             true
         }
         if (Attributes.loginUserInfo != null)

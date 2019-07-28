@@ -7,12 +7,12 @@ import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 import com.google.gson.JsonObject
 
-class JoinProjectImpl(view:View) : BasePresenterImpl<GetProjectRequest,JsonObject,JoinProjectImpl.View>(view) {
+class JoinProjectImpl(view: View) : BasePresenterImpl<GetProjectRequest, JsonObject, JoinProjectImpl.View>(view) {
 
     override fun afterRequestSuccess(data: JsonObject?) {
         mView?.run {
             data?.apply {
-                when(code) {
+                when (code) {
                     200 -> {
                         val content = jsonData
                         Attributes.token = content.newToken
@@ -31,7 +31,7 @@ class JoinProjectImpl(view:View) : BasePresenterImpl<GetProjectRequest,JsonObjec
         return RemoteService.joinProject(request).execute().body()
     }
 
-    interface View:BaseNetworkView {
+    interface View : BaseNetworkView {
         fun onJoinRequestSuccess(join: Boolean)
         fun onJoinRequestFailed(json: JsonObject)
     }

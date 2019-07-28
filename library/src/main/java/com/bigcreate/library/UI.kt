@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
@@ -20,6 +21,7 @@ import android.widget.Toast
 import androidx.annotation.ColorLong
 import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.DrawableCompat
@@ -38,7 +40,7 @@ fun Window.statusBarTransucent(){
 
 fun Window.statusBarLight(light: Boolean){
     var ui = this.decorView.systemUiVisibility
-    ui = if (light)
+    ui = if (light && AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO)
         ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     else
         ui and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
@@ -114,10 +116,10 @@ fun Window.setFullTruncentStatusBar(){
 fun Intent.startBy(context:Context?){
     context?.startActivity(this)
 }
-fun Context.startActivity(cls:Class<*>):Intent{
+fun Context.startActivity(cls:Class<*>,bundle: Bundle? = null,block:(Intent.() -> Unit) ?= null){
     val intent = Intent(this,cls)
-    startActivity(intent)
-    return intent
+    block?.invoke(intent)
+    startActivity(intent,bundle)
 }
 
 fun Window.openStatusBarMask(enable:Boolean){

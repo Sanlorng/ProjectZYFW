@@ -5,7 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.bigcreate.library.*
+import com.bigcreate.library.isVisible
+import com.bigcreate.library.startActivity
+import com.bigcreate.library.toast
+import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.LoginModel
@@ -16,7 +19,6 @@ import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_launch.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class LaunchActivity : AppCompatActivity(), LoginImpl.View {
     private val presenter = LoginImpl(this)
@@ -25,9 +27,9 @@ class LaunchActivity : AppCompatActivity(), LoginImpl.View {
         setContentView(R.layout.activity_launch)
         window.translucentSystemUI(true)
         try {
-            Log.e("startService","true")
-            startService(Intent(this,CheckUpdateService::class.java))
-        }catch (e:Exception) {
+            Log.e("startService", "true")
+            startService(Intent(this, CheckUpdateService::class.java))
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         when {

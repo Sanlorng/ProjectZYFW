@@ -13,6 +13,12 @@
             android:summaryOff="沉浸式状态栏"
             android:summaryOn="带色差的状态栏"/>
         <SwitchPreference
+            android:icon="@drawable/ic_outline_explore_24px"
+            android:key="switch_night_mode"
+            android:defaultValue="false"
+            android:title="夜间模式"
+            android:summary="开启/关闭夜间模式" />
+        <SwitchPreference
             android:icon="@drawable/ic_error_outline_black_24dp"
             android:title="允许弹出错误对话框"
             android:key="show_exception_dialog"

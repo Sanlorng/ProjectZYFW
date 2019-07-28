@@ -1,7 +1,6 @@
 package com.bigcreate.zyfw.fragments
 
 import android.app.Dialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -10,34 +9,28 @@ import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.TextView
 import androidx.core.view.setPadding
-import androidx.core.view.updateMargins
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.library.fromJson
-
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.models.City
 import com.bigcreate.zyfw.models.Province
 import kotlinx.android.synthetic.main.fragment_city_select.*
-import kotlinx.android.synthetic.main.fragment_city_select.view.*
-import kotlinx.android.synthetic.main.fragment_register.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.lang.Exception
 
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [CitySelectFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
  */
 class CitySelectFragment : DialogFragment() {
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+    //    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
 //                              savedInstanceState: Bundle?): View? {
 //        // Inflate the layout for this fragment
 //        return inflater.inflate(R.layout.fragment_city_select, container, false)
@@ -48,10 +41,6 @@ class CitySelectFragment : DialogFragment() {
     private var selectBackgroundDrawable: Drawable? = null
     // TODO: Rename method, update argument and hook method into UI event
     fun onButtonPressed(uri: Uri) {
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -68,7 +57,7 @@ class CitySelectFragment : DialogFragment() {
             }
             toolbarSelectCity.inflateMenu(R.menu.toolbar_selecte_city)
             toolbarSelectCity.setOnMenuItemClickListener {
-                when(it.itemId) {
+                when (it.itemId) {
                     R.id.selectDoneCity -> if (city.isNotEmpty()) {
                         Attributes.AppCity = city
                         dismiss()
@@ -77,16 +66,16 @@ class CitySelectFragment : DialogFragment() {
                 true
             }
             toolbarSelectCity.title = "选择城市"
-            toolbarSelectCity.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED)
+            toolbarSelectCity.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
             val height = toolbarSelectCity.measuredHeight
             cityListCitySelected.apply {
-                setPadding(paddingLeft,paddingTop + height,paddingRight,paddingBottom)
+                setPadding(paddingLeft, paddingTop + height, paddingRight, paddingBottom)
             }
             provinceListCitySelected.apply {
-                setPadding(paddingLeft,paddingTop + height,paddingRight,paddingBottom)
+                setPadding(paddingLeft, paddingTop + height, paddingRight, paddingBottom)
             }
             val typedValue = TypedValue()
-            context.theme.resolveAttribute(R.attr.colorPrimary,typedValue,true)
+            context.theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
             val attr = context.theme.obtainStyledAttributes(typedValue.resourceId, intArrayOf(R.attr.colorPrimary))
             selectBackgroundDrawable = attr.getDrawable(0)?.constantState?.newDrawable()
             selectBackgroundDrawable?.alpha = (0.6f * 255).toInt()
@@ -99,7 +88,7 @@ class CitySelectFragment : DialogFragment() {
                     cityJson += temp
                     temp = buffer.readLine()
                 }
-                Log.e("cityJson",cityJson)
+                Log.e("cityJson", cityJson)
                 val cityList = cityJson.fromJson<List<Province>>()
                 provinceListCitySelected.layoutManager = LinearLayoutManager(context)
                 provinceListCitySelected.adapter = ProvinceAdapter(cityList)
@@ -111,7 +100,7 @@ class CitySelectFragment : DialogFragment() {
                         if (city.name == Attributes.AppCity) {
                             (provinceListCitySelected.adapter as ProvinceAdapter).selectedPosition = i
                             provinceListCitySelected.scrollToPosition(i)
-                            toolbarSelectCity.title = String.format("当前：%s -> %s",province.name,city.name)
+                            toolbarSelectCity.title = String.format("当前：%s -> %s", province.name, city.name)
                             this@CitySelectFragment.city = city.name
                             this@CitySelectFragment.province = province.name
                             hasFind = true
@@ -121,31 +110,28 @@ class CitySelectFragment : DialogFragment() {
                     if (hasFind)
                         break
                 }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
-    }
-
-    inner class ProvinceViewHolder(view: View): RecyclerView.ViewHolder(view)
-    inner class CityViewHolder(view: View): RecyclerView.ViewHolder(view)
-    inner class ProvinceAdapter(val list: List<Province>): RecyclerView.Adapter<ProvinceViewHolder>() {
+    inner class ProvinceViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    inner class CityViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    inner class ProvinceAdapter(val list: List<Province>) : RecyclerView.Adapter<ProvinceViewHolder>() {
         var selectedPosition = -1
-        set(value) {
-            if (field!= value) {
-                city = ""
-                val temp = field
-                field = value
-                if (temp!=-1)
-                    notifyItemChanged(temp)
-                notifyItemChanged(value)
+            set(value) {
+                if (field != value) {
+                    city = ""
+                    val temp = field
+                    field = value
+                    if (temp != -1)
+                        notifyItemChanged(temp)
+                    notifyItemChanged(value)
+                }
+
             }
 
-        }
         override fun getItemCount(): Int {
             return list.size
         }
@@ -161,7 +147,7 @@ class CitySelectFragment : DialogFragment() {
                         selectedPosition = position
                         dialog?.apply {
                             province = name
-                            toolbarSelectCity.title = String.format(titleFormat,name,this@CitySelectFragment.city)
+                            toolbarSelectCity.title = String.format(titleFormat, name, this@CitySelectFragment.city)
                             cityListCitySelected.layoutManager = LinearLayoutManager(context)
                             cityListCitySelected.adapter = CityAdapter(city)
                         }
@@ -179,14 +165,14 @@ class CitySelectFragment : DialogFragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProvinceViewHolder {
             return ProvinceViewHolder(TextView(parent.context).apply {
                 setEms(5)
-                setTextSize(TypedValue.COMPLEX_UNIT_SP,18f)
-                val padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8f,context.resources.displayMetrics)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                val padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics)
                 setPadding(padding.toInt())
             })
         }
     }
 
-    inner class CityAdapter(val list: List<City>): RecyclerView.Adapter<CityViewHolder>() {
+    inner class CityAdapter(val list: List<City>) : RecyclerView.Adapter<CityViewHolder>() {
         override fun getItemCount(): Int {
             return list.size
         }
@@ -198,7 +184,7 @@ class CitySelectFragment : DialogFragment() {
                     setOnClickListener {
                         city = name
                         dialog?.apply {
-                            toolbarSelectCity.title = String.format(titleFormat,province,city)
+                            toolbarSelectCity.title = String.format(titleFormat, province, city)
                         }
                     }
 
@@ -208,15 +194,15 @@ class CitySelectFragment : DialogFragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityViewHolder {
             return CityViewHolder(TextView(parent.context).apply {
-                setTextSize(TypedValue.COMPLEX_UNIT_SP,18f)
-                val padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8f,context.resources.displayMetrics)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+                val padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics)
                 setPadding(padding.toInt())
                 val typedValue = TypedValue()
-                context.theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue , true)
+                context.theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
                 val attribute = intArrayOf(android.R.attr.selectableItemBackground)
                 val typedArray = context.theme.obtainStyledAttributes(typedValue.resourceId, attribute)
                 background = typedArray.getDrawable(0)
-                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             })
         }
     }

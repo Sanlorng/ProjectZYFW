@@ -37,7 +37,8 @@ class FavoriteProjectImpl(mView: View?) : BaseMultiPresenterImpl<FavoriteProject
                     when (code) {
                         200 -> {
                             Attributes.token = newTokenFromData
-                            onUnFavoriteProjectSuccess() }
+                            onUnFavoriteProjectSuccess()
+                        }
                         else -> onUnFavoriteProjectFailed()
                     }
                 }
@@ -58,6 +59,7 @@ class FavoriteProjectImpl(mView: View?) : BaseMultiPresenterImpl<FavoriteProject
         cancelJob()
         addJob(unFavoriteInter.doRequest(mView, unFavoriteRequest))
     }
+
     interface View : BaseNetworkView {
         fun onFavoriteProjectSuccess()
         fun onFavoriteProjectFailed()

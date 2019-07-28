@@ -12,7 +12,10 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.edit
-import androidx.core.view.*
+import androidx.core.view.get
+import androidx.core.view.isVisible
+import androidx.core.view.setMargins
+import androidx.core.view.size
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -38,10 +41,10 @@ import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.gson.JsonObject
-import kotlinx.android.synthetic.main.layout_search_bar.*
 import kotlinx.android.synthetic.main.fragment_search_dialog.*
+import kotlinx.android.synthetic.main.layout_search_bar.*
 
-class SearchDialogFragment : DialogFragment(){
+class SearchDialogFragment : DialogFragment() {
     private var searchKey = ""
     var location: AMapLocation? = null
     var isClick = false
@@ -67,7 +70,7 @@ class SearchDialogFragment : DialogFragment(){
         }
     })
     private var projectId = -1
-    private val searchRequest = SearchRequest("", null, null, null,1)
+    private val searchRequest = SearchRequest("", null, null, null, 1)
     private val searchView = object : SearchImpl.View {
         override fun onSearchFailed(response: JsonObject) {
             context?.toast(response.toJson())
@@ -76,7 +79,7 @@ class SearchDialogFragment : DialogFragment(){
 
         override fun onSearchFinished(searchResponse: SearchResponse) {
             dialog?.apply {
-//                GlobalScope.launch {
+                //                GlobalScope.launch {
 //                    searchHistory = ArrayList(searchHistory.filter {
 //                        it.first != searchKey
 //                    }).apply {
@@ -85,7 +88,7 @@ class SearchDialogFragment : DialogFragment(){
 //                            removeAt(10)
 //                    }
 //                    showSearchHistory(ad)
-                    addSearchHistory()
+                addSearchHistory()
 //                }
 //                progressSearchDialog.isVisible = false
 //                searchResponse.list.isEmpty().apply {
@@ -135,7 +138,7 @@ class SearchDialogFragment : DialogFragment(){
         }
     }
     private val searchImpl = SearchImpl(searchView)
-//    private val locationView = object : LocationContract.View {
+    //    private val locationView = object : LocationContract.View {
 //        override fun onLocationPermissionDenied() {
 //            context?.toast("位置权限被禁止")
 //        }
@@ -168,7 +171,7 @@ class SearchDialogFragment : DialogFragment(){
         return Dialog(context!!, R.style.bottomDialog).apply {
             networkStateViewModel = ViewModelProviders.of(this@SearchDialogFragment).get(NetworkStateViewModel::class.java)
             networkStateViewModel.state.observe(this@SearchDialogFragment, Observer {
-                when(it.status) {
+                when (it.status) {
                     Status.SUCCESS -> showProgress(false)
                     Status.FAILED -> {
                         showProgress(false)
@@ -221,14 +224,14 @@ class SearchDialogFragment : DialogFragment(){
                         else -> location!!.city
                     }
                     if (!inputSearchBar.editableText.trimEnd().isEmpty())
-                    searchRequest.apply {
-                        searchKey = inputSearchBar.editableText.trimEnd().toString()
-                        token = Attributes.token
-                        projectRegion = city
-                        projectTopic = searchKey
-                        projectContent = null
-                        reSearch()
-                    }
+                        searchRequest.apply {
+                            searchKey = inputSearchBar.editableText.trimEnd().toString()
+                            token = Attributes.token
+                            projectRegion = city
+                            projectTopic = searchKey
+                            projectContent = null
+                            reSearch()
+                        }
                     true
                 } else
                     false
@@ -240,11 +243,10 @@ class SearchDialogFragment : DialogFragment(){
                 if (hasFocus) {
                     showSearchHistory(true)
                     swipeLayoutSearch.isVisible = false
-                }
-                else {
+                } else {
                     showSearchHistory(false)
                     swipeLayoutSearch.isVisible = true
-                    context.getSystemService(InputMethodManager::class.java).hideSoftInputFromWindow(v.windowToken,0)
+                    context.getSystemService(InputMethodManager::class.java).hideSoftInputFromWindow(v.windowToken, 0)
                 }
             }
             swipeLayoutSearch.setOnRefreshListener {
@@ -285,7 +287,7 @@ class SearchDialogFragment : DialogFragment(){
 //                }
 //            })
             if (BuildConfig.DEBUG)
-                Log.e("onCreateDialog","true")
+                Log.e("onCreateDialog", "true")
         }
 
     }
@@ -293,6 +295,7 @@ class SearchDialogFragment : DialogFragment(){
     private fun showProgress(boolean: Boolean) {
 
     }
+
     private fun reSearch() {
         searchRequest.projectRegion = Attributes.AppCity
         dialog?.apply {
@@ -316,11 +319,12 @@ class SearchDialogFragment : DialogFragment(){
             listSearchResult.isVisible = true
         }
     }
+
     override fun onResume() {
         if (BuildConfig.DEBUG)
-            Log.e("onResume","true")
+            Log.e("onResume", "true")
         dialog?.apply {
-//            locationImpl.doLocationRequest()
+            //            locationImpl.doLocationRequest()
             aMapLocationImpl.startLocation()
             if (isClick.not())
                 inputSearchBar.requestFocus()
@@ -336,26 +340,28 @@ class SearchDialogFragment : DialogFragment(){
         addSearchHistory()
         showSearchHistory(true)
     }
-    fun onBackPressed():Boolean {
-        Log.e("onBackPressed",(dialog == null).not().toString())
+
+    fun onBackPressed(): Boolean {
+        Log.e("onBackPressed", (dialog == null).not().toString())
         dialog?.apply {
-            Log.e("swipe",swipeLayoutSearch.isVisible.not().toString())
-            return if (inputSearchBar.hasFocus()&&listSearchResult.childCount!=0) {
-    //                showSearchHistory(false)
-    //                swipeLayoutSearch?.isVisible = true
+            Log.e("swipe", swipeLayoutSearch.isVisible.not().toString())
+            return if (inputSearchBar.hasFocus() && listSearchResult.childCount != 0) {
+                //                showSearchHistory(false)
+                //                swipeLayoutSearch?.isVisible = true
                 if (BuildConfig.DEBUG)
-                    Log.e("focus","true")
+                    Log.e("focus", "true")
                 inputSearchBar.clearFocus()
                 true
-            }else {
+            } else {
                 this@SearchDialogFragment.dismiss()
                 if (BuildConfig.DEBUG)
-                    Log.e("unFocus","true")
+                    Log.e("unFocus", "true")
                 false
             }
         }
         return false
     }
+
     override fun onDismiss(dialog: DialogInterface) {
         searchImpl.detachView()
 //        locationImpl.detachView()
@@ -366,9 +372,10 @@ class SearchDialogFragment : DialogFragment(){
         isClick = false
         super.onDismiss(dialog)
     }
+
     private fun addSearchHistory() {
         if (BuildConfig.DEBUG)
-            Log.e("onSearchKey",searchHistory.size.toString())
+            Log.e("onSearchKey", searchHistory.size.toString())
         searchHistory = ArrayList(searchHistory.filter {
             it.first != searchKey
         }).apply {
@@ -403,7 +410,8 @@ class SearchDialogFragment : DialogFragment(){
             }
         }
     }
-//    private fun showSearchHistory(dialog: Dialog) {
+
+    //    private fun showSearchHistory(dialog: Dialog) {
 //        dialog.apply {
 //            searchHistory.apply {
 //                val last = when {
@@ -449,22 +457,23 @@ class SearchDialogFragment : DialogFragment(){
     private fun showSearchHistory(value: Boolean) {
         dialog?.apply {
             if (BuildConfig.DEBUG) {
-                Log.e("isShow",value.toString())
-                Log.e("historyNum",searchHistory.size.toString())
-                Log.e("num",chipGroupSearchHistory.childCount.toString())
+                Log.e("isShow", value.toString())
+                Log.e("historyNum", searchHistory.size.toString())
+                Log.e("num", chipGroupSearchHistory.childCount.toString())
             }
-            if (searchHistory.size!= chipGroupSearchHistory.size && value)
+            if (searchHistory.size != chipGroupSearchHistory.size && value)
                 addSearchHistory()
             chipGroupSearchHistory?.isVisible = value
             layoutSearchHistory?.isVisible = value
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         dialog?.apply {
             inputSearchBar?.clearFocus()
             if (requestCode == RequestCode.OPEN_PROJECT && resultCode == ResultCode.OK) {
-                }
             }
+        }
         super.onActivityResult(requestCode, resultCode, data)
     }
 

@@ -3,21 +3,20 @@ package com.bigcreate.zyfw.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bigcreate.library.setIconTint
 import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.SelectListAdapter
-import com.bigcreate.zyfw.base.*
-import com.bigcreate.zyfw.models.FilesUploadRequest
+import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.RequestCode
+import com.bigcreate.zyfw.base.ResultCode
+import com.bigcreate.zyfw.base.paddingStatusBar
 import com.bigcreate.zyfw.models.PublishExploreRequest
 import com.bigcreate.zyfw.mvp.user.PublishExploreImpl
 import com.bilibili.boxing.Boxing
@@ -27,10 +26,11 @@ import com.bilibili.boxing.loader.IBoxingMediaLoader
 import com.bilibili.boxing.model.config.BoxingConfig
 import com.bilibili.boxing_impl.ui.BoxingActivity
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_publish_explore.*
 import java.io.File
 
-class PublishExploreActivity : AuthLoginActivity(),PublishExploreImpl.View {
+class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View {
 
     private var action = SelectListAdapter.Action("")
     private val list = ArrayList<SelectListAdapter.Model>().apply {
@@ -55,7 +55,7 @@ class PublishExploreActivity : AuthLoginActivity(),PublishExploreImpl.View {
     }
 
     override fun afterCheckLoginSuccess() {
-        dialog = androidx.appcompat.app.AlertDialog.Builder(this@PublishExploreActivity)
+        dialog = MaterialAlertDialogBuilder(this@PublishExploreActivity)
                 .setView(R.layout.layout_process_upload)
                 .setCancelable(false)
                 .create()
@@ -67,7 +67,7 @@ class PublishExploreActivity : AuthLoginActivity(),PublishExploreImpl.View {
             setDisplayHomeAsUpEnabled(true)
             title = "发表动态"
         }
-        listExplorePublish.layoutManager = GridLayoutManager(this,4)
+        listExplorePublish.layoutManager = GridLayoutManager(this, 4)
         BoxingMediaLoader.getInstance().init(boxImpl)
         imageConfig = BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
         videoConfig = BoxingConfig(BoxingConfig.Mode.VIDEO)
@@ -78,6 +78,8 @@ class PublishExploreActivity : AuthLoginActivity(),PublishExploreImpl.View {
 
         }
         toolbarExplorePublish.paddingStatusBar()
+        toolbarExplorePublish.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        toolbarExplorePublish.layoutParams.height = toolbarExplorePublish.measuredHeight
         listExplorePublish.itemAnimator = DefaultItemAnimator()
     }
 
@@ -128,10 +130,11 @@ class PublishExploreActivity : AuthLoginActivity(),PublishExploreImpl.View {
     override fun onRequestFinished() {
         showProgress(false)
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_release_project,menu)
-        menu?.findItem(R.id.releaseEditProjectDone)?.isVisible= false
-        menu?.findItem(R.id.releaseCreateProject)?.setIconTint(getColor(R.color.colorAccent))
+        menuInflater.inflate(R.menu.toolbar_release_project, menu)
+        menu?.findItem(R.id.releaseEditProjectDone)?.isVisible = false
+//        menu?.findItem(R.id.releaseCreateProject)?.setIconTint(getColor(R.color.colorAccent))
         return true
     }
 
@@ -150,7 +153,7 @@ class PublishExploreActivity : AuthLoginActivity(),PublishExploreImpl.View {
                                             listFile.add(File(it.path))
                                     }
                                     listFile
-                                },token,inputExplorePublish.text?.trim()?.toString()?:""))
+                                }, token, inputExplorePublish.text?.trim()?.toString() ?: ""))
                     }
                 }
             }

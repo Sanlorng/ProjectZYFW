@@ -1,9 +1,6 @@
 package com.bigcreate.zyfw.mvp.project
 
-import com.bigcreate.library.fromJson
-import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.base.*
-import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.models.SearchRequest
 import com.bigcreate.zyfw.models.SearchResponse
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView

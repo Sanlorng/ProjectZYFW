@@ -6,27 +6,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activities.PublishExploreActivity">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarPublishExplore"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize">
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarExplorePublish"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.appbar.AppBarLayout>
+
     <com.google.android.material.textfield.TextInputEditText
         app:layout_anchor="@id/appbarPublishExplore"
         app:layout_anchorGravity="bottom"
         android:id="@+id/inputExplorePublish"
-        android:background="#ffffff"
+        android:background="?attr/colorBackgroundFloating"
         android:hint="@string/write_something"
         android:gravity="start"
         android:padding="8dp"
         android:minLines="6"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
+
     <androidx.recyclerview.widget.RecyclerView
         tools:itemCount="9"
         tools:listitem="@layout/layout_item_select"
@@ -34,5 +38,5 @@
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         android:id="@+id/listExplorePublish"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 </LinearLayout>

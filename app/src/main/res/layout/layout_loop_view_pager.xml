@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
     <androidx.viewpager.widget.ViewPager
-            android:id="@+id/mLoopViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        android:id="@+id/mLoopViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
-            android:background="?attr/colorAccent"
-            android:textColor="#ffffff"
-            android:padding="8dp"
-            android:id="@+id/titleLoopViewPager"
-            android:layout_gravity="bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:background="?attr/colorAccent"
+        android:textColor="#ffffff"
+        android:padding="8dp"
+        android:id="@+id/titleLoopViewPager"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </FrameLayout>

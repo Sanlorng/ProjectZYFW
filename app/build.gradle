@@ -36,7 +36,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.bigcreate.zyfw"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode getVersionCode()
         versionName getVersionName()
@@ -70,16 +70,22 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+    buildToolsVersion = '29.0.1'
 }
 final String annotation_version = "1.1.0"
 final String preference_version = "1.1.0-rc01"
-final String material_version = "1.1.0-alpha07"
+final String material_version = "1.1.0-alpha08"
 final String navigation_ktx_version = "2.0.0"
 final String lifecycle_version = "2.2.0-alpha02"
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //Kotlin Library
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
     //Android X Library
     implementation "androidx.appcompat:appcompat:1.1.0-rc01"
@@ -94,7 +100,7 @@ dependencies {
     implementation "androidx.paging:paging-runtime:2.1.0"
     //LifeCycle Library
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation "androidx.work:work-runtime-ktx:2.1.0"
     //Navigation Library
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_ktx_version"
@@ -105,8 +111,8 @@ dependencies {
     //Gson Library
     implementation 'com.google.code.gson:gson:2.8.5'
     //Retrofit Library
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     //OkHttp Library
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'

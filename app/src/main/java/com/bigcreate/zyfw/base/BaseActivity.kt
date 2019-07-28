@@ -10,7 +10,6 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 
 val Fragment.appCompactActivity: AppCompatActivity?
     get() {
@@ -27,5 +26,5 @@ val Context.defaultSharedPreferences: SharedPreferences
 fun Activity.startInstallPermissionSettingActivity() {
     startActivityForResult(Intent(
             Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES
-    ),RequestCode.INSTALL_PERMISSION)
+    ), RequestCode.INSTALL_PERMISSION)
 }

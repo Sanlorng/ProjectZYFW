@@ -52,7 +52,7 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        isForgetPass = activity?.intent?.getBooleanExtra("isResetPassword",false).valueOrNotNull
+        isForgetPass = activity?.intent?.getBooleanExtra("isResetPassword", false).valueOrNotNull
 
         appCompactActivity?.setSupportActionBar(toolbarRegister)
         appCompactActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -91,7 +91,6 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_register, container, false)
     }
-
 
 
     private fun attemptLogin() {
@@ -134,9 +133,9 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
             // perform the user login attempt.
             showProgress(true)
             if (isForgetPass)
-                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr,"", inputValidCodeRegister.text.toString()))
+                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr, "", inputValidCodeRegister.text.toString()))
             else
-                presenter.doRegister(RegisterRequest(emailStr, passwordStr,inputIdentifyRegister.text.toString(), inputValidCodeRegister.text.toString()))
+                presenter.doRegister(RegisterRequest(emailStr, passwordStr, inputIdentifyRegister.text.toString(), inputValidCodeRegister.text.toString()))
         }
         buttonSubmitRegister.isEnabled = true
     }
@@ -216,7 +215,7 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
         GlobalScope.launch {
             for (i in 60 downTo 1) {
                 withContext(Dispatchers.Main) {
-                    buttonSendValidCodeRegister.text = getString(R.string.reSendTimeVar,i)
+                    buttonSendValidCodeRegister.text = getString(R.string.reSendTimeVar, i)
                 }
                 delay(1000)
             }
@@ -229,12 +228,12 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
 
     override fun onRequesting() {
         if (!isSendCode)
-        showProgress(true)
+            showProgress(true)
     }
 
     override fun onRequestFinished() {
         if (!isSendCode)
-        showProgress(false)
+            showProgress(false)
         isSendCode = false
     }
 

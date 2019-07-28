@@ -4,19 +4,15 @@ package com.bigcreate.zyfw.fragments
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.FavoriteListAdapter
-import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.datasource.FavoriteListDataSource
 import com.bigcreate.zyfw.models.Project
@@ -44,7 +40,7 @@ class MyFavoriteFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        arguments?.putString("title","收藏的项目")
+        arguments?.putString("title", "收藏的项目")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -59,9 +55,10 @@ class MyFavoriteFragment : Fragment() {
         listMyFavorite.layoutManager = LinearLayoutManager(listMyFavorite.context)
         refreshList()
     }
+
     private fun refreshList() {
         val adapter = FavoriteListAdapter()
-        adapter.submitList(PagedList.Builder<Int,Project>(FavoriteListDataSource(networkStateViewModel.state),PagedList.Config.Builder()
+        adapter.submitList(PagedList.Builder<Int, Project>(FavoriteListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
                 .setPageSize(10)
                 .setPrefetchDistance(20)
                 .build())
@@ -72,6 +69,7 @@ class MyFavoriteFragment : Fragment() {
                 }.build())
         listMyFavorite.adapter = adapter
     }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -88,7 +86,7 @@ class MyFavoriteFragment : Fragment() {
                     arguments = Bundle().apply {
                         putString(ARG_PARAM1, param1)
                         putString(ARG_PARAM2, param2)
-                        putString("title","收藏的项目")
+                        putString("title", "收藏的项目")
                     }
                 }
     }

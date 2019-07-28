@@ -9,7 +9,7 @@ import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 import com.google.gson.JsonObject
 
-class GetUserInfoImpl(mView: View):BasePresenterImpl<SimpleRequest,JsonObject,GetUserInfoImpl.View>(mView) {
+class GetUserInfoImpl(mView: View) : BasePresenterImpl<SimpleRequest, JsonObject, GetUserInfoImpl.View>(mView) {
 
     override fun afterRequestSuccess(data: JsonObject?) {
         mView?.run {
@@ -17,14 +17,14 @@ class GetUserInfoImpl(mView: View):BasePresenterImpl<SimpleRequest,JsonObject,Ge
                 if (isJsonNull)
                     onUserInfoIsEmpty()
                 else
-                when(code) {
-                    200 -> onGetUserInfoSuccess(jsonContentFromData.toJson().fromJson<UserInfo>().apply {
-                        Attributes.token = jsonContentFromData.getAsString("token")
-                        Attributes.userInfo = this
-                    })
-                    404 -> onUserInfoIsEmpty()
-                    else -> onGetUserInfoFailed()
-                }
+                    when (code) {
+                        200 -> onGetUserInfoSuccess(jsonContentFromData.toJson().fromJson<UserInfo>().apply {
+                            Attributes.token = jsonContentFromData.getAsString("token")
+                            Attributes.userInfo = this
+                        })
+                        404 -> onUserInfoIsEmpty()
+                        else -> onGetUserInfoFailed()
+                    }
             }
         }
     }
@@ -32,7 +32,8 @@ class GetUserInfoImpl(mView: View):BasePresenterImpl<SimpleRequest,JsonObject,Ge
     override fun backgroundRequest(request: SimpleRequest): JsonObject? {
         return RemoteService.instance.getUserInfoBySelf(request).execute().body()
     }
-    interface View: BaseNetworkView {
+
+    interface View : BaseNetworkView {
         fun onGetUserInfoSuccess(userInfo: UserInfo)
         fun onGetUserInfoFailed()
         fun onUserInfoIsEmpty()

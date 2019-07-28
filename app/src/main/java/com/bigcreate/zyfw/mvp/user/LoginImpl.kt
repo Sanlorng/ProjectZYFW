@@ -25,7 +25,7 @@ class LoginImpl(mView: View?) : BasePresenterImpl<LoginRequest, JsonObject, Logi
                                 putString("password", loginRequest.password)
                             }
                         }
-                        Attributes.loginUserInfo = LoginModel(loginRequest.username, loginRequest.password, newTokenFromData,jsonData.getAsInt("userId"))
+                        Attributes.loginUserInfo = LoginModel(loginRequest.username, loginRequest.password, newTokenFromData, jsonData.getAsInt("userId"))
                         onLoginSuccess(Attributes.loginUserInfo!!)
                     }
                     else -> {

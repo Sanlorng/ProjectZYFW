@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:title="加入项目"
+    <item android:title="@string/joinProject"
         android:id="@+id/projectDetailsJoin"
         android:icon="@drawable/ic_favorite_border_black_24dp"
         app:showAsAction="always"/>
@@ -15,7 +15,7 @@
         <!--android:id="@+id/projectDetailsComment"-->
         <!--android:icon="@drawable/ic_outline_comment_24px"-->
         <!--app:showAsAction="ifRoom"/>-->
-    <item android:title="群聊"
+    <item android:title="@string/groupChat"
         android:id="@+id/projectDetailsGroupChat"
         android:icon="@drawable/ic_outline_group_24px"
         app:showAsAction="always"/>

@@ -9,7 +9,7 @@ import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 import com.google.gson.JsonObject
 
-class PublishExploreImpl(view: View):BasePresenterImpl<PublishExploreRequest,JsonObject,PublishExploreImpl.View>(view) {
+class PublishExploreImpl(view: View) : BasePresenterImpl<PublishExploreRequest, JsonObject, PublishExploreImpl.View>(view) {
 
     override fun afterRequestSuccess(data: JsonObject?) {
         mView?.run {
@@ -17,8 +17,7 @@ class PublishExploreImpl(view: View):BasePresenterImpl<PublishExploreRequest,Jso
                 if (code == 200) {
                     Attributes.token = newTokenFromData
                     explorePublishSuccess()
-                }
-                else
+                } else
                     explorePublishFailed()
             }
         }
@@ -26,11 +25,11 @@ class PublishExploreImpl(view: View):BasePresenterImpl<PublishExploreRequest,Jso
 
     override fun backgroundRequest(request: PublishExploreRequest): JsonObject? {
         return request.run {
-            RemoteService.explorePublish(parts,token,dyContent).execute().body()
+            RemoteService.explorePublish(parts, token, dyContent).execute().body()
         }
     }
 
-    interface View: BaseNetworkView {
+    interface View : BaseNetworkView {
         fun explorePublishSuccess()
         fun explorePublishFailed()
     }

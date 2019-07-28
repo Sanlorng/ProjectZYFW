@@ -42,6 +42,7 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
     override fun setContentView() {
         setContentView(R.layout.activity_release_project)
     }
+
     override fun afterCheckLoginSuccess() {
         setSupportActionBar(toolbarReleaseProject)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -90,9 +91,10 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
                 .setCancelable(false)
                 .create()
 //        locationImpl.start()
-        amapLocationImpl = AMapLocationImpl(object :AMapLocationImpl.View {
+        amapLocationImpl = AMapLocationImpl(object : AMapLocationImpl.View {
             override val onceLocation: Boolean
                 get() = false
+
             override fun onRequestFailed(location: AMapLocation?) {
 
             }
@@ -115,6 +117,7 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
         chipLocationRelease.isChecked = false
         chipLocationRelease.isCheckable = false
     }
+
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.apply {
             if (editMode) findItem(R.id.releaseCreateProject).isVisible = false

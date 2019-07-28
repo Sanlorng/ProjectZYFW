@@ -9,8 +9,8 @@ import com.bigcreate.zyfw.R
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.layout_item_select.view.*
 
-class SelectListAdapter(val list:ArrayList<Model>,var onItemClickListener:((Int) -> Unit)? = null): RecyclerView.Adapter<SelectListAdapter.ViewHolder>() {
-    inner class ViewHolder(view: View):RecyclerView.ViewHolder(view)
+class SelectListAdapter(val list: ArrayList<Model>, var onItemClickListener: ((Int) -> Unit)? = null) : RecyclerView.Adapter<SelectListAdapter.ViewHolder>() {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     override fun getItemCount(): Int {
         return list.count()
@@ -47,21 +47,22 @@ class SelectListAdapter(val list:ArrayList<Model>,var onItemClickListener:((Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_item_select,parent,false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_item_select, parent, false))
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(list[position]){
+        return when (list[position]) {
             is Image -> 0
             is Video -> 1
             else -> 2
         }
     }
+
     abstract class Model(val path: String)
-    class Image(path: String):Model(path)
-    class Video(path: String):Model(path)
-    class Action(path: String):Model(path)
+    class Image(path: String) : Model(path)
+    class Video(path: String) : Model(path)
+    class Action(path: String) : Model(path)
     interface OnItemClickListener {
-       fun onItemClick()
+        fun onItemClick()
     }
 }

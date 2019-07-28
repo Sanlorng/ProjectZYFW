@@ -6,37 +6,39 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 
-class PinnedBottomBehavior(context: Context,attributeSet: AttributeSet):AppBarLayout.ScrollingViewBehavior(context,attributeSet) {
+class PinnedBottomBehavior(context: Context, attributeSet: AttributeSet) : AppBarLayout.ScrollingViewBehavior(context, attributeSet) {
     private var appBarLayout: AppBarLayout? = null
     private var onAnimationRunnablePosted = false
 
     override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: View, directTargetChild: View, target: View, axes: Int, type: Int): Boolean {
         appBarLayout?.apply {
-            startAnimationRunnable(child,this)
+            startAnimationRunnable(child, this)
         }
         return super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type)
     }
+
     override fun onMeasureChild(parent: CoordinatorLayout, child: View, parentWidthMeasureSpec: Int, widthUsed: Int, parentHeightMeasureSpec: Int, heightUsed: Int): Boolean {
         appBarLayout?.apply {
             val bottomPadding = calculateBottomPadding(this)
-            if (bottomPadding!=child.paddingBottom) {
+            if (bottomPadding != child.paddingBottom) {
                 child.setPadding(
                         child.paddingLeft,
                         child.paddingTop,
                         child.paddingRight,
                         bottomPadding)
             }
-            startAnimationRunnable(child,this)
+            startAnimationRunnable(child, this)
         }
         return super.onMeasureChild(parent, child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed)
     }
+
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
         val result = super.onDependentViewChanged(parent, child, dependency)
         if (appBarLayout == null)
             appBarLayout = dependency as AppBarLayout
         val bottomPadding = calculateBottomPadding(appBarLayout)
         val paddingChanged = bottomPadding != child.paddingBottom
-        if (paddingChanged){
+        if (paddingChanged) {
             child.setPadding(
                     child.paddingLeft,
                     child.paddingTop,
@@ -45,11 +47,11 @@ class PinnedBottomBehavior(context: Context,attributeSet: AttributeSet):AppBarLa
             child.requestLayout()
         }
 //        if (paddingChanged)
-            startAnimationRunnable(child, dependency)
-        return paddingChanged||result
+        startAnimationRunnable(child, dependency)
+        return paddingChanged || result
     }
 
-    private fun calculateBottomPadding(dependency: AppBarLayout?):Int {
+    private fun calculateBottomPadding(dependency: AppBarLayout?): Int {
 //        Log.e("appbar",(dependency != null).toString())
         return dependency!!.totalScrollRange + dependency.top
     }

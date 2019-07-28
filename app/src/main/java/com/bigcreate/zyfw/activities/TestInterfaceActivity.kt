@@ -78,24 +78,24 @@ class TestInterfaceActivity : AppCompatActivity() {
                     GlobalScope.launch {
                         UpdateService.getAppUpdateVersion(packageName).execute().body()?.apply {
 
-                                DownloadImpl.startDownload(externalCacheDir?.absolutePath + "/" + path.split("/").last(), path, object : DownloadCallback {
-                                    override fun onDownloadFailed(msg: String) {
-                                        toast("下载失败")
-                                    }
+                            DownloadImpl.startDownload(externalCacheDir?.absolutePath + "/" + path.split("/").last(), path, object : DownloadCallback {
+                                override fun onDownloadFailed(msg: String) {
+                                    toast("下载失败")
+                                }
 
-                                    override fun onPreDownload() {
-                                        toast("开始下载")
-                                    }
+                                override fun onPreDownload() {
+                                    toast("开始下载")
+                                }
 
-                                    override fun onDownloadSuccess(path: String) {
-                                        toast("下载成功 $path")
-                                    }
+                                override fun onDownloadSuccess(path: String) {
+                                    toast("下载成功 $path")
+                                }
 
-                                    override fun onDownloading(totalLen: Long, currentLen: Long) {
-                                        toast("正在下载 %${currentLen.toFloat() / currentLen}")
-                                    }
-                                })
-                            }
+                                override fun onDownloading(totalLen: Long, currentLen: Long) {
+                                    toast("正在下载 %${currentLen.toFloat() / currentLen}")
+                                }
+                            })
+                        }
                     }
                 }
                 R.id.testFileProvider -> {

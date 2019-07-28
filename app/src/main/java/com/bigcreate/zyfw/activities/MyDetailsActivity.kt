@@ -8,7 +8,7 @@ import com.bigcreate.zyfw.models.UserInfo
 import com.bigcreate.zyfw.mvp.user.GetUserInfoImpl
 import kotlinx.android.synthetic.main.activity_my_details.*
 
-class MyDetailsActivity : AuthLoginActivity(),GetUserInfoImpl.View {
+class MyDetailsActivity : AuthLoginActivity(), GetUserInfoImpl.View {
     private val getUserInfoImpl = GetUserInfoImpl(this)
     override fun setContentView() {
         setContentView(R.layout.activity_my_details)
@@ -24,6 +24,7 @@ class MyDetailsActivity : AuthLoginActivity(),GetUserInfoImpl.View {
             setDisplayHomeAsUpEnabled(true)
         }
     }
+
     override fun getViewContext(): Context {
         return this
     }
@@ -38,10 +39,11 @@ class MyDetailsActivity : AuthLoginActivity(),GetUserInfoImpl.View {
 
     override fun onUserInfoIsEmpty() {
         startActivityForResult(Intent(this@MyDetailsActivity, RegisterActivity::class.java).apply {
-                type = "setupInfo"
+            type = "setupInfo"
         }, RequestCode.SETUP_USER_INFO)
 
     }
+
     override fun onDestroy() {
         super.onDestroy()
         getUserInfoImpl.detachView()

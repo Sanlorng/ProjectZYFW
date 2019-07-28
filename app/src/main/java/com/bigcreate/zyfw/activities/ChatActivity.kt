@@ -16,11 +16,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bigcreate.library.fromJson
-import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.WebInterface
 import com.bigcreate.zyfw.models.ChatMessage
 import com.bigcreate.zyfw.models.MessageType
 import com.bigcreate.zyfw.service.MessageService
@@ -28,13 +25,13 @@ import kotlinx.android.synthetic.main.activity_chat.*
 import okhttp3.WebSocket
 import java.util.*
 
-class ChatActivity : AuthLoginActivity(){
+class ChatActivity : AuthLoginActivity() {
     private val chatMessages = ArrayList<ChatMessage>()
     private var unreadMessage = 0
     private var sendType = MessageType.SINGLE
     private var chatId = 0
-    private lateinit var socketClient:WebSocket
-    private var binder : MessageService.MessageBinder? = null
+    private lateinit var socketClient: WebSocket
+    private var binder: MessageService.MessageBinder? = null
     private val messageTag = "messageDetails"
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -48,6 +45,7 @@ class ChatActivity : AuthLoginActivity(){
             binder?.removeAllListener(messageTag)
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbarChat)
@@ -62,10 +60,10 @@ class ChatActivity : AuthLoginActivity(){
         toolbarChat.setNavigationOnClickListener {
             finish()
         }
-        chatId = intent.getIntExtra("chatId",0)
+        chatId = intent.getIntExtra("chatId", 0)
 
         buttonSendChat.isEnabled = false
-        bindService(Intent(this,MessageService::class.java), connection,Service.BIND_AUTO_CREATE)
+        bindService(Intent(this, MessageService::class.java), connection, Service.BIND_AUTO_CREATE)
 
         listChatHistory.layoutManager = LinearLayoutManager(this).apply {
             stackFromEnd = true
@@ -76,7 +74,7 @@ class ChatActivity : AuthLoginActivity(){
     }
 
     //WebSocket接受到新消息时的处理
-    private fun onNewMessage(message: ChatMessage){
+    private fun onNewMessage(message: ChatMessage) {
         if (message.receiveUserId == chatId || message.sendUserId == chatId) {
             chatMessages.add(message)
             unreadMessage++
@@ -92,6 +90,7 @@ class ChatActivity : AuthLoginActivity(){
                 listChatHistory.scrollToPosition(chatMessages.lastIndex)
         }
     }
+
     override fun afterCheckLoginSuccess() {
         initListener()
     }
@@ -101,13 +100,14 @@ class ChatActivity : AuthLoginActivity(){
     }
 
     override fun onDestroy() {
+        unbindService(connection)
         super.onDestroy()
     }
 
     private fun initListener() {
         //发送点击监听
         buttonSendChat.setOnClickListener {
-            val str = ChatMessage(inputMessageChat.text.toString(),chatId,Attributes.userId,"",sendType == MessageType.SINGLE,chatId)
+            val str = ChatMessage(inputMessageChat.text.toString(), chatId, Attributes.userId, "", sendType == MessageType.SINGLE, chatId)
 //            socketClient.send(str)
             binder?.sendMessage(str)
             inputMessageChat.text.clear()
@@ -135,17 +135,17 @@ class ChatActivity : AuthLoginActivity(){
         //未读消息监听
         textUnreadChat.setOnClickListener {
             it.isVisible = false
-            listChatHistory.smoothScrollToPosition(chatMessages.lastIndex - unreadMessage+1)
+            listChatHistory.smoothScrollToPosition(chatMessages.lastIndex - unreadMessage + 1)
         }
         //消息列表监听
         listChatHistory.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 recyclerView.apply {
-                    if (layoutManager is LinearLayoutManager){
+                    if (layoutManager is LinearLayoutManager) {
                         val count = chatMessages.size - 1 - (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-                        if (unreadMessage>0 && count < unreadMessage){
+                        if (unreadMessage > 0 && count < unreadMessage) {
                             unreadMessage = count
-                            textUnreadChat?.text = getString(R.string.countMessageVar,unreadMessage)
+                            textUnreadChat?.text = getString(R.string.countMessageVar, unreadMessage)
                             if (count == 0)
                                 textUnreadChat?.isVisible = false
                         }
@@ -155,7 +155,8 @@ class ChatActivity : AuthLoginActivity(){
             }
         })
     }
-    inner class ChatMessageAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
+    inner class ChatMessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun getItemCount(): Int {
             return chatMessages.size
         }
@@ -164,17 +165,18 @@ class ChatActivity : AuthLoginActivity(){
             holder.itemView.apply {
                 findViewById<TextView>(R.id.message_item_chat).apply {
                     text = chatMessages[position].msg
-                    maxWidth = resources.displayMetrics.widthPixels *5/8
+                    maxWidth = resources.displayMetrics.widthPixels * 5 / 8
 
                 }
             }
         }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            return object :RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(viewType,parent,false)){}
+            return object : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(viewType, parent, false)) {}
         }
 
         override fun getItemViewType(position: Int): Int {
-            return if (chatMessages[position].sendUserId!=Attributes.userId) R.layout.item_message_chat_left else R.layout.item_message_chat_right
+            return if (chatMessages[position].sendUserId != Attributes.userId) R.layout.item_message_chat_left else R.layout.item_message_chat_right
         }
 
     }

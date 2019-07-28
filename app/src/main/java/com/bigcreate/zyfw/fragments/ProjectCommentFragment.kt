@@ -1,11 +1,9 @@
 package com.bigcreate.zyfw.fragments
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +14,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bigcreate.library.toJson
 import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.CommentAdapter
@@ -33,7 +30,10 @@ import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_comment_details.*
 import kotlinx.android.synthetic.main.layout_loading.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import java.util.concurrent.Executors
 
 
@@ -86,7 +86,7 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         networkStateViewModel = ViewModelProviders.of(this).get(NetworkStateViewModel::class.java)
         networkStateViewModel.state.observe(this, Observer {
-            when(it.status) {
+            when (it.status) {
                 Status.SUCCESS -> showProgress(false)
                 Status.FAILED -> {
                     showProgress(false)
@@ -123,8 +123,8 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
     private fun refreshList() {
         projectId?.run {
             listCommentsDetails.adapter = CommentAdapter().apply {
-                submitList(PagedList.Builder<Int,Comment>(CommentListDataSource(CommentListRequest(token = Attributes.token, projectId = projectId!!, pageNum = 1),
-                        networkStateViewModel.state),PagedList.Config
+                submitList(PagedList.Builder<Int, Comment>(CommentListDataSource(CommentListRequest(token = Attributes.token, projectId = projectId!!, pageNum = 1),
+                        networkStateViewModel.state), PagedList.Config
                         .Builder()
                         .setPageSize(20)
                         .setPrefetchDistance(40)
@@ -141,6 +141,7 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
 //            commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = this, pageNum = 1))
         }
     }
+
     override fun getViewContext(): Context {
         return context!!
     }
@@ -175,7 +176,7 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
     override fun onRequesting() {
         textLoading.text = "正在加载评论"
         if (swipeLayoutCommentDetails.isRefreshing.not())
-        showProgress(true)
+            showProgress(true)
     }
 
     private fun showProgress(boolean: Boolean) {
@@ -201,6 +202,7 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
             commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = this, pageNum = 1))
         }
     }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

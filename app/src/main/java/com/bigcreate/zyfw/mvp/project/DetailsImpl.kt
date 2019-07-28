@@ -18,7 +18,8 @@ class DetailsImpl(mView: View?) :
                     200 -> {
                         val content = jsonData
                         Attributes.token = content.newToken
-                        onGetDetailsSuccess(content.get("content").toJson().fromJson<Project>()) }
+                        onGetDetailsSuccess(content.get("content").toJson().fromJson<Project>())
+                    }
                     else -> onGetDetailsFailed(this@apply)
                 }
             }
@@ -28,6 +29,7 @@ class DetailsImpl(mView: View?) :
     override fun backgroundRequest(request: GetProjectRequest): JsonObject? {
         return RemoteService.getProjectInfo(request).execute().body()
     }
+
     interface View : BaseNetworkView {
         fun onGetDetailsSuccess(project: Project)
         fun onGetDetailsFailed(jsonObject: JsonObject)

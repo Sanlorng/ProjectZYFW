@@ -14,8 +14,8 @@ import java.io.File
 
 class DownloadService : Service() {
     private var type = "file"
-    private var downloadJob : Job? = null
-    private val downloadCallBack = object :DownloadCallback {
+    private var downloadJob: Job? = null
+    private val downloadCallBack = object : DownloadCallback {
         override fun onDownloadFailed(msg: String) {
 
         }
@@ -23,7 +23,7 @@ class DownloadService : Service() {
         override fun onDownloadSuccess(path: String) {
             toast("下载完成")
             if (BuildConfig.DEBUG)
-                Log.e("type",type)
+                Log.e("type", type)
             if (type == "update")
                 startInstallApp(File(path))
         }
@@ -36,6 +36,7 @@ class DownloadService : Service() {
             toast("准备下载")
         }
     }
+
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
     }
@@ -45,10 +46,11 @@ class DownloadService : Service() {
             val savePath = getStringExtra("savePath")
             val downloadUrl = getStringExtra("downloadUrl")
             this@DownloadService.type = getStringExtra("downloadType")
-            downloadJob = DownloadImpl.startDownload(savePath,downloadUrl,downloadCallBack)
+            downloadJob = DownloadImpl.startDownload(savePath, downloadUrl, downloadCallBack)
         }
         return super.onStartCommand(intent, flags, startId)
     }
+
     override fun onDestroy() {
         downloadJob?.cancel()
         super.onDestroy()

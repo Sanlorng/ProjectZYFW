@@ -35,7 +35,7 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/imageProjectSearchItem"
         app:layout_constraintStart_toStartOf="@+id/topicProjectSearchItem"
-        app:layout_constraintTop_toBottomOf="@+id/topicProjectSearchItem"/>
+        app:layout_constraintTop_toBottomOf="@+id/topicProjectSearchItem" />
 
     <TextView
         android:id="@+id/addressProjectSearchItem"

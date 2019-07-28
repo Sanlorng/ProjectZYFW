@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@id/homeFragment" android:title="@string/title_home" android:icon="@drawable/home_icon_checkable"/>
     <item android:id="@id/messageFragment" android:title="@string/title_message" android:icon="@drawable/message_icon_checkable"/>
-    <item android:id="@id/releaseProjectActivity" android:title="发布" android:icon="@drawable/ic_add_black_24dp" />
-    <item android:id="@id/exploreFragment" android:title="探索" android:icon="@drawable/explore_icon_checkable" />
+    <item android:id="@id/releaseProjectActivity" android:title="@string/release" android:icon="@drawable/ic_add_black_24dp" />
+    <item android:id="@id/exploreFragment" android:title="@string/explore" android:icon="@drawable/explore_icon_checkable" />
     <item android:id="@id/accountFragment" android:title="@string/title_person" android:icon="@drawable/person_icon_cheackable"/>
 </menu>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardViewAppBarMain"
     android:layout_width="match_parent"
@@ -14,6 +13,7 @@
     app:strokeWidth="1dp"
     app:cardElevation="1dp"
     app:cardCornerRadius="8dp">
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarSearchBar"
         android:layout_height="48dp"
@@ -22,6 +22,7 @@
         app:layout_collapseMode="pin"
         app:contentInsetStart="0dp"
         app:contentInsetStartWithNavigation="0dp">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputSearchBar"
             android:layout_width="match_parent"
@@ -33,7 +34,8 @@
             android:textSize="16sp"
             android:inputType="text"
             android:imeOptions="actionSearch"
-            android:background="#00ffffff"/>
+            android:background="#00ffffff" />
+
         <TextView
             android:drawableStart="@drawable/ic_search_black_24dp"
             android:drawablePadding="16dp"

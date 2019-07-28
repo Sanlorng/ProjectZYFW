@@ -17,7 +17,6 @@ import com.bigcreate.library.toast
 import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.MyApplication
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.models.LoginModel
@@ -63,8 +62,8 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
             startActivity(RegisterActivity::class.java)
         }
         textStartResetLogin.setOnClickListener {
-            startActivity(Intent(this,RegisterActivity::class.java).apply {
-                putExtra("isResetPassword",true)
+            startActivity(Intent(this, RegisterActivity::class.java).apply {
+                putExtra("isResetPassword", true)
             })
         }
     }

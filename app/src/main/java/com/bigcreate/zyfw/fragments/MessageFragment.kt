@@ -1,39 +1,31 @@
 package com.bigcreate.zyfw.fragments
 
-import android.annotation.SuppressLint
 import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.*
+import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.util.set
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.library.toJson
-import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MainActivity
 import com.bigcreate.zyfw.adapter.MessageListAdapter
-import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.models.ChatMessage
 import com.bigcreate.zyfw.models.MessageHeader
 import com.bigcreate.zyfw.service.MessageService
-import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.fragment_message.*
 import kotlinx.android.synthetic.main.layout_search_bar.*
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.Comparator
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,25 +40,25 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class MessageFragment : Fragment(),MainActivity.ChildFragment{
+class MessageFragment : Fragment(), MainActivity.ChildFragment {
     private var param1: String? = null
     private var param2: String? = null
     private val success = 1
-    private var messageMap = HashMap<Int,MessageHeader>()
-	private val messageList = ArrayList<MessageHeader>()
-	private var binder: MessageService.MessageBinder? =null
-	private var messageTag = "MessageFragment"
-	private var connection = object : ServiceConnection {
-		override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-			binder = service as MessageService.MessageBinder
-			binder?.addOnMessageReceiveListener(messageTag) {
-				onNewMessage(it)
-			}
-		}
+    private var messageMap = SparseArray<MessageHeader>()
+    private val messageList = ArrayList<MessageHeader>()
+    private var binder: MessageService.MessageBinder? = null
+    private var messageTag = "MessageFragment"
+    private var connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            binder = service as MessageService.MessageBinder
+            binder?.addOnMessageReceiveListener(messageTag) {
+                onNewMessage(it)
+            }
+        }
 
-		override fun onServiceDisconnected(name: ComponentName?) {
-		}
-	}
+        override fun onServiceDisconnected(name: ComponentName?) {
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,28 +79,27 @@ class MessageFragment : Fragment(),MainActivity.ChildFragment{
         val layoutParam = cardViewAppBarMain.layoutParams as ViewGroup.MarginLayoutParams
         layoutParam.topMargin += context?.let {
             it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
-        }?:0
+        } ?: 0
         cardViewAppBarMain.layoutParams = layoutParam
         swipeMessage.apply {
-            cardViewAppBarMain.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED)
-            setProgressViewEndTarget(true,cardViewAppBarMain.measuredHeight + progressViewEndOffset)
+            cardViewAppBarMain.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+            setProgressViewEndTarget(true, cardViewAppBarMain.measuredHeight + progressViewEndOffset)
         }
         listMessage.apply {
-            setPadding(paddingLeft,paddingTop + cardViewAppBarMain.measuredHeight +
-                    resources.getDimensionPixelOffset(resources.
-                            getIdentifier("status_bar_height", "dimen", "android")),
-                    paddingRight,paddingBottom)
+            setPadding(paddingLeft, paddingTop + cardViewAppBarMain.measuredHeight +
+                    resources.getDimensionPixelOffset(resources.getIdentifier("status_bar_height", "dimen", "android")),
+                    paddingRight, paddingBottom)
         }
 
 //        initHashSet()
         textMessage.visibility = View.GONE
-	    hintSearchBar.isVisible = true
-	    inputSearchBar.isVisible = false
-		listMessage.itemAnimator = DefaultItemAnimator()
+        hintSearchBar.isVisible = true
+        inputSearchBar.isVisible = false
+        listMessage.itemAnimator = DefaultItemAnimator()
         listMessage.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         listMessage.adapter = MessageListAdapter(messageList)
         listMessage.layoutManager = LinearLayoutManager(context)
-		context?.bindService(Intent(context!!,MessageService::class.java),connection, Service.BIND_AUTO_CREATE)
+        context?.bindService(Intent(context!!, MessageService::class.java), connection, Service.BIND_AUTO_CREATE)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -125,32 +116,40 @@ class MessageFragment : Fragment(),MainActivity.ChildFragment{
     override fun onStart() {
         super.onStart()
     }
-	fun onNewMessage(message: ChatMessage) {
-		var item = messageMap[message.chatId]
-		Log.e("xxxxx",message.toJson())
-		if (item != null) {
-			item.message = message.msg
-//			item.time = SimpleDateFormat("yyyy.MM.dd hh:mm:ss", Locale.getDefault()).parse(message.time).time
-			val index = messageList.indexOf(item)
-			if (index == 0) {
-				listMessage?.adapter?.notifyItemChanged(0)
-			}else {
-				messageList.removeAt(index)
-				listMessage?.adapter?.notifyItemRemoved(index)
-				messageList.add(0,item)
-				listMessage?.adapter?.notifyItemInserted(0)
-			}
-		}else {
-			item = MessageHeader(message.chatId,message.msg,0)
-			messageMap[message.chatId] = item
-			messageList.add(0,item)
-			listMessage?.adapter?.notifyItemInserted(0)
-		}
 
-	}
+    fun onNewMessage(message: ChatMessage) {
+        var item = messageMap[message.chatId]
+        Log.e("xxxxx", message.toJson())
+        if (item != null) {
+            item.message = message.msg
+//			item.time = SimpleDateFormat("yyyy.MM.dd hh:mm:ss", Locale.getDefault()).parse(message.time).time
+            val index = messageList.indexOf(item)
+            if (index == 0) {
+                listMessage?.adapter?.notifyItemChanged(0)
+            } else {
+                messageList.removeAt(index)
+                listMessage?.adapter?.notifyItemRemoved(index)
+                messageList.add(0, item)
+                listMessage?.adapter?.notifyItemInserted(0)
+            }
+        } else {
+            item = MessageHeader(message.chatId, message.msg, 0)
+            messageMap[message.chatId] = item
+            messageList.add(0, item)
+            listMessage?.adapter?.notifyItemInserted(0)
+        }
+
+    }
+
     override fun onLoginSuccess() {
 
     }
+
+    override fun onDestroy() {
+        context?.unbindService(connection)
+        super.onDestroy()
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

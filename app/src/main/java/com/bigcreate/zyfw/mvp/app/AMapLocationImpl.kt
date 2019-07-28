@@ -9,12 +9,12 @@ import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.mvp.base.BasePresenterImpl
 import com.bigcreate.zyfw.mvp.base.BaseView
 
-class AMapLocationImpl(view: View):BasePresenterImpl<Void,AMapLocation,AMapLocationImpl.View>(view) {
-    private var location:AMapLocation? = null
+class AMapLocationImpl(view: View) : BasePresenterImpl<Void, AMapLocation, AMapLocationImpl.View>(view) {
+    private var location: AMapLocation? = null
     private var locationClient: AMapLocationClient? = null
 
     fun startLocation() {
-        if (locationClient == null&&mView!= null) {
+        if (locationClient == null && mView != null) {
             locationClient = AMapLocationClient(mView!!.getViewContext().applicationContext).apply {
                 setLocationListener(LocationListener())
                 setLocationOption(AMapLocationClientOption().setOnceLocation(mView!!.onceLocation))
@@ -27,11 +27,12 @@ class AMapLocationImpl(view: View):BasePresenterImpl<Void,AMapLocation,AMapLocat
     fun stopLocation() {
         locationClient?.stopLocation()
     }
+
     override fun backgroundRequest(request: Void): AMapLocation? {
         if (location == null) {
             do {
 
-            }while (location == null)
+            } while (location == null)
         }
         return location
     }
@@ -50,14 +51,14 @@ class AMapLocationImpl(view: View):BasePresenterImpl<Void,AMapLocation,AMapLocat
         if (location == null)
             mView?.onRequestFailed(location)
         else
-            when(location.errorCode) {
+            when (location.errorCode) {
                 0 -> mView?.onRequestSuccess(location)
                 else -> mView?.getViewContext()?.toast(getErrorText(location.errorCode))
             }
     }
 
-    private fun getErrorText(errorCode: Int):String {   //https://lbs.amap.com/api/android-location-sdk/guide/utilities/errorcode/
-        return when(errorCode) {
+    private fun getErrorText(errorCode: Int): String {   //https://lbs.amap.com/api/android-location-sdk/guide/utilities/errorcode/
+        return when (errorCode) {
             1 -> "一些重要参数为空，如context."                               //请对定位传递的参数进行非空判断。
             2 -> "定位失败，由于仅扫描到单个wifi，且没有基站信息。"           //请重新尝试。
             3 -> "获取到的请求参数为空，可能获取过程中出现异常。"             //请对所连接网络进行全面检查，请求可能被篡改。
@@ -79,7 +80,8 @@ class AMapLocationImpl(view: View):BasePresenterImpl<Void,AMapLocation,AMapLocat
             else -> "未知错误$errorCode"
         }
     }
-    inner class LocationListener:AMapLocationListener {
+
+    inner class LocationListener : AMapLocationListener {
         override fun onLocationChanged(p0: AMapLocation?) {
             location = p0
             p0?.apply {
@@ -89,7 +91,7 @@ class AMapLocationImpl(view: View):BasePresenterImpl<Void,AMapLocation,AMapLocat
         }
     }
 
-    interface View:BaseView {
+    interface View : BaseView {
         val onceLocation: Boolean
         fun onRequestSuccess(location: AMapLocation)
         fun onRequestFailed(location: AMapLocation?)

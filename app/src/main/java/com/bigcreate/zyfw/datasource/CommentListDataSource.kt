@@ -1,6 +1,5 @@
 package com.bigcreate.zyfw.datasource
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.bigcreate.library.fromJson
@@ -17,14 +16,14 @@ import retrofit2.Response
 
 class CommentListDataSource(private val commentRequest: CommentListRequest,
                             private val networkState: MutableLiveData<NetworkState>)
-    : PageKeyedDataSource<Int,Comment>() {
+    : PageKeyedDataSource<Int, Comment>() {
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Comment>) {
         commentRequest.pageNum = params.key
         commentRequest.token = Attributes.token
         RemoteService.getProjectComments(commentRequest).enqueue(object : Callback<JsonObject> {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                networkState.postValue(NetworkState.error(t.message?:""))
+                networkState.postValue(NetworkState.error(t.message ?: ""))
             }
 
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -34,7 +33,7 @@ class CommentListDataSource(private val commentRequest: CommentListRequest,
                     if (code == 200) {
                         jsonData.toJson().fromJson<ProjectListCommentResponse>().apply {
                             Attributes.token = newToken
-                            callback.onResult(content.list,if (content.hasNextPage) params.key+1  else null)
+                            callback.onResult(content.list, if (content.hasNextPage) params.key + 1 else null)
                         }
                     }
                 }
@@ -48,7 +47,7 @@ class CommentListDataSource(private val commentRequest: CommentListRequest,
         commentRequest.token = Attributes.token
         RemoteService.getProjectComments(commentRequest).enqueue(object : Callback<JsonObject> {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                networkState.postValue(NetworkState.error(t.message?:""))
+                networkState.postValue(NetworkState.error(t.message ?: ""))
             }
 
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -58,7 +57,7 @@ class CommentListDataSource(private val commentRequest: CommentListRequest,
                     if (code == 200) {
                         jsonData.toJson().fromJson<ProjectListCommentResponse>().apply {
                             Attributes.token = newToken
-                            callback.onResult(content.list,if (content.hasPreviousPage) params.key-1  else null)
+                            callback.onResult(content.list, if (content.hasPreviousPage) params.key - 1 else null)
                         }
                     }
                 }
@@ -73,7 +72,7 @@ class CommentListDataSource(private val commentRequest: CommentListRequest,
         networkState.postValue(NetworkState.LOADING)
         RemoteService.getProjectComments(commentRequest).enqueue(object : Callback<JsonObject> {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                networkState.postValue(NetworkState.error(t.message?:""))
+                networkState.postValue(NetworkState.error(t.message ?: ""))
             }
 
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -84,7 +83,7 @@ class CommentListDataSource(private val commentRequest: CommentListRequest,
                         networkState.postValue(NetworkState.LOADED)
                         jsonData.toJson().fromJson<ProjectListCommentResponse>().apply {
                             Attributes.token = newToken
-                            callback.onResult(content.list,null,if (content.hasNextPage) 2 else null)
+                            callback.onResult(content.list, null, if (content.hasNextPage) 2 else null)
                         }
                     }
                 }

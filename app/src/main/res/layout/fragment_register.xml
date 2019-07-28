@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.SignUpFragment">
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="@string/sign_up"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
             android:id="@+id/progressRegister"
@@ -41,6 +42,7 @@
             android:id="@+id/layoutFormRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:contentDescription="@string/action_sign_in"
                 android:id="@+id/imageIconRegister"
@@ -52,7 +54,7 @@
                 android:src="@mipmap/ic_launcher_round"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textAppNameRegister"
@@ -61,6 +63,7 @@
                 android:text="@string/app_name"
                 android:gravity="center"
                 app:layout_constraintTop_toBottomOf="@+id/imageIconRegister" />
+
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:id="@+id/layoutPhoneRegister"
@@ -121,6 +124,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/layoutPassRegister"
                 app:layout_constraintStart_toStartOf="@id/layoutPassRegister"
                 app:layout_constraintEnd_toEndOf="@id/layoutPassRegister">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:ems="11"
                     android:maxEms="11"
@@ -132,6 +136,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layoutValidCodeRegister"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"

@@ -7,11 +7,30 @@ data class ChatMessage(
         var sendUserId: Int,
         val time: String,
         val to: Boolean,
-		var chatId:Int = 0
+        var chatId: Int = 0
 )
 
 data class ChatUser(val userId: Int)
-data class UserOnlineInfo(val onlineInfo: IntArray,val onlineCount: Int)
+data class UserOnlineInfo(val onlineInfo: IntArray, val onlineCount: Int) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as UserOnlineInfo
+
+        if (!onlineInfo.contentEquals(other.onlineInfo)) return false
+        if (onlineCount != other.onlineCount) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = onlineInfo.contentHashCode()
+        result = 31 * result + onlineCount
+        return result
+    }
+}
+
 enum class MessageType {
-	GROUP,SINGLE
+    GROUP, SINGLE
 }

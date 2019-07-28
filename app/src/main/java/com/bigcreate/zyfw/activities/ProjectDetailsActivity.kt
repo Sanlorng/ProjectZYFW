@@ -4,12 +4,12 @@ package com.bigcreate.zyfw.activities
 //import com.amap.api.maps.model.MarkerOptions
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AlertDialog
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
@@ -40,7 +40,7 @@ import com.tencent.mapsdk.raster.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_project_details.*
 import kotlinx.coroutines.*
 
-class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectActionItemListDialogFragment.Listener, FavoriteProjectImpl.View,CommentCallBack,FillTextCallBack {
+class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectActionItemListDialogFragment.Listener, FavoriteProjectImpl.View, CommentCallBack, FillTextCallBack {
     private var project: Project? = null
     private var projectId = -1
     private lateinit var fragmentJob: Deferred<DetailsImpl.View>
@@ -52,23 +52,29 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
     private var isFavoriteRequest = false
     private var projectType = -1
     private var commentText = ""
-//    private lateinit var favoriteIcon: Deferred<MenuItem>
+    //    private lateinit var favoriteIcon: Deferred<MenuItem>
     private lateinit var commentJob: Deferred<CommentDialogFragment>
     private lateinit var bottomJob: Deferred<ProjectActionItemListDialogFragment>
-    private lateinit var viewPagerFragments : List<Fragment>
+    private lateinit var viewPagerFragments: List<Fragment>
+    private val typeValue = TypedValue()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mapProjectDetails.onCreate(savedInstanceState)
     }
+
     override fun setContentView() {
         setContentView(R.layout.activity_project_details)
         bottomAppBarDetails.inflateMenu(R.menu.toolbar_project_details)
+        theme.resolveAttribute(R.attr.colorOnSurface, typeValue, true)
+        bottomAppBarDetails.menu.forEach {
+            it.iconTintList = ColorStateList.valueOf(getColor(typeValue.resourceId))
+        }
         bottomAppBarDetails.setOnMenuItemClickListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.projectDetailsAction -> GlobalScope.launch(Dispatchers.Main) {
                     bottomJob.await().show(supportFragmentManager, "bottomSheet")
                 }
-                R.id.projectDetailsGroupChat -> startActivity(Intent(this,ChatActivity::class.java).apply {
+                R.id.projectDetailsGroupChat -> startActivity(Intent(this, ChatActivity::class.java).apply {
 
                 })
 
@@ -96,6 +102,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
             }
         }
     }
+
     override fun afterCheckLoginSuccess() {
         setSupportActionBar(toolbarProjectDetails)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -103,16 +110,16 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
             finish()
         }
         intent?.data?.pathSegments?.forEachIndexed { index, s ->
-            Log.e("aaaaaaa","$index is $s")
+            Log.e("aaaaaaa", "$index is $s")
         }
-        Log.e("uri","${intent.data?.toString()}")
-        projectId = intent?.data?.lastPathSegment?.toInt()?:-1
+        Log.e("uri", "${intent.data?.toString()}")
+        projectId = intent?.data?.lastPathSegment?.toInt() ?: -1
         projectName = intent.type?.split("/")?.last()
         textProjectTitle.text = projectName
         fragmentJob = GlobalScope.async(Dispatchers.Main) {
             viewPagerFragments = listOf(DetailsFragment.newInstance(projectId.toString(), ""), CommentsFragment.newInstance(projectId.toString(), ""))
             FragmentAdapter(supportFragmentManager, viewPagerFragments).let {
-//                commentsFragment = it.list[1] as CommentsFragment
+                //                commentsFragment = it.list[1] as CommentsFragment
 //                commentsFragment?.marginHeight(appbarHeight)
                 viewPagerDetails.adapter = it
                 tabProjectDetails.setupWithViewPager(viewPagerDetails)
@@ -134,6 +141,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
             detailsImpl.doRequest(GetProjectRequest(token = token, projectId = projectId.toString()))
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         detailsImpl.detachView()
@@ -142,7 +150,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            RequestCode.EDIT_PROJECT,RequestCode.SELECT_IMAGE,RequestCode.SELECT_VIDEO -> if (resultCode == ResultCode.OK) detailsImpl.doRequest(GetProjectRequest(Attributes.token, projectId.toString()))
+            RequestCode.EDIT_PROJECT, RequestCode.SELECT_IMAGE, RequestCode.SELECT_VIDEO -> if (resultCode == ResultCode.OK) detailsImpl.doRequest(GetProjectRequest(Attributes.token, projectId.toString()))
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -164,6 +172,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
     override fun setTextContent(content: CharSequence) {
         buttonShowCommentDialog.text = content
     }
+
     override fun onGetDetailsFailed(jsonObject: JsonObject) {
         GlobalScope.launch(Dispatchers.Main) { fragmentJob.await().onGetDetailsFailed(jsonObject) }
         bottomAppBarDetails.isVisible = false
@@ -237,7 +246,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
                         showInfoWindow()
                     }
             mapProjectDetails.map.apply {
-//                setPointToCenter(latitude.toInt(),longitude.toInt())
+                //                setPointToCenter(latitude.toInt(),longitude.toInt())
                 setCenter(LatLng(latitude, longitude)); setZoom(30)
             }
             mapProjectDetails.isVisible = true
@@ -273,7 +282,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
             bottomAppBarDetails.menu.findItem(R.id.projectDetailsFavorite).apply {
                 isChecked = true
                 icon = getDrawable(R.drawable.ic_star_black_24dp)?.apply {
-                    DrawableCompat.setTint(this,getColor(R.color.colorAccent))
+                    DrawableCompat.setTint(this, getColor(R.color.colorAccent))
                 }
             }
         }
@@ -350,6 +359,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
         super.onSaveInstanceState(outState)
         mapProjectDetails.onSaveInstanceState(outState)
     }
+
     override fun onProjectActionItemClicked(position: Int) {
         when (position) {
             R.drawable.ic_outline_edit_24px -> startActivityForResult(Intent(this,
@@ -386,15 +396,15 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
                     }
                     .create().show()
             R.drawable.ic_outline_add_photo_alternate_24px -> startActivityForResult(
-                    Intent(this,SelectImageAndVideoActivity::class.java).apply {
+                    Intent(this, SelectImageAndVideoActivity::class.java).apply {
                         type = "image"
-                        putExtra("projectId",projectId.toString())
-                    },RequestCode.SELECT_IMAGE)
+                        putExtra("projectId", projectId.toString())
+                    }, RequestCode.SELECT_IMAGE)
             R.drawable.ic_outline_video_call_24px -> startActivityForResult(
-                    Intent(this,SelectImageAndVideoActivity::class.java).apply {
+                    Intent(this, SelectImageAndVideoActivity::class.java).apply {
                         type = "video"
-                        putExtra("projectId",projectId.toString())
-                    },RequestCode.SELECT_VIDEO)
+                        putExtra("projectId", projectId.toString())
+                    }, RequestCode.SELECT_VIDEO)
         }
     }
 

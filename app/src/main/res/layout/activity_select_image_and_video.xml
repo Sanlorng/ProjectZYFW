@@ -9,11 +9,13 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbarSelect"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarSelect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:id="@+id/listSelectItem"

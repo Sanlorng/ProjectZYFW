@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorAccent</item>
         <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense</item>
 <!--        <item name="hintTextAppearance">@style/TextAppearance.AppCompat.Small</item>-->
@@ -13,13 +13,29 @@
         <item name="actionBarStyle">@style/toolBar</item>
         <item name="actionBarTheme">@style/toolBar</item>
         <item name="appBarLayoutStyle">@style/appBar</item>
+        <item name="android:windowBackground">?attr/colorSurface</item>
+        <item name="preferenceStyle">@style/preference</item>
+        <item name="chipStyle">@style/chip</item>
+        <item name="actionButtonStyle">@style/actionButtonStyle</item>
+    </style>
 
+    <style name="actionButtonStyle" parent="Widget.AppCompat.ActionButton">
+        <item name="android:tint">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:gravity">center|clip_horizontal</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="preference" parent="Preference.Material">
+        <item name="android:iconTint">?attr/colorOnSurface</item>
     </style>
     
 <!--    <style name=""-->
 
     <style name="toolBar" parent="Widget.MaterialComponents.Toolbar.Primary" >
         <item name="android:contentInsetStart">0dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
         <item name="android:background">?attr/colorOnPrimary</item>
         <item name="titleTextColor">?attr/colorPrimary</item>
         <item name="android:minHeight">?attr/actionBarSize</item>

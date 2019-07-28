@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,9 +12,8 @@ import com.bigcreate.zyfw.models.SearchModel
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_project_search.view.*
 
-class ProjectListAdapter(private val listener:((Int,SearchModel ) -> Unit)? = null) : PagedListAdapter<SearchModel,ProjectListAdapter.ViewHolder>(diff) {
+class ProjectListAdapter(private val listener: ((Int, SearchModel) -> Unit)? = null) : PagedListAdapter<SearchModel, ProjectListAdapter.ViewHolder>(diff) {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -23,11 +21,11 @@ class ProjectListAdapter(private val listener:((Int,SearchModel ) -> Unit)? = nu
             holder.itemView.run {
                 topicProjectSearchItem.text = projectTopic
                 addressProjectSearchItem.text = context.getString(R.string.secondContentSearchVar,
-                        projectPrincipalName,projectAddress,projectIssueTime)
+                        projectPrincipalName, projectAddress, projectIssueTime)
                 contentProjectSearchItem.text = projectContent
-                numbersProjectSearchItem.text = context.getString(R.string.numberProjectSearchVar,projectPeopleNumbers)
+                numbersProjectSearchItem.text = context.getString(R.string.numberProjectSearchVar, projectPeopleNumbers)
                 projectPictureLinkTwo.apply {
-                    if (size >0)
+                    if (size > 0)
                         Glide.with(context)
                                 .load(get(0))
                                 .centerInside()
@@ -36,7 +34,7 @@ class ProjectListAdapter(private val listener:((Int,SearchModel ) -> Unit)? = nu
                         imageProjectSearchItem.isVisible = false
                 }
                 setOnClickListener {
-                    listener?.invoke(position,this@apply)
+                    listener?.invoke(position, this@apply)
                 }
             }
         }

@@ -5,10 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.AppUpdateHistoryActivity">
+
     <com.google.android.material.appbar.AppBarLayout
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <com.google.android.material.appbar.MaterialToolbar
             android:fitsSystemWindows="true"
             android:id="@+id/toolbarAppUpdateHistory"
@@ -17,6 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="应用历史记录" />
     </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:paddingBottom="16dp"

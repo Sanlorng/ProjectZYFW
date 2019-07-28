@@ -12,8 +12,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:id="@+id/navigationMain"
+        android:background="?attr/colorSurface"
+        app:itemBackground="?attr/colorSurface"
         app:headerLayout="@layout/layout_navigation_header"
-        app:insetForeground="@color/zeroColor"
-        />
+        app:insetForeground="@color/zeroColor" />
 
 </FrameLayout>

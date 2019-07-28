@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ChatActivity
 import com.bigcreate.zyfw.models.MessageHeader
@@ -32,8 +31,8 @@ class MessageListAdapter(private val messageMap: ArrayList<MessageHeader>) : Rec
             messageMap[position].apply {
                 hintMessageItem.text = message
                 setOnClickListener {
-                    val intent = Intent(context,ChatActivity::class.java)
-                    intent.putExtra("chatId",this.id)
+                    val intent = Intent(context, ChatActivity::class.java)
+                    intent.putExtra("chatId", this.id)
                     context.startActivity(intent)
                 }
             }

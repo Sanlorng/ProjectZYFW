@@ -15,7 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-abstract class AuthLoginActivity:AppCompatActivity() {
+abstract class AuthLoginActivity : AppCompatActivity() {
     private var isOnResume = false
     var checkOnResume = false
     private val loginImpl = LoginImpl(object : LoginImpl.View {
@@ -25,7 +25,7 @@ abstract class AuthLoginActivity:AppCompatActivity() {
 
         override fun onLoginFailed(response: JsonObject) {
             GlobalScope.launch(Dispatchers.Main) {
-                startActivityForResult(Intent(this@AuthLoginActivity,LoginActivity::class.java),RequestCode.LOGIN)
+                startActivityForResult(Intent(this@AuthLoginActivity, LoginActivity::class.java), RequestCode.LOGIN)
             }
         }
 
@@ -34,40 +34,43 @@ abstract class AuthLoginActivity:AppCompatActivity() {
             afterCheckLoginSuccess()
         }
     })
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView()
         checkLogin()
     }
+
     abstract fun setContentView()
     abstract fun afterCheckLoginSuccess()
     private fun checkLogin() {
-        if (Attributes.loginUserInfo == null){
+        if (Attributes.loginUserInfo == null) {
             if (hasLoginInfo)
                 loginImpl.doRequest(LoginRequest(
-                        username = defaultSharedPreferences.getString("username","")!!,
-                        password = defaultSharedPreferences.getString("password","")!!
+                        username = defaultSharedPreferences.getString("username", "")!!,
+                        password = defaultSharedPreferences.getString("password", "")!!
                 ))
             else
                 GlobalScope.launch(Dispatchers.Main) {
-                    startActivityForResult(Intent(this@AuthLoginActivity,LoginActivity::class.java),RequestCode.LOGIN)
+                    startActivityForResult(Intent(this@AuthLoginActivity, LoginActivity::class.java), RequestCode.LOGIN)
                 }
-        }else
+        } else
             afterCheckLoginSuccess()
 
     }
+
     override fun onResume() {
         window.translucentSystemUI(true)
-        if (Attributes.loginUserInfo == null&&checkOnResume){
+        if (Attributes.loginUserInfo == null && checkOnResume) {
             if (hasLoginInfo)
                 loginImpl.doRequest(LoginRequest(
-                        username = defaultSharedPreferences.getString("username","")!!,
-                        password = defaultSharedPreferences.getString("password","")!!
+                        username = defaultSharedPreferences.getString("username", "")!!,
+                        password = defaultSharedPreferences.getString("password", "")!!
                 ))
             else
                 GlobalScope.launch(Dispatchers.Main) {
                     isOnResume = true
-                    startActivityForResult(Intent(this@AuthLoginActivity,LoginActivity::class.java),RequestCode.LOGIN)
+                    startActivityForResult(Intent(this@AuthLoginActivity, LoginActivity::class.java), RequestCode.LOGIN)
                 }
         }
         super.onResume()
@@ -75,8 +78,8 @@ abstract class AuthLoginActivity:AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode==RequestCode.LOGIN) {
-            if (resultCode==ResultCode.OK)
+        if (requestCode == RequestCode.LOGIN) {
+            if (resultCode == ResultCode.OK)
                 afterCheckLoginSuccess()
             else
                 finish()

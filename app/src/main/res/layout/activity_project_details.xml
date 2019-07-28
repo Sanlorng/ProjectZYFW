@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarProjectDetails"
         android:layout_width="match_parent"
@@ -18,13 +19,15 @@
             app:layout_scrollInterpolator="@android:anim/decelerate_interpolator"
             app:statusBarScrim="@color/zeroColor"
             app:toolbarId="@+id/toolbarProjectDetails">
+
             <com.tencent.tencentmap.mapsdk.map.MapView
                 android:id="@+id/mapProjectDetails"
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
+
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbarProjectDetails"
                 android:layout_width="match_parent"
@@ -45,22 +48,26 @@
                     android:textSize="20sp" />
             </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabProjectDetails"
             android:background="#00000000"
             app:tabIndicatorFullWidth="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/details"/>
+                android:text="@string/details" />
+
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/comment"/>
+                android:text="@string/comment" />
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.viewpager.widget.ViewPager
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:id="@+id/viewPagerDetails"
@@ -70,13 +77,13 @@
     </androidx.viewpager.widget.ViewPager>
 
     <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
-        <!--android:src="@drawable/ic_favorite_border_black_24dp"-->
-        <!--android:id="@+id/buttonJoinProjectDetails"-->
-        <!--app:backgroundTint="@color/colorPrimary"-->
-        <!--android:foregroundTint="@color/colorPrimary"-->
-        <!--app:layout_anchor="@id/bottomAppBarDetails"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
+    <!--android:src="@drawable/ic_favorite_border_black_24dp"-->
+    <!--android:id="@+id/buttonJoinProjectDetails"-->
+    <!--app:backgroundTint="@color/colorPrimary"-->
+    <!--android:foregroundTint="@color/colorPrimary"-->
+    <!--app:layout_anchor="@id/bottomAppBarDetails"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content" />-->
     <com.google.android.material.bottomappbar.BottomAppBar
         app:contentInsetStart="0dp"
         app:fabAlignmentMode="center"
@@ -85,7 +92,8 @@
         style="@style/Widget.MaterialComponents.BottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" >
+        android:layout_gravity="bottom">
+
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:id="@+id/buttonShowCommentDialog"
@@ -102,6 +110,6 @@
             app:icon="@drawable/ic_outline_comment_24px"
             app:iconPadding="16dp"
             app:iconTint="#919191"
-            app:rippleColor="#00000000"/>
+            app:rippleColor="#00000000" />
     </com.google.android.material.bottomappbar.BottomAppBar>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

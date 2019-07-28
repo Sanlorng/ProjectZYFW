@@ -1,13 +1,9 @@
 package com.bigcreate.zyfw.adapter
 
 import android.content.Intent
-import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.paging.PagedListAdapter
@@ -23,8 +19,8 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_user_share_content.view.*
 import kotlinx.android.synthetic.main.layout_item_select.view.*
 
-class ExploreListAdapter(private val onItemClick:((view:View,item:ExploreItem,position:Int) -> Unit)?= null,
-                         private val onItemImageOpenTransition:((view:View,item:String,intent: Intent)-> Unit)?= null): PagedListAdapter<ExploreItem, ExploreListAdapter.ViewHolder>(diff) {
+class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreItem, position: Int) -> Unit)? = null,
+                         private val onItemImageOpenTransition: ((view: View, item: String, intent: Intent) -> Unit)? = null) : PagedListAdapter<ExploreItem, ExploreListAdapter.ViewHolder>(diff) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.run {
@@ -37,12 +33,12 @@ class ExploreListAdapter(private val onItemClick:((view:View,item:ExploreItem,po
                         .circleCrop()
                         .into(exploreItemUserAvatar)
                 if (listImageExploreItem.adapter == null) {
-                    listImageExploreItem.layoutManager = GridLayoutManager(context,when {
-                        dynamicPicture.size %5 == 0 -> 5
-                        dynamicPicture.size %4 == 0 -> 4
+                    listImageExploreItem.layoutManager = GridLayoutManager(context, when {
+                        dynamicPicture.size % 5 == 0 -> 5
+                        dynamicPicture.size % 4 == 0 -> 4
                         else -> 3
                     })
-                    listImageExploreItem.adapter = ExploreItemImageAdapter(onItemImageOpenTransition,dynamicPicture)
+                    listImageExploreItem.adapter = ExploreItemImageAdapter(onItemImageOpenTransition, dynamicPicture)
                 }
                 if (Attributes.userId == userInfoByPart.userId) {
                     exploreItemUserAction.isVisible = true
@@ -51,19 +47,20 @@ class ExploreListAdapter(private val onItemClick:((view:View,item:ExploreItem,po
                 }
 
                 setOnClickListener {
-                    onItemClick?.invoke(this@run,this,position)
+                    onItemClick?.invoke(this@run, this, position)
                 }
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(R.layout.item_user_share_content,parent)
+        return ViewHolder(R.layout.item_user_share_content, parent)
     }
 
-    inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        constructor(resId: Int, parent: ViewGroup):this(LayoutInflater.from(parent.context).inflate(resId,parent,false))
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        constructor(resId: Int, parent: ViewGroup) : this(LayoutInflater.from(parent.context).inflate(resId, parent, false))
     }
+
     companion object {
         private val diff = object : DiffUtil.ItemCallback<ExploreItem>() {
             override fun areContentsTheSame(oldItem: ExploreItem, newItem: ExploreItem): Boolean {
@@ -76,7 +73,7 @@ class ExploreListAdapter(private val onItemClick:((view:View,item:ExploreItem,po
         }
     }
 
-    class ExploreItemImageAdapter(private val onItemImageOpenTransition: ((view: View, item: String, intent: Intent) -> Unit)?= null,private val list: List<DynamicPicture>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    class ExploreItemImageAdapter(private val onItemImageOpenTransition: ((view: View, item: String, intent: Intent) -> Unit)? = null, private val list: List<DynamicPicture>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val urlList: Array<String> = Array(list.size) {
             list[it].dyPictureTwoLink
         }
@@ -94,11 +91,11 @@ class ExploreListAdapter(private val onItemClick:((view:View,item:ExploreItem,po
                             .into(itemSelectedImage)
                     cancelImage.isVisible = false
                     setOnClickListener {
-                        val intent = Intent(context,ImageViewActivity::class.java)
-                        intent.putExtra("list",urlList)
-                        intent.putExtra("position",position)
+                        val intent = Intent(context, ImageViewActivity::class.java)
+                        intent.putExtra("list", urlList)
+                        intent.putExtra("position", position)
                         itemSelectedImage.transitionName = this
-                        onItemImageOpenTransition?.invoke(itemSelectedImage,this,intent)
+                        onItemImageOpenTransition?.invoke(itemSelectedImage, this, intent)
                     }
                 }
                 updatePadding(right = 0)
@@ -106,7 +103,7 @@ class ExploreListAdapter(private val onItemClick:((view:View,item:ExploreItem,po
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            return object : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_item_select,parent,false)) {}
+            return object : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_item_select, parent, false)) {}
         }
     }
 }

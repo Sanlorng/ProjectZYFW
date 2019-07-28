@@ -1,7 +1,6 @@
 package com.bigcreate.zyfw.fragments
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,7 +14,10 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.base.*
+import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.RequestCode
+import com.bigcreate.zyfw.base.ResultCode
+import com.bigcreate.zyfw.base.appCompactActivity
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
 import com.bigcreate.zyfw.mvp.user.UserInfoImpl
 import com.bilibili.boxing.Boxing
@@ -65,6 +67,7 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
                     .into(img)
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -97,12 +100,12 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
         toolbarSetupInfo.requestApplyInsets()
         BoxingMediaLoader.getInstance().init(boxImpl)
         imageAvatarSetupInfo.setOnClickListener {
-//            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            //            val intent = Intent(Intent.ACTION_GET_CONTENT)
 //            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageType)
 //            startActivityForResult(intent, photoResult)
             Boxing.of(BoxingConfig(BoxingConfig.Mode.SINGLE_IMG))
-                    .withIntent(context!!,BoxingActivity::class.java)
-                    .start(this,RequestCode.SELECT_IMAGE)
+                    .withIntent(context!!, BoxingActivity::class.java)
+                    .start(this, RequestCode.SELECT_IMAGE)
         }
         chipGroupGenderTypeSetupInfo.setOnCheckedChangeListener { _, i ->
             Log.e("check", chipGroupGenderTypeSetupInfo.checkedChipId.toString())
@@ -240,20 +243,20 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Boxing.getResult(data)?.run {
-//            data.data?.run {
-                Log.d("url", get(0).path)
-                when (requestCode) {
-                    RequestCode.SELECT_IMAGE -> {
+            //            data.data?.run {
+            Log.d("url", get(0).path)
+            when (requestCode) {
+                RequestCode.SELECT_IMAGE -> {
 //                        imageView_setup.setImageBitmap(context!!.getBitmapFromUri(this).roundBitmap)
 //                        imageView_setup.scaleType = ImageView.ScaleType.CENTER_CROP
-                        textAvatarSetupInfo.text = "更换照片"
-                        Glide.with(this@SetupInfoFragment)
-                                .load(get(0).path)
-                                .circleCrop()
-                                .into(imageAvatarSetupInfo)
-                        avatarFile = File(get(0).path)
-                    }
+                    textAvatarSetupInfo.text = "更换照片"
+                    Glide.with(this@SetupInfoFragment)
+                            .load(get(0).path)
+                            .circleCrop()
+                            .into(imageAvatarSetupInfo)
+                    avatarFile = File(get(0).path)
                 }
+            }
 //            }
         }
         super.onActivityResult(requestCode, resultCode, data)

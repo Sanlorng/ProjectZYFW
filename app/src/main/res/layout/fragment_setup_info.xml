@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -10,7 +11,8 @@
         android:layout_width="match_parent"
         app:title="@string/setup_info"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
+
         <ProgressBar
             android:visibility="gone"
             android:layout_gravity="end"
@@ -145,6 +147,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/student" />
+
                         <com.google.android.material.chip.Chip
                             app:checkedIconVisible="false"
                             android:checkable="true"
@@ -152,6 +155,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/teacher" />
+
                         <com.google.android.material.chip.Chip
                             app:checkedIconVisible="false"
                             android:checkable="true"
@@ -228,6 +232,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/layoutAddressSetupInfo" />
 
                     <ImageView
+                        android:tint="?attr/colorOnSurface"
                         android:contentDescription="@string/userAvatar"
                         android:id="@+id/imageAvatarSetupInfo"
                         android:layout_width="80dp"

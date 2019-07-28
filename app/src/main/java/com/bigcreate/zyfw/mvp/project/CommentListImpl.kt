@@ -1,7 +1,6 @@
 package com.bigcreate.zyfw.mvp.project
 
 import com.bigcreate.zyfw.base.*
-import com.bigcreate.zyfw.models.Comment
 import com.bigcreate.zyfw.models.CommentListRequest
 import com.bigcreate.zyfw.models.ProjectCommentResponse
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView

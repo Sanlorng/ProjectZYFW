@@ -4,5 +4,4 @@
     android:id="@+id/containerRegister"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.RegisterActivity">
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    tools:context=".activities.RegisterActivity"></androidx.coordinatorlayout.widget.CoordinatorLayout>

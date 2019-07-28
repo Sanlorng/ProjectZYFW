@@ -13,7 +13,6 @@ import com.bigcreate.library.dialog
 import com.bigcreate.library.setIconTint
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.translucentSystemUI
-import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.startInstallPermissionSettingActivity
@@ -84,20 +83,20 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
 
     override fun onUpdateCheckSuccess(updateInfo: UpdateInfo) {
         path = updateInfo.path
-        textChangelogUpdate.text = getString(R.string.textChangelogVar,updateInfo.versionName,updateInfo.changelog)
+        textChangelogUpdate.text = getString(R.string.textChangelogVar, updateInfo.versionName, updateInfo.changelog)
         buttonDownloadUpdate.setOnClickListener {
-//            startActivity(Intent(Intent.ACTION_VIEW, updateInfo.path.toUri()))
-            if (Build.VERSION.SDK_INT<Build.VERSION_CODES.O||packageManager.canRequestPackageInstalls())
-            Intent(this,DownloadService::class.java).apply {
-                File(externalCacheDir?.absoluteFile!!,"update").apply {
-                    if (!exists())
-                        mkdir()
-                }
-                putExtra("downloadType", "update")
-                putExtra("savePath", externalCacheDir?.absolutePath + "/update/appUpdate.apk")
-                putExtra("downloadUrl", path)
-                startService(this)
-            }else {
+            //            startActivity(Intent(Intent.ACTION_VIEW, updateInfo.path.toUri()))
+            if (packageManager.canRequestPackageInstalls())
+                Intent(this, DownloadService::class.java).apply {
+                    File(externalCacheDir?.absoluteFile!!, "update").apply {
+                        if (!exists())
+                            mkdir()
+                    }
+                    putExtra("downloadType", "update")
+                    putExtra("savePath", externalCacheDir?.absolutePath + "/update/appUpdate.apk")
+                    putExtra("downloadUrl", path)
+                    startService(this)
+                } else {
                 dialog("请求安装权限",
                         "Android O以上版本需要额外的权限才能安装，请授予权限",
                         "跳转到权限授予界面",
@@ -116,9 +115,9 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode==RequestCode.INSTALL_PERMISSION&&resultCode== Activity.RESULT_OK)
-            Intent(this,DownloadService::class.java).apply {
-                File(externalCacheDir?.absoluteFile,"update").apply {
+        if (requestCode == RequestCode.INSTALL_PERMISSION && resultCode == Activity.RESULT_OK)
+            Intent(this, DownloadService::class.java).apply {
+                File(externalCacheDir?.absoluteFile, "update").apply {
                     if (!exists())
                         mkdir()
                 }

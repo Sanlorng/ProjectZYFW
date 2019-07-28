@@ -11,7 +11,6 @@ import com.bigcreate.zyfw.mvp.base.BaseMultiPresenterImpl
 import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.PresenterInter
 import com.google.gson.JsonObject
-import kotlinx.coroutines.Job
 import java.io.File
 
 class UserInfoImpl(mView: View?) : BaseMultiPresenterImpl<UserInfoImpl.View>(mView) {
@@ -88,6 +87,7 @@ class UserInfoImpl(mView: View?) : BaseMultiPresenterImpl<UserInfoImpl.View>(mVi
         )))
 
     }
+
     interface View : BaseNetworkView {
         fun onInitUserInfoSuccess(jsonObject: JsonObject)
         fun onInitUserInfoFailed(jsonObject: JsonObject)
