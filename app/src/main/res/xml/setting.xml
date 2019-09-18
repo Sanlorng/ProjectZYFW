@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="账号" android:key="category_account" android:shouldDisableView="true">
         <Preference android:key="account_settings" android:icon="@drawable/ic_person_outline_black_24dp"/>
         <Preference android:key="exit_account" android:summary="退出账号"/>
@@ -19,6 +20,7 @@
             android:title="夜间模式"
             android:summary="开启/关闭夜间模式" />
         <SwitchPreference
+            app:isPreferenceVisible="false"
             android:icon="@drawable/ic_error_outline_black_24dp"
             android:title="允许弹出错误对话框"
             android:key="show_exception_dialog"

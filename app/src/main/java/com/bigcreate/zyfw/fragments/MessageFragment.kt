@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bigcreate.library.statusBarHeight
 import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MainActivity
@@ -80,22 +81,24 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         super.onActivityCreated(savedInstanceState)
         context?.bindService(Intent(context!!,MessageService::class.java),connection,Service.BIND_AUTO_CREATE)
         val layoutParam = cardViewAppBarMain.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParam.topMargin += context?.let {
-            it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
-        } ?: 0
+        layoutParam.topMargin += cardViewAppBarMain.context.statusBarHeight
         cardViewAppBarMain.layoutParams = layoutParam
         swipeMessage.apply {
             cardViewAppBarMain.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-            setProgressViewEndTarget(true, cardViewAppBarMain.measuredHeight + progressViewEndOffset)
+            setProgressViewEndTarget(true, cardViewAppBarMain.measuredHeight + progressViewEndOffset + layoutParam.topMargin + layoutParam.bottomMargin)
         }
         listMessage.apply {
             setPadding(paddingLeft, paddingTop + cardViewAppBarMain.measuredHeight +
-                    resources.getDimensionPixelOffset(resources.getIdentifier("status_bar_height", "dimen", "android")),
+                    context.statusBarHeight + layoutParam.topMargin + layoutParam.bottomMargin,
                     paddingRight, paddingBottom)
         }
-
+        swipeMessage.setOnRefreshListener {
+            swipeMessage.isRefreshing = false
+        }
 //        initHashSet()
-        messageList.add(MessageHeader(MessageHeader.GROUP_ID,"全国群聊",System.currentTimeMillis()))
+        val group = MessageHeader(MessageHeader.GROUP_ID,"全国群聊",System.currentTimeMillis())
+        messageList.add(group)
+        messageMap[MessageHeader.GROUP_ID] = group
         textMessage.visibility = View.GONE
         hintSearchBar.isVisible = true
         inputSearchBar.isVisible = false
@@ -121,7 +124,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
     }
 
     fun onNewMessage(message: ChatMessage) {
-        var item = messageMap[message.chatId]
+        var item = messageMap[if (message.to) message.chatId else MessageHeader.GROUP_ID]
         Log.e("xxxxx", message.toJson())
         if (item != null) {
             item.message = message.msg

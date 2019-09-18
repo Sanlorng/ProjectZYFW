@@ -14,7 +14,6 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listMessage"
             android:clipToPadding="false"
-            android:paddingTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"

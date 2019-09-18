@@ -113,7 +113,9 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
                 })
             }else {
                 contactProjectDetails.setOnActionClick(View.OnClickListener {
-                    it.context.startActivity<ChatActivity>()
+                    it.context.startActivity<ChatActivity> {
+                        putExtra("chatId",userInfoByPart.userId)
+                    }
                 })
             }
             contactProjectDetails.setTitleText(projectPrincipalName)

@@ -11,6 +11,6 @@ data class MessageHeader(
         var userNick: String = ""
 ){
     companion object {
-        const val GROUP_ID = -1000
+        const val GROUP_ID = 0
     }
 }

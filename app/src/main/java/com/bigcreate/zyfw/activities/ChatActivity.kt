@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.models.ChatMessage
+import com.bigcreate.zyfw.models.MessageHeader
 import com.bigcreate.zyfw.models.MessageType
 import com.bigcreate.zyfw.service.MessageService
 import kotlinx.android.synthetic.main.activity_chat.*
@@ -75,7 +76,7 @@ class ChatActivity : AuthLoginActivity() {
 
     //WebSocket接受到新消息时的处理
     private fun onNewMessage(message: ChatMessage) {
-        if (message.receiveUserId == chatId || message.sendUserId == chatId) {
+        if (message.receiveUserId == chatId || message.sendUserId == chatId || (chatId == MessageHeader.GROUP_ID && message.to.not())) {
             chatMessages.add(message)
             unreadMessage++
             if (unreadMessage > 0)
@@ -107,7 +108,7 @@ class ChatActivity : AuthLoginActivity() {
     private fun initListener() {
         //发送点击监听
         buttonSendChat.setOnClickListener {
-            val str = ChatMessage(inputMessageChat.text.toString(), chatId, Attributes.userId, "", true, chatId)
+            val str = ChatMessage(inputMessageChat.text.toString(), chatId, Attributes.userId, "", chatId!=MessageHeader.GROUP_ID, chatId)
 //            socketClient.send(str)
             binder?.sendMessage(str)
 //            onNewMessage(str)
