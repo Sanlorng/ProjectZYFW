@@ -7,7 +7,7 @@ data class ChatMessage(
         val msg: String,
         var receiveUserId: Int,
         var sendUserId: Int,
-        val time: String,
+        val time: Long,
         val to: Boolean,
         @Expose
         var chatId: Int = 0

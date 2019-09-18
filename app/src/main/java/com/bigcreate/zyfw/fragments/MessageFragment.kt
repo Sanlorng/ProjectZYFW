@@ -12,7 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.util.set
-import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -22,13 +22,17 @@ import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MainActivity
 import com.bigcreate.zyfw.adapter.MessageListAdapter
+import com.bigcreate.zyfw.adapter.AvatarListAdapter
+import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.base.getAsInt
+import com.bigcreate.zyfw.base.getAsString
 import com.bigcreate.zyfw.callback.enqueue
 import com.bigcreate.zyfw.models.ChatMessage
+import com.bigcreate.zyfw.models.ChatUser
 import com.bigcreate.zyfw.models.MessageHeader
 import com.bigcreate.zyfw.service.MessageService
 import kotlinx.android.synthetic.main.fragment_message.*
-import kotlinx.android.synthetic.main.layout_search_bar.*
 
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,11 +53,18 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
     private val success = 1
     private var messageMap = SparseArray<MessageHeader>()
     private val messageList = ArrayList<MessageHeader>()
+    private val avatarArray = ArrayList<ChatUser>()
     private var binder: MessageService.MessageBinder? = null
     private var messageTag = "MessageFragment"
     private var connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             binder = service as MessageService.MessageBinder
+            binder?.addOnOnlineListUpdateListener(messageTag) {
+                swipeMessage.isRefreshing = false
+                avatarArray.clear()
+                avatarArray.addAll(it)
+                avatarList?.adapter?.notifyDataSetChanged()
+            }
             binder?.addOnMessageReceiveListener(messageTag) {
                 onNewMessage(it)
             }
@@ -79,33 +90,58 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        context?.bindService(Intent(context!!,MessageService::class.java),connection,Service.BIND_AUTO_CREATE)
-        val layoutParam = cardViewAppBarMain.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParam.topMargin += cardViewAppBarMain.context.statusBarHeight
-        cardViewAppBarMain.layoutParams = layoutParam
-        swipeMessage.apply {
-            cardViewAppBarMain.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-            setProgressViewEndTarget(true, cardViewAppBarMain.measuredHeight + progressViewEndOffset + layoutParam.topMargin + layoutParam.bottomMargin)
-        }
-        listMessage.apply {
-            setPadding(paddingLeft, paddingTop + cardViewAppBarMain.measuredHeight +
-                    context.statusBarHeight + layoutParam.topMargin + layoutParam.bottomMargin,
-                    paddingRight, paddingBottom)
-        }
+//        val layoutParam = cardViewAppBarMain.layoutParams as ViewGroup.MarginLayoutParams
+//        layoutParam.topMargin += cardViewAppBarMain.context.statusBarHeight
+//        cardViewAppBarMain.layoutParams = layoutParam
+//        swipeMessage.apply {
+//            cardViewAppBarMain.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+//            setProgressViewEndTarget(true, cardViewAppBarMain.measuredHeight + progressViewEndOffset + layoutParam.topMargin + layoutParam.bottomMargin)
+//        }
+//        listMessage.apply {
+//            setPadding(paddingLeft, paddingTop + cardViewAppBarMain.measuredHeight +
+//                    layoutParam.topMargin + layoutParam.bottomMargin,
+//                    paddingRight, paddingBottom)
+//        }
         swipeMessage.setOnRefreshListener {
-            swipeMessage.isRefreshing = false
+            binder?.getUserList()
         }
 //        initHashSet()
         val group = MessageHeader(MessageHeader.GROUP_ID,"全国群聊",System.currentTimeMillis())
         messageList.add(group)
         messageMap[MessageHeader.GROUP_ID] = group
         textMessage.visibility = View.GONE
-        hintSearchBar.isVisible = true
-        inputSearchBar.isVisible = false
+//        hintSearchBar.isVisible = true
+//        inputSearchBar.isVisible = false
         listMessage.itemAnimator = DefaultItemAnimator()
         listMessage.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         listMessage.adapter = MessageListAdapter(messageList)
         listMessage.layoutManager = LinearLayoutManager(context)
+        avatarList.itemAnimator = DefaultItemAnimator()
+        avatarList.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+        avatarList.adapter = AvatarListAdapter(avatarArray)
+        appBarMessage.updatePadding(top = appBarMessage.paddingTop + appBarMessage.context.statusBarHeight)
+//        val layoutParam = avatarList.layoutParams as ViewGroup.MarginLayoutParams
+//        layoutParam.updateMargins(top = layoutParam.topMargin + avatarList.context.statusBarHeight)
+//        avatarList.layoutParams = layoutParam
+        context?.bindService(Intent(context!!,MessageService::class.java),connection,Service.BIND_AUTO_CREATE)
+        RemoteService.getMessageLog(Attributes.userId).enqueue {
+            response {
+                val info = body()
+                if (info.isNullOrEmpty().not()) {
+                    info?.forEach {
+                        onNewMessage(ChatMessage(
+                                msg = it.getAsString("message"),
+                                sendUserId = it.getAsInt("sendUserId"),
+                                receiveUserId = it.getAsInt("receiveUserId"),
+                                time = it.get("sendTime").asLong,
+                                to = it.get("type").asBoolean
+                        ).apply {
+                            chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
+                        })
+                    }
+                }
+            }
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -114,8 +150,8 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        hintSearchBar.isVisible = true
-        inputSearchBar.isVisible = false
+//        hintSearchBar.isVisible = true
+//        inputSearchBar.isVisible = false
     }
 
 

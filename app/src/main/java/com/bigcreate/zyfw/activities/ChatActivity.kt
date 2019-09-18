@@ -18,6 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.base.getAsInt
+import com.bigcreate.zyfw.base.getAsString
+import com.bigcreate.zyfw.callback.enqueue
 import com.bigcreate.zyfw.models.ChatMessage
 import com.bigcreate.zyfw.models.MessageHeader
 import com.bigcreate.zyfw.models.MessageType
@@ -72,6 +76,24 @@ class ChatActivity : AuthLoginActivity() {
         listChatHistory.adapter = ChatMessageAdapter()
         textUnreadChat.isVisible = false
         listChatHistory.itemAnimator = DefaultItemAnimator()
+        RemoteService.getMessageSingle(Attributes.userId,chatId).enqueue {
+            response {
+                val info = body()
+                if (info.isNullOrEmpty().not()) {
+                    info?.forEach {
+                        onNewMessage(ChatMessage(
+                                msg = it.getAsString("message"),
+                                sendUserId = it.getAsInt("sendUserId"),
+                                receiveUserId = it.getAsInt("receiveUserId"),
+                                time = it.get("sendTime").asLong,
+                                to = it.get("type").asBoolean
+                        ).apply {
+                            chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
+                        })
+                    }
+                }
+            }
+        }
     }
 
     //WebSocket接受到新消息时的处理
@@ -108,7 +130,7 @@ class ChatActivity : AuthLoginActivity() {
     private fun initListener() {
         //发送点击监听
         buttonSendChat.setOnClickListener {
-            val str = ChatMessage(inputMessageChat.text.toString(), chatId, Attributes.userId, "", chatId!=MessageHeader.GROUP_ID, chatId)
+            val str = ChatMessage(inputMessageChat.text.toString(), chatId, Attributes.userId, 0, chatId!=MessageHeader.GROUP_ID, chatId)
 //            socketClient.send(str)
             binder?.sendMessage(str)
 //            onNewMessage(str)
