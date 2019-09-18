@@ -8,14 +8,22 @@ import android.os.Bundle
 import android.os.IBinder
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.util.containsKey
+import androidx.core.util.set
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bigcreate.library.startActivity
+import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
@@ -26,6 +34,7 @@ import com.bigcreate.zyfw.models.ChatMessage
 import com.bigcreate.zyfw.models.MessageHeader
 import com.bigcreate.zyfw.models.MessageType
 import com.bigcreate.zyfw.service.MessageService
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_chat.*
 import okhttp3.WebSocket
 import java.util.*
@@ -76,6 +85,7 @@ class ChatActivity : AuthLoginActivity() {
         listChatHistory.adapter = ChatMessageAdapter()
         textUnreadChat.isVisible = false
         listChatHistory.itemAnimator = DefaultItemAnimator()
+        if (chatId != MessageHeader.GROUP_ID) {
         RemoteService.getMessageSingle(Attributes.userId,chatId).enqueue {
             response {
                 val info = body()
@@ -90,6 +100,25 @@ class ChatActivity : AuthLoginActivity() {
                         ).apply {
                             chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
                         })
+                        listChatHistory.smoothScrollToPosition(chatMessages.lastIndex)
+                    }
+                }
+            }
+        }
+        }else {
+            RemoteService.getMessageGroup().enqueue {
+                response {
+                    body()?.forEach {
+                        onNewMessage(ChatMessage(
+                                msg = it.getAsString("message"),
+                                sendUserId = it.getAsInt("sendUserId"),
+                                receiveUserId = it.getAsInt("receiveUserId"),
+                                time = it.get("sendTime").asLong,
+                                to = it.get("type").asBoolean
+                        ).apply {
+                            chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
+                        })
+                        listChatHistory.smoothScrollToPosition(chatMessages.lastIndex)
                     }
                 }
             }
@@ -109,7 +138,7 @@ class ChatActivity : AuthLoginActivity() {
 
             listChatHistory.adapter?.notifyItemInserted(chatMessages.lastIndex)
             val manager = listChatHistory.layoutManager as LinearLayoutManager
-            if (manager.findLastVisibleItemPosition() == chatMessages.lastIndex - 1 || message.sendUserId == Attributes.userId)
+            if (manager.findLastVisibleItemPosition() == chatMessages.lastIndex -1 || message.sendUserId == Attributes.userId)
                 listChatHistory.scrollToPosition(chatMessages.lastIndex)
         }
     }
@@ -135,6 +164,13 @@ class ChatActivity : AuthLoginActivity() {
             binder?.sendMessage(str)
 //            onNewMessage(str)
             inputMessageChat.text.clear()
+        }
+
+        inputMessageChat.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                buttonSendChat.callOnClick()
+            }
+            return@setOnEditorActionListener true
         }
         //输入监听
         inputMessageChat.addTextChangedListener(object : TextWatcher {
@@ -187,10 +223,39 @@ class ChatActivity : AuthLoginActivity() {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             holder.itemView.apply {
-                findViewById<TextView>(R.id.message_item_chat).apply {
-                    text = chatMessages[position].msg
-                    maxWidth = resources.displayMetrics.widthPixels * 5 / 8
+                chatMessages[position].run {
 
+                    findViewById<TextView>(R.id.message_item_chat).apply {
+                        text = msg
+                        maxWidth = resources.displayMetrics.widthPixels * 5 / 8
+                    }
+                    if (Attributes.userTemp.containsKey(sendUserId).not()) {
+                        RemoteService.getHeadLinkAndNick(sendUserId).enqueue {
+                            response {
+                                val info = body()
+                                if (info != null) {
+                                    Attributes.userTemp[sendUserId] = info
+                                    findViewById<TextView>(R.id.message_item_nick).text = info.userNick
+                                    Glide.with(context)
+                                            .load(info.userHeadPictureLink)
+                                            .circleCrop()
+                                            .into(findViewById(R.id.message_item_avatar))
+                                }
+                            }
+                        }
+                    }else {
+                        val info = Attributes.userTemp[sendUserId]
+                        this@apply.findViewById<TextView>(R.id.message_item_nick).text = info.userNick
+                        Glide.with(context)
+                                .load(info.userHeadPictureLink)
+                                .circleCrop()
+                                .into(findViewById(R.id.message_item_avatar))
+                    }
+                    findViewById<ImageView>(R.id.message_item_avatar).setOnClickListener { 
+                        context.startActivity<MyDetailsActivity> {
+                            putExtra("userId",sendUserId)
+                        }
+                    }
                 }
             }
         }

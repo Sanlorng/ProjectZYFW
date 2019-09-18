@@ -1,6 +1,7 @@
 package com.bigcreate.zyfw.base
 
 import android.content.Context
+import android.util.SparseArray
 import android.view.View
 import androidx.core.view.updatePadding
 import com.bigcreate.library.fromJson
@@ -8,16 +9,18 @@ import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.UserInfo
+import com.bigcreate.zyfw.models.UserInfoByPart
 import com.google.gson.JsonObject
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.collections.HashMap
 
 object Attributes {
     object Action {
         const val OPEN_PROJECT = "${BuildConfig.APPLICATION_ID}.OPEN_PROJECT"
     }
-
+    val userTemp = SparseArray<UserInfoByPart>()
     const val authority = "content://${BuildConfig.APPLICATION_ID}"
     const val authorityProject = "$authority/project/%s"
     val backgroundExecutors: ExecutorService = Executors.newFixedThreadPool(5)

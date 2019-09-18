@@ -11,9 +11,11 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.IntegerRes
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.isVisible
 import com.bigcreate.zyfw.R
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.android.synthetic.main.layout_list_item_view.view.*
 
 class ListItemView:MaterialCardView {
@@ -80,6 +82,10 @@ class ListItemView:MaterialCardView {
     fun showAction(show:Boolean) {
         actionTextView.isVisible = show
         dividerView.isVisible = show
+    }
+
+    fun getActionView():MaterialTextView {
+        return actionTextView
     }
 
     fun setOnActionClick(onClickListener: OnClickListener?) {

@@ -30,7 +30,7 @@ data class CreateProjectRequest(var projectTopic: String, var projectContent: St
                                 var projectAddress: String, var latitude: Double, var longitude: Double, var projectPrincipalName: String, var projectPrincipalPhone: String, var projectPeopleNumbers: String,
                                 var username: String, var token: String, var projectTypeId: Int)
 
-data class GetProjectRequest(var token: String, var projectId: String)
+data class GetProjectRequest(var token: String, var projectId: Int)
 data class UpdateProjectRequest(var projectTopic: String, var projectContent: String, var projectAddress: String, var projectPrincipalName: String, var projectRegion: String,
                                 var projectPrincipalPhone: String, var projectPeopleNumbers: String, var username: String, var projectId: String, var token: String)
 

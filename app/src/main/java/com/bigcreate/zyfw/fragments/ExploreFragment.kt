@@ -52,7 +52,7 @@ class ExploreFragment : Fragment(), MainActivity.ChildFragment {
     private lateinit var commentDialogFragment: CommentDialogFragment
     private val favoriteImpl = ExploreFavoriteImpl(null)
     private val likeImpl = ExploreLikeImpl(null)
-    private val commentImpl = ExploreCommentImpl(null)
+    private val commentImpl = ExploreCommentImpl(CommentItemView())
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -135,7 +135,7 @@ class ExploreFragment : Fragment(), MainActivity.ChildFragment {
                             commentImpl.doRequest(CommentItemView(), ExploreCommentRequest(
                                     Attributes.token,item.dyId,content
                             ))
-                            toast("评论成功")
+                            //toast("评论成功")
                         }
 
                         override fun setCommentContent(content: String) {

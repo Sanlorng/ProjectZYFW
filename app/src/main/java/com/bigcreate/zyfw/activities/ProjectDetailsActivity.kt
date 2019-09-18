@@ -163,7 +163,7 @@ class ProjectDetailsActivity :
 //        }
 
         Attributes.loginUserInfo?.run {
-            detailsImpl.doRequest(GetProjectRequest(token = token, projectId = projectId.toString()))
+            detailsImpl.doRequest(GetProjectRequest(token = token, projectId = projectId))
         }
     }
 
@@ -175,7 +175,7 @@ class ProjectDetailsActivity :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            RequestCode.EDIT_PROJECT, RequestCode.SELECT_IMAGE, RequestCode.SELECT_VIDEO -> if (resultCode == ResultCode.OK) detailsImpl.doRequest(GetProjectRequest(Attributes.token, projectId.toString()))
+            RequestCode.EDIT_PROJECT, RequestCode.SELECT_IMAGE, RequestCode.SELECT_VIDEO -> if (resultCode == ResultCode.OK) detailsImpl.doRequest(GetProjectRequest(Attributes.token, projectId))
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -416,7 +416,7 @@ class ProjectDetailsActivity :
                             GlobalScope.launch {
                                 RemoteService.deleteProject(
                                         GetProjectRequest(Attributes.token,
-                                                projectId.toString())).execute().body()?.apply {
+                                                projectId)).execute().body()?.apply {
                                     launch(Dispatchers.Main) {
                                         if (get("code").asInt == 200) {
                                             setResult(ResultCode.OK)

@@ -43,14 +43,14 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
-    private var projectId: String? = null
+    private var projectId: Int = 0
     private var param2: String? = null
     private val presenter = DetailsImpl(this)
     private val joinPresenter = JoinProjectImpl(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            projectId = it.getString(PROJECT_ID)
+            projectId = (it.getString(PROJECT_ID)?:"0").toInt()
             param2 = it.getString(ARG_PARAM2)
         }
     }
@@ -63,7 +63,7 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         swipeLayoutProjectDetails.setOnRefreshListener {
-            presenter.doRequest(GetProjectRequest(Attributes.token, projectId!!))
+            presenter.doRequest(GetProjectRequest(Attributes.token, projectId))
         }
 //        buttonJoinProjectDetails.setOnClickListener {
 //            joinPresenter.doRequest(GetProjectRequest(Attributes.token,projectId!!))
@@ -76,7 +76,7 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
     }
 
     override fun onJoinRequestSuccess(join: Boolean) {
-        presenter.doRequest(GetProjectRequest(Attributes.token, projectId!!))
+        presenter.doRequest(GetProjectRequest(Attributes.token, projectId))
     }
 
     override fun onGetDetailsFailed(jsonObject: JsonObject) {
@@ -107,9 +107,9 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
                 contactProjectDetails.setActionIcon(R.drawable.ic_outline_edit_24px)
                 contactProjectDetails.setActionText("编辑")
                 contactProjectDetails.setOnActionClick(View.OnClickListener {
-                    startActivity(Intent(context!!, RegisterActivity::class.java).apply {
+                    startActivity<RegisterActivity> {
                         type = "updateInfo"
-                    })
+                    }
                 })
             }else {
                 contactProjectDetails.setOnActionClick(View.OnClickListener {
@@ -127,6 +127,8 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
                 }
             })
 
+
+
             navigationProjectDetails.setOnActionClick(View.OnClickListener {
                 val endPoi = Poi(projectAddress, LatLng(latitude,longitude),"")
                 AmapNaviPage.getInstance().showRouteActivity(it.context, AmapNaviParams(null,null,endPoi,AmapNaviType.WALK,AmapPageType.NAVI),null)
@@ -138,6 +140,16 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
 
             otherProjectDetails.setTitleText(getString(R.string.needPeoleNumVar, projectPeopleNumbers))
             otherProjectDetails.setSubTitleText(projectIssueTime)
+
+            otherProjectDetails.setOnActionClick(View.OnClickListener {
+                joinPresenter.doRequest(GetProjectRequest(Attributes.token,projectId))
+            })
+            if (join) {
+                context?.getDrawable(R.drawable.ic_favorite_black_24dp)?.setTint(context!!.getColor(R.color.colorAccent))
+                otherProjectDetails.setActionIcon(R.drawable.ic_favorite_black_24dp)
+            }else {
+                otherProjectDetails.setActionIcon(R.drawable.ic_favorite_border_black_24dp)
+            }
 //            ArrayList<DetailsMediaAdapter.Model>().apply {
 //                add(DetailsMediaAdapter.Header("").apply {
 //                    this.project = project

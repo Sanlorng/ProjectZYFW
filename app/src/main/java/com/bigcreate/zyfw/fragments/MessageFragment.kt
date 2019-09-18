@@ -11,6 +11,7 @@ import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.util.containsKey
 import androidx.core.util.set
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
@@ -176,13 +177,14 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
             }
         } else {
             item = MessageHeader(message.chatId, message.msg, 0)
-            if (item.id > 0) {
+            if (item.id > 0 && Attributes.userTemp.containsKey(item.id).not()) {
                 RemoteService.getHeadLinkAndNick(item.id).enqueue {
                     response {
                         val info = body()
                         if (info != null) {
                             item.userNick = info.userNick ?: ""
                             item.userImg = info.userHeadPictureLink ?: ""
+                            Attributes.userTemp[item.id] = info
                             val index = messageList.indexOf(item)
                             if (index < 0) {
                                 messageList.add(1, item)

@@ -8,6 +8,7 @@ import android.app.job.JobParameters
 import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -85,8 +86,11 @@ class RecommendService : JobService(), RecommendImpl.View {
                         .setContentIntent(
                                 PendingIntent.getActivity(this@RecommendService,
                                         0, Intent(this@RecommendService, ProjectDetailsActivity::class.java).apply {
+//                                    putExtra("projectId", projectId)
+//                                    putExtra("projectTopic", projectTopic)
+                                    addCategory(Intent.CATEGORY_DEFAULT)
+                                    setDataAndType(Uri.parse(String.format(Attributes.authorityProject, projectId)), "project/${projectTopic}")
                                     putExtra("projectId", projectId)
-                                    putExtra("projectTopic", projectTopic)
                                 }, PendingIntent.FLAG_UPDATE_CURRENT))
                 createNotificationChannel()
                 with(NotificationManagerCompat.from(this@RecommendService)) {

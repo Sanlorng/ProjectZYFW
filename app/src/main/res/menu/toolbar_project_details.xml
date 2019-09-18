@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:title="@string/joinProject"
+        android:visible="false"
         android:id="@+id/projectDetailsJoin"
         android:icon="@drawable/ic_favorite_border_black_24dp"
         app:showAsAction="always"/>
@@ -16,6 +17,7 @@
         <!--android:icon="@drawable/ic_outline_comment_24px"-->
         <!--app:showAsAction="ifRoom"/>-->
     <item android:title="@string/groupChat"
+        android:visible="false"
         android:id="@+id/projectDetailsGroupChat"
         android:icon="@drawable/ic_outline_group_24px"
         app:showAsAction="always"/>

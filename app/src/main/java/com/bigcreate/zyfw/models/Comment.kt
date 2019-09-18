@@ -28,5 +28,6 @@ data class Comment(
         val commentTime: String,
         val project_id: Any,
         val userId: Int,
-        val userNick: String
+        val userNick: String,
+        val headPictureLink: String
 )
