@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+    <LinearLayout
+        android:background="?attr/selectableItemBackground"
+        android:id="@+id/layoutHeaderItemView"
+        android:padding="8dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/logoView"
+            android:layout_gravity="center_vertical"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:maxHeight="48dp"
+            android:maxWidth="48dp" />
+
+        <LinearLayout
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:minHeight="44dp"
+            android:layout_height="wrap_content" >
+            <com.google.android.material.textview.MaterialTextView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/actionTextView"
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/TextAppearance.AppCompat.Headline"
+                android:textSize="16sp"
+                android:id="@+id/headerTextView"
+                android:text="Sanlorng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/actionTextView" />
+            <com.google.android.material.textview.MaterialTextView
+                app:layout_constraintStart_toStartOf="@id/headerTextView"
+                app:layout_constraintTop_toBottomOf="@id/headerTextView"
+                app:layout_constraintEnd_toEndOf="@id/headerTextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/summaryTextView"
+                android:text="summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        app:layout_constraintTop_toTopOf="@id/headerTextView"
+        app:layout_constraintBottom_toBottomOf="@id/summaryTextView"
+        app:layout_constraintEnd_toStartOf="@id/actionTextView"
+        android:id="@+id/dividerView"
+        android:alpha="0.2"
+        android:layout_margin="4dp"
+        android:layout_alignStart="@id/actionTextView"
+        android:background="#ffffff"
+        android:backgroundTint="?android:attr/textColorSecondary"
+        android:layout_width="2dp"
+        android:layout_gravity="center_vertical"
+        android:layout_height="32dp" />
+    <com.google.android.material.textview.MaterialTextView
+        app:layout_constraintTop_toTopOf="@id/headerTextView"
+        app:layout_constraintBottom_toBottomOf="@id/summaryTextView"
+        android:id="@+id/actionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="4dp"
+        android:background="?attr/selectableItemBackground"
+        android:drawableTop="@drawable/ic_outline_place_24px"
+        android:drawableTint="?android:attr/textColorSecondary"
+        android:minWidth="56dp"
+        android:minHeight="40dp"
+        android:padding="8dp"
+        android:text="去这里"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent" />
+</LinearLayout>

@@ -7,23 +7,9 @@
     tools:context=".activities.MyDetailsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            app:toolbarId="@id/toolbarMyDetails"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                app:title="个人详情"
-                android:id="@+id/toolbarMyDetails"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
-
-            </com.google.android.material.appbar.MaterialToolbar>
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        <include layout="@layout/layout_navigation_header" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView

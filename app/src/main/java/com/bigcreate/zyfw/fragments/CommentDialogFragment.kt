@@ -17,17 +17,15 @@ import androidx.fragment.app.DialogFragment
 import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.callback.CommentCallBack
-import com.bigcreate.zyfw.callback.FillTextCallBack
 import com.bigcreate.zyfw.models.CreateCommentRequest
 import com.bigcreate.zyfw.mvp.project.CreateCommentImpl
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_comment_dialog.*
 
-class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatcher, CreateCommentImpl.View {
-    var fillTextCallBack: FillTextCallBack? = null
-    var commentCallBack: CommentCallBack? = null
-    private var createCommentImpl = CreateCommentImpl(this)
+class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatcher{
+    //var fillTextCallBack: FillTextCallBack? = null
+    var commentCallBack: CommentCallback? = null
+//    private var createCommentImpl = CreateCommentImpl(this)
     private lateinit var editText: EditText
     lateinit var button: ImageView
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -52,14 +50,14 @@ class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatche
     override fun onHiddenChanged(hidden: Boolean) {
         if (hidden.not()) {
             editText.text.clear()
-            editText.text.append(fillTextCallBack?.getTextContent())
+            editText.text.append(commentCallBack?.getCommentContent())
         }
         super.onHiddenChanged(hidden)
     }
 
     override fun onResume() {
         editText.text.clear()
-        editText.text.append(fillTextCallBack?.getTextContent())
+        editText.text.append(commentCallBack?.getCommentContent()?:"")
         if (editText.text.toString().isEmpty()) {
             button.isEnabled = false
             button.setColorFilter(ContextCompat.getColor(context!!, R.color.color737373))
@@ -71,51 +69,18 @@ class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatche
         super.onResume()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        //commentCallBack = null
+    }
     override fun onDismiss(dialog: DialogInterface) {
-        fillTextCallBack?.setTextContent(editText.text.toString())
+        commentCallBack?.setCommentContent(editText.text.toString())
         super.onDismiss(dialog)
     }
-
     override fun onClick(v: View?) {
-        if (v != null) when (v.id) {
-            R.id.sendCommentDialog -> {
-                val projectId = fillTextCallBack!!.getProjectId()
-                Attributes.loginUserInfo?.run {
-                    createCommentImpl.doRequest(CreateCommentRequest(
-                            comment = editText.text.toString(),
-                            projectId = projectId,
-                            token = token,
-                            username = username
-                    ))
-                }
-            }
+        when(v?.id) {
+            R.id.sendCommentDialog -> commentCallBack?.onCommentDone(editText.text.toString())
         }
-    }
-
-    override fun onCreateCommentFailed(jsonObject: JsonObject) {
-        context?.toast("评论失败，错误代码：${jsonObject.get("code").asString}")
-    }
-
-    override fun onCreateCommentSuccess(jsonObject: JsonObject) {
-        editText.text.clear()
-        context?.toast("评论成功")
-        dismiss()
-        commentCallBack?.commentSuccess()
-    }
-
-    override fun getViewContext(): Context {
-        return context!!
-    }
-
-    override fun onNetworkFailed() {
-        context?.toast("网络出了点差错")
-    }
-
-    override fun onRequesting() {
-
-    }
-
-    override fun onRequestFinished() {
 
     }
 
@@ -124,7 +89,7 @@ class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatche
     }
 
     override fun afterTextChanged(s: Editable?) {
-        if (s == null || s.isEmpty()) {
+        if (s.isNullOrEmpty()) {
             button.isEnabled = false
             button.setColorFilter(ContextCompat.getColor(context!!, R.color.color737373))
         } else {
@@ -135,5 +100,10 @@ class CommentDialogFragment : DialogFragment(), View.OnClickListener, TextWatche
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
+    }
+    interface CommentCallback {
+        fun getCommentContent():CharSequence
+        fun setCommentContent(content: String)
+        fun onCommentDone(content: String)
     }
 }

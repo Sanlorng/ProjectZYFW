@@ -1,6 +1,7 @@
 package com.bigcreate.library
 
 import android.annotation.TargetApi
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -116,9 +117,9 @@ fun Window.setFullTruncentStatusBar(){
 fun Intent.startBy(context:Context?){
     context?.startActivity(this)
 }
-fun Context.startActivity(cls:Class<*>,bundle: Bundle? = null,block:(Intent.() -> Unit) ?= null){
-    val intent = Intent(this,cls)
-    block?.invoke(intent)
+inline fun <reified T:Activity> Context.startActivity(bundle: Bundle? = null,block:(Intent.() -> Unit)){
+    val intent = Intent(this,T::class.java)
+    block(intent)
     startActivity(intent,bundle)
 }
 
@@ -245,12 +246,21 @@ fun Context.startInstallApp(file: File) {
         startActivity(this)
     }
 }
-
+val Context.statusBarHeight
+get() = resources.getDimensionPixelOffset(resources.getIdentifier("status_bar_height", "dimen", "android"))
 fun Fragment.toast(str: String) {
     context?.toast(str)
 }
 
-fun Fragment.startActivity(clz: Class<*>) {
-    context?.startActivity(clz)
+inline fun <reified T:Activity> Fragment.startActivity(bundle: Bundle? = null, block: (Intent.() -> Unit)) {
+    context?.startActivity<T>(bundle, block)
 }
+inline fun <reified T:Activity> Fragment.startActivity(bundle: Bundle? = null) {
+    context?.startActivity<T>(bundle)
+}
+inline fun <reified T: Activity> Context.startActivity(bundle: Bundle? = null) {
+    val intent = Intent(this,T::class.java)
+    startActivity(intent)
+}
+
 

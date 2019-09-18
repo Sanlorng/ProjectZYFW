@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.toast
@@ -16,18 +18,22 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.*
 import com.bigcreate.zyfw.adapter.MenuListAdapter
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.MyApplication
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.models.SimpleRequest
 import com.bigcreate.zyfw.models.UserInfo
 import com.bigcreate.zyfw.mvp.user.GetUserInfoImpl
+import com.bigcreate.zyfw.viewmodel.LoginViewModel
+import com.bigcreate.zyfw.viewmodel.UserInfoStatus
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_account.*
+import kotlinx.android.synthetic.main.layout_navigation_header.*
 import kotlinx.android.synthetic.main.layout_navigation_header.view.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class AccountFragment : Fragment(), MainActivity.ChildFragment {
+class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
     private val getUserInfoImpl = GetUserInfoImpl(object : GetUserInfoImpl.View {
         override fun onGetUserInfoFailed() {
             toast("获取用户信息失败")
@@ -81,14 +87,14 @@ class AccountFragment : Fragment(), MainActivity.ChildFragment {
         super.onActivityCreated(savedInstanceState)
         navigationMain.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.setting_menu -> startActivity(SettingsActivity::class.java)
+                R.id.setting_menu -> startActivity<SettingsActivity>()
 //                R.id.startReleaseProjectNavigation -> startActivity(ReleaseProjectActivity::class.java)
-                R.id.testInterface -> startActivity(TestInterfaceActivity::class.java)
+                R.id.testInterface -> startActivity<TestInterfaceActivity>()
             }
             true
         }
         navigationMain.setOnClickListener {
-            startActivity(MyDetailsActivity::class.java)
+            startActivity<MyDetailsActivity>()
         }
         Attributes.loginUserInfo?.apply {
             onLoginSuccess()
@@ -100,6 +106,15 @@ class AccountFragment : Fragment(), MainActivity.ChildFragment {
                 })
             }
         }
+
+        getLoginViewModel().getUserInfoStatus.observe(this, Observer {
+            when(it) {
+                UserInfoStatus.STATUS_SUCCESS -> {
+                    getLoginViewModel().userInfo.value?.onUserInfoLoad()
+                }
+            }
+        })
+        getLoginViewModel().tryGetUserInfo()
     }
 
     private fun UserInfo.onUserInfoLoad() {
@@ -107,14 +122,17 @@ class AccountFragment : Fragment(), MainActivity.ChildFragment {
             nickNavigationHeader.text = userNick
             phoneNavigationHeader.text = userPhone
             Glide.with(this)
-                    .load(Attributes.userImg)
+                    .load(userHeadPictureLink)
                     .circleCrop()
                     .into(avatarNavigationHeader)
+            locationNavigationHeader.text = userAddress
+            sexNavigationHeader.text = userSex
+            identifyNavigationHeader.text = userIdentify
             listAccountMenu.layoutManager = GridLayoutManager(context, 4)
             listAccountMenu.adapter = MenuListAdapter(menuList) {
                 when (it.id) {
-                    R.id.setting_menu -> startActivity(SettingsActivity::class.java)
-                    R.id.testInterface -> startActivity(TestInterfaceActivity::class.java)
+                    R.id.setting_menu -> startActivity<SettingsActivity>()
+                    R.id.testInterface -> startActivity<TestInterfaceActivity>()
                     R.id.userFavoriteNavigation -> startActivity(Intent(context!!, FavAndJoinActivity::class.java).apply {
                         putExtra("favOrJoin", 2)
                     })

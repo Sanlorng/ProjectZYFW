@@ -95,6 +95,8 @@
                 <com.bigcreate.zyfw.view.ProportionView
                     app:width_weight="4"
                     app:height_weight="3"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

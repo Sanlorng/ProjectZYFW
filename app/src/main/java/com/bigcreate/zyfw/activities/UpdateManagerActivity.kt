@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.bigcreate.library.dialog
 import com.bigcreate.library.setIconTint
 import com.bigcreate.library.startActivity
@@ -38,7 +39,7 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
         toolbarUpdate.inflateMenu(R.menu.toolbar_app_manager)
         toolbarUpdate.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.appUpdateHistory -> startActivity(AppUpdateHistoryActivity::class.java)
+                R.id.appUpdateHistory -> startActivity<AppUpdateHistoryActivity>()
             }
             true
         }
@@ -56,7 +57,7 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
-            R.id.appUpdateHistory -> startActivity(AppUpdateHistoryActivity::class.java)
+            R.id.appUpdateHistory -> startActivity<AppUpdateHistoryActivity>()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -85,24 +86,26 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
         path = updateInfo.path
         textChangelogUpdate.text = getString(R.string.textChangelogVar, updateInfo.versionName, updateInfo.changelog)
         buttonDownloadUpdate.setOnClickListener {
-            //            startActivity(Intent(Intent.ACTION_VIEW, updateInfo.path.toUri()))
-            if (packageManager.canRequestPackageInstalls())
-                Intent(this, DownloadService::class.java).apply {
-                    File(externalCacheDir?.absoluteFile!!, "update").apply {
-                        if (!exists())
-                            mkdir()
-                    }
-                    putExtra("downloadType", "update")
-                    putExtra("savePath", externalCacheDir?.absolutePath + "/update/appUpdate.apk")
-                    putExtra("downloadUrl", path)
-                    startService(this)
-                } else {
-                dialog("请求安装权限",
-                        "Android O以上版本需要额外的权限才能安装，请授予权限",
-                        "跳转到权限授予界面",
-                        DialogInterface.OnClickListener { _, _ ->
-                            startInstallPermissionSettingActivity()
-                        })
+//                        startActivity(Intent(Intent.ACTION_VIEW, updateInfo.path.toUri()))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (packageManager.canRequestPackageInstalls())
+                    Intent(this, DownloadService::class.java).apply {
+                        File(externalCacheDir?.absoluteFile!!, "update").apply {
+                            if (!exists())
+                                mkdir()
+                        }
+                        putExtra("downloadType", "update")
+                        putExtra("savePath", externalCacheDir?.absolutePath + "/update/appUpdate.apk")
+                        putExtra("downloadUrl", path)
+                        startService(this)
+                    } else {
+                    dialog("请求安装权限",
+                            "Android O以上版本需要额外的权限才能安装，请授予权限",
+                            "跳转到权限授予界面",
+                            DialogInterface.OnClickListener { _, _ ->
+                                startInstallPermissionSettingActivity()
+                            })
+                }
             }
         }
 

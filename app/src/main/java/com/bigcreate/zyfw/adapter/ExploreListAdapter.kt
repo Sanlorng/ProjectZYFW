@@ -10,8 +10,10 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ImageViewActivity
+import com.bigcreate.zyfw.activities.MyDetailsActivity
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.models.DynamicPicture
 import com.bigcreate.zyfw.models.ExploreItem
@@ -32,6 +34,11 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
                         .load(userInfoByPart.userHeadPictureLink)
                         .circleCrop()
                         .into(exploreItemUserAvatar)
+                exploreItemUserAvatar.setOnClickListener {
+                    it.context.startActivity<MyDetailsActivity> {
+                        putExtra("userId",userInfoByPart.userId)
+                    }
+                }
                 if (listImageExploreItem.adapter == null) {
                     listImageExploreItem.layoutManager = GridLayoutManager(context, when {
                         dynamicPicture.size % 5 == 0 -> 5
@@ -46,8 +53,24 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
                     }
                 }
 
+                if (favorite) {
+                    exploreItemFavorite.setImageResource(R.drawable.ic_star_black_24dp)
+                }
+
+                if (praise) {
+                    exploreItemLike.setImageResource(R.drawable.ic_favorite_black_24dp)
+                }
                 setOnClickListener {
-                    onItemClick?.invoke(this@run, this, position)
+                    onItemClick?.invoke(it, this, position)
+                }
+                exploreItemComment.setOnClickListener {
+                    onItemClick?.invoke(it,this,position)
+                }
+                exploreItemFavorite.setOnClickListener {
+                    onItemClick?.invoke(it,this,position)
+                }
+                exploreItemLike.setOnClickListener {
+                    onItemClick?.invoke(it,this,position)
                 }
             }
         }
@@ -74,9 +97,9 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
     }
 
     class ExploreItemImageAdapter(private val onItemImageOpenTransition: ((view: View, item: String, intent: Intent) -> Unit)? = null, private val list: List<DynamicPicture>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        private val urlList: Array<String> = Array(list.size) {
-            list[it].dyPictureTwoLink
-        }
+//        private val urlList: Array<String> = Array(list.size) {
+//            list[it].dyPictureTwoLink
+//        }
 
         override fun getItemCount(): Int {
             return list.size
@@ -84,18 +107,20 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             holder.itemView.run {
-                urlList[position].apply {
+                list[position].apply {
                     Glide.with(context)
-                            .load(this)
+                            .load(dyPictureTwoLink)
                             .centerCrop()
                             .into(itemSelectedImage)
                     cancelImage.isVisible = false
                     setOnClickListener {
                         val intent = Intent(context, ImageViewActivity::class.java)
-                        intent.putExtra("list", urlList)
+                        intent.putExtra("list", Array(list.size) {
+                            list[it].dyPictureTwoLink
+                        })
                         intent.putExtra("position", position)
-                        itemSelectedImage.transitionName = this
-                        onItemImageOpenTransition?.invoke(itemSelectedImage, this, intent)
+                        itemSelectedImage.transitionName = dyPictureTwoLink
+                        onItemImageOpenTransition?.invoke(itemSelectedImage, dyPictureTwoLink, intent)
                     }
                 }
                 updatePadding(right = 0)

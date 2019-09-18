@@ -18,8 +18,10 @@
         android:orientation="horizontal">
 
         <com.google.android.material.appbar.MaterialToolbar
+            style="@style/toolBar"
             app:navigationIcon="@drawable/ic_clear_black_24dp"
             app:layout_constraintTop_toTopOf="parent"
+            android:fitsSystemWindows="false"
             android:id="@+id/toolbarSelectCity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

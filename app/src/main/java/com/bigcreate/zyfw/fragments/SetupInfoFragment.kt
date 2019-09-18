@@ -47,7 +47,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View {
+class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocationListener, UserInfoImpl.View {
     private var param1: String? = null
     private var param2: String? = null
     private var tencentLocation: TencentLocation? = null
@@ -83,6 +83,7 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        dealInfoType()
         val isSetup = activity?.intent?.type
 //        val isEditMode = activity?.intent?.getBooleanExtra("isEditMode",false).valueOrNotNull
         if (isSetup == null || isSetup != "setupInfo") {
@@ -132,7 +133,7 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
                         getIndexForChip(chipGroupGenderTypeSetupInfo.checkedChipId),
                         getIndexForChip(chipGroupUserTypeSetupInfo.checkedChipId),
                         layoutAddressSetupInfo.editText!!.string().trim(),
-                        layoutPhoneSetupInfo.editText!!.string().trim(), userInfo.token))
+                        layoutPhoneSetupInfo.editText!!.string().trim(), userInfo.token, Attributes.userId))
             }
         }
         chipQuickLocaleSetupInfo.setOnClickListener {
@@ -217,7 +218,7 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
          */
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-                SetupInfoFragment().apply {
+                SetupInfoFragment("").apply {
                     arguments = Bundle().apply {
                         putString(ARG_PARAM1, param1)
                         putString(ARG_PARAM2, param2)
@@ -273,7 +274,7 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
         val userInfo = Attributes.loginUserInfo!!
         userInfo.apply {
             userInfoImpl.doSetupAvatar(
-                    avatarFile!!, token, username)
+                    avatarFile!!, token, userId)
         }
 
     }
@@ -315,6 +316,36 @@ class SetupInfoFragment : Fragment(), TencentLocationListener, UserInfoImpl.View
             R.id.chipIdTeacherSetupInfo, R.id.chipFemaleSetupInfo -> 2
             R.id.chipIdOtherSetupInfo -> 3
             else -> 0
+        }
+    }
+
+    private fun dealInfoType() {
+        when {
+            infoType.startsWith("setupInfo") -> {
+
+            }
+            infoType.startsWith("updateInfo") -> {
+                showInfo()
+            }
+            infoType.startsWith("showInfo") -> {
+                showInfo()
+            }
+        }
+    }
+
+    private fun showInfo() {
+        Attributes.userInfo?.apply {
+            Glide.with(imageAvatarSetupInfo.context)
+                    .load(userHeadPictureLink)
+                    .circleCrop()
+                    .into(imageAvatarSetupInfo)
+            textAvatarSetupInfo.text = "更换个人头像"
+            layoutNickSetupInfo.editText?.text?.clear()
+            layoutNickSetupInfo.editText?.text?.append(userNick)
+            layoutAddressSetupInfo.editText?.text?.clear()
+            layoutAddressSetupInfo.editText?.text?.append(userAddress)
+//            if (i)
+            //layoutNickSetupInfo.editText.cane
         }
     }
 }

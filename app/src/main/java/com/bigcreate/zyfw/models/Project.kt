@@ -22,7 +22,8 @@ data class Project(
         val projectVideoLink: Any,
         val projectVideoLinkTwo: List<String>,
         val token: String?,
-        val username: String
+        val username: String,
+        val userInfoByPart: UserInfoByPart
 )
 
 data class SearchResponse(

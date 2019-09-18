@@ -1,5 +1,7 @@
 package com.bigcreate.zyfw.models
 
+import com.google.gson.annotations.Expose
+
 //data class ChatMessage(val msg: String,val type: Int, val to: String,val sendTime: String, val username:String)
 data class ChatMessage(
         val msg: String,
@@ -7,6 +9,7 @@ data class ChatMessage(
         var sendUserId: Int,
         val time: String,
         val to: Boolean,
+        @Expose
         var chatId: Int = 0
 )
 

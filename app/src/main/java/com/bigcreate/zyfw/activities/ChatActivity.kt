@@ -107,9 +107,10 @@ class ChatActivity : AuthLoginActivity() {
     private fun initListener() {
         //发送点击监听
         buttonSendChat.setOnClickListener {
-            val str = ChatMessage(inputMessageChat.text.toString(), chatId, Attributes.userId, "", sendType == MessageType.SINGLE, chatId)
+            val str = ChatMessage(inputMessageChat.text.toString(), chatId, Attributes.userId, "", true, chatId)
 //            socketClient.send(str)
             binder?.sendMessage(str)
+//            onNewMessage(str)
             inputMessageChat.text.clear()
         }
         //输入监听

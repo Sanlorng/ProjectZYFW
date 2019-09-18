@@ -21,6 +21,8 @@ import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MainActivity
 import com.bigcreate.zyfw.adapter.MessageListAdapter
+import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.callback.enqueue
 import com.bigcreate.zyfw.models.ChatMessage
 import com.bigcreate.zyfw.models.MessageHeader
 import com.bigcreate.zyfw.service.MessageService
@@ -76,6 +78,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        context?.bindService(Intent(context!!,MessageService::class.java),connection,Service.BIND_AUTO_CREATE)
         val layoutParam = cardViewAppBarMain.layoutParams as ViewGroup.MarginLayoutParams
         layoutParam.topMargin += context?.let {
             it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
@@ -92,6 +95,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         }
 
 //        initHashSet()
+        messageList.add(MessageHeader(MessageHeader.GROUP_ID,"全国群聊",System.currentTimeMillis()))
         textMessage.visibility = View.GONE
         hintSearchBar.isVisible = true
         inputSearchBar.isVisible = false
@@ -99,7 +103,6 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         listMessage.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         listMessage.adapter = MessageListAdapter(messageList)
         listMessage.layoutManager = LinearLayoutManager(context)
-        context?.bindService(Intent(context!!, MessageService::class.java), connection, Service.BIND_AUTO_CREATE)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -129,20 +132,38 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
             } else {
                 messageList.removeAt(index)
                 listMessage?.adapter?.notifyItemRemoved(index)
-                messageList.add(0, item)
-                listMessage?.adapter?.notifyItemInserted(0)
+                messageList.add(1, item)
+                listMessage?.adapter?.notifyItemInserted(1)
             }
         } else {
             item = MessageHeader(message.chatId, message.msg, 0)
+            if (item.id > 0) {
+                RemoteService.getHeadLinkAndNick(item.id).enqueue {
+                    response {
+                        val info = body()
+                        if (info != null) {
+                            item.userNick = info.userNick ?: ""
+                            item.userImg = info.userHeadPictureLink ?: ""
+                            val index = messageList.indexOf(item)
+                            if (index < 0) {
+                                messageList.add(1, item)
+                                listMessage?.adapter?.notifyItemInserted(1)
+                            } else {
+                                listMessage?.adapter?.notifyItemChanged(index)
+                            }
+                        }
+                    }
+                }
+            }
             messageMap[message.chatId] = item
-            messageList.add(0, item)
-            listMessage?.adapter?.notifyItemInserted(0)
+            messageList.add(1, item)
+            listMessage?.adapter?.notifyItemInserted(1)
         }
 
     }
 
     override fun onLoginSuccess() {
-
+        context?.bindService(Intent(context!!, MessageService::class.java), connection, Service.BIND_AUTO_CREATE)
     }
 
     override fun onDestroy() {

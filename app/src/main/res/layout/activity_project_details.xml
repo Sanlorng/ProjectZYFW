@@ -7,12 +7,11 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarProjectDetails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="360dp"
+            android:layout_height="240dp"
             android:background="?attr/colorOnPrimary"
             app:contentScrim="?attr/colorOnPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -25,7 +24,6 @@
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
                 android:scaleType="centerCrop" />
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -42,7 +40,7 @@
                     android:id="@+id/textProjectTitle"
                     android:maxLines="1"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:textColor="?attr/colorAccent"
                     android:textSize="20sp" />
@@ -76,14 +74,6 @@
 
     </androidx.viewpager.widget.ViewPager>
 
-    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
-    <!--android:src="@drawable/ic_favorite_border_black_24dp"-->
-    <!--android:id="@+id/buttonJoinProjectDetails"-->
-    <!--app:backgroundTint="@color/colorPrimary"-->
-    <!--android:foregroundTint="@color/colorPrimary"-->
-    <!--app:layout_anchor="@id/bottomAppBarDetails"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content" />-->
     <com.google.android.material.bottomappbar.BottomAppBar
         app:contentInsetStart="0dp"
         app:fabAlignmentMode="center"

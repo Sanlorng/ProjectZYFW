@@ -1,6 +1,8 @@
 package com.bigcreate.zyfw.fragments
 
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,10 +14,13 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.activities.ProjectDetailsActivity
 import com.bigcreate.zyfw.adapter.FavoriteListAdapter
+import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.datasource.FavoriteListDataSource
 import com.bigcreate.zyfw.models.Project
+import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import kotlinx.android.synthetic.main.fragment_my_favorite.*
 
@@ -57,8 +62,14 @@ class MyFavoriteFragment : Fragment() {
     }
 
     private fun refreshList() {
-        val adapter = FavoriteListAdapter()
-        adapter.submitList(PagedList.Builder<Int, Project>(FavoriteListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
+        val adapter = ProjectListAdapter(){ i, searchModel ->
+            startActivity(Intent(context!!,ProjectDetailsActivity::class.java).apply {
+                addCategory(Intent.CATEGORY_DEFAULT)
+                setDataAndType(Uri.parse(String.format(Attributes.authorityProject, searchModel.projectId)), "prpject/${searchModel.projectTopic}")
+                putExtra("projectId",searchModel.projectId)
+            })
+        }
+        adapter.submitList(PagedList.Builder<Int, SearchModel>(FavoriteListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
                 .setPageSize(10)
                 .setPrefetchDistance(20)
                 .build())

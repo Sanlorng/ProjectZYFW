@@ -6,29 +6,66 @@
     android:layout_height="match_parent"
     tools:context=".activities.ExploreDetailsActivity">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        app:layout_behavior="@string/appbar_string"
+        android:clipToPadding="false"
+        android:paddingTop="0dp"
+        android:id="@+id/swipeLayoutCommentExploreDetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:clipToPadding="false"
+            android:paddingTop="16dp"
+            android:paddingBottom="?attr/actionBarSize"
+            android:id="@+id/exploreItemCommentList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_project_search" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
+        android:id="@+id/appBarHome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbarExploreDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@id/toolbarExploreDetails"
+            android:id="@+id/collapsingHome"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:statusBarScrim="?attr/colorOnPrimary"
+            app:contentScrim="?attr/colorOnPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <include layout="@layout/item_user_share_content" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+        <com.google.android.material.tabs.TabLayout
+            app:layout_scrollFlags="noScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <com.google.android.material.tabs.TabItem
+                android:text="评论"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.tabs.TabLayout>
+<!--        <include-->
+<!--            layout="@layout/layout_search_bar"-->
+<!--            app:layout_collapseMode="pin" />-->
     </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    <com.google.android.material.bottomappbar.BottomAppBar
+        app:menu="@menu/bottom_explore_bar"
+        android:id="@+id/bottomExploreBar"
+        android:layout_gravity="bottom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content">
+        <TextView
+            android:hint="评论"
+            android:textSize="16sp"
+            android:id="@+id/bottomCommentTextExplore"
+            android:gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.bottomappbar.BottomAppBar>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

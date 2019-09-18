@@ -11,15 +11,18 @@ data class CrashLog(
         val versionCode: String,
         val crashString: String
 )
-
+data class ExploreCommentInfoRequest(var token: String,var dyCommentId:Int, var pageNum: Int)
+data class ExploreItemFavoriteRequest(var token:String, val dyCollectionId: Int)
+data class ExploreItemLikeRequest(var token:String, val dyPraiseId: Int)
+data class ExploreCommentRequest(var token: String,val dyCommentId: Int, val dyCommentContent: String)
 data class TokenRequest(var token: String)
 data class PageRequest(var token: String, var pageNum: Int)
 data class SimpleRequest(var token: String, var userId: Int)
 data class LoginRequest(var username: String, var password: String)
 data class IsSetupInfoRequest(var token: String, var username: String)
-data class RegisterRequest(var username: String, var password: String, var idNumber: String, var code: String)
+data class RegisterRequest(var username: String, var password: String, var idNumber: String,var realName:String, var code: String)
 data class InitPersonInfoRequest(var username: String, var userNick: String, var userSexCode: Int,
-                                 var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String)
+                                 var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String, var userId: Int)
 
 data class UpdateInfoRequest(var username: String, var userAddress: String, var userPhone: String)
 data class SearchRequest(var token: String, var projectRegion: String?, var projectTopic: String?, var projectContent: String?, var pageNum: Int)
@@ -35,7 +38,7 @@ data class CreateCommentRequest(
         val comment: String,
         val projectId: String,
         val token: String,
-        val username: String
+        val userId: Int
 )
 
 data class CommentListRequest(var token: String, var projectId: String, var pageNum: Int)
@@ -63,7 +66,7 @@ data class UpdateInfo(
 
 data class RestResult<T>(val message: String, val code: Int, val data: T)
 
-class FileUploadRequest(file: File, token: String, username: String) {
+class FileUploadRequest(file: File, token: String, userId: Int) {
     var part: MultipartBody.Part
     var token: RequestBody
     var username: RequestBody
@@ -72,7 +75,7 @@ class FileUploadRequest(file: File, token: String, username: String) {
         val type = MediaType.parse("multipart/form-data")
         part = MultipartBody.Part.createFormData("file", file.name, RequestBody.create(type, file))
         this.token = RequestBody.create(type, token)
-        this.username = RequestBody.create(type, username)
+        this.username = RequestBody.create(type, userId.toString())
     }
 }
 

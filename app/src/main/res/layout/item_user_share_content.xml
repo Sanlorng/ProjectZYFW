@@ -90,31 +90,26 @@
         android:background="#E0E0E0" />
 
     <LinearLayout
+        android:layout_gravity="end"
+        android:id="@+id/user_share_action_layout"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="48dp">
 
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
-            android:src="@drawable/ic_favorite_border_black_24dp"
-            android:contentDescription="TODO" />
-
-        <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
+            android:id="@+id/exploreItemComment"
+            style="@style/user_share_action_style"
             android:src="@drawable/ic_outline_comment_24px"
             android:contentDescription="TODO" />
 
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
+            android:id="@+id/exploreItemLike"
+            android:src="@drawable/ic_favorite_border_black_24dp"
+            style="@style/user_share_action_style" />
+
+        <ImageButton
+            android:id="@+id/exploreItemFavorite"
+            style="@style/user_share_action_style"
             android:src="@drawable/ic_star_border_black_24dp"
             android:contentDescription="TODO" />
     </LinearLayout>

@@ -21,7 +21,28 @@ data class ProjectListCommentResponse(
         val content: ProjectListCommentContent,
         val newToken: String
 )
-
+data class ListDataContent<T> (
+        val endRow: Int,
+        val firstPage: Int,
+        val hasNextPage: Boolean,
+        val hasPreviousPage: Boolean,
+        val isFirstPage: Boolean,
+        val isLastPage: Boolean,
+        val lastPage: Int,
+        val list: List<T>,
+        val navigateFirstPage: Int,
+        val navigateLastPage: Int,
+        val navigatePages: Int,
+        val navigatepageNums: List<Int>,
+        val nextPage: Int,
+        val pageNum: Int,
+        val pageSize: Int,
+        val pages: Int,
+        val prePage: Int,
+        val size: Int,
+        val startRow: Int,
+        val total: Int
+)
 data class ProjectListCommentContent(
         val endRow: Int,
         val firstPage: Int,
@@ -129,8 +150,8 @@ data class ExploreItem(
         val dyReleaseTime: String,
         val dyReleaseUserId: Int,
         val dynamicPicture: List<DynamicPicture>,
-        val favorite: Boolean,
-        val praise: Boolean,
+        var favorite: Boolean,
+        var praise: Boolean,
         val userInfoByPart: UserInfoByPart
 )
 

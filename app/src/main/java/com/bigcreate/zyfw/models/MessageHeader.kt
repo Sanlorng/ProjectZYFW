@@ -7,5 +7,10 @@ data class MessageHeader(
         val id: Int,
         var message: String = "",
         var time: Long,
-        var userImg: String = ""
-)
+        var userImg: String = "",
+        var userNick: String = ""
+){
+    companion object {
+        const val GROUP_ID = -1000
+    }
+}

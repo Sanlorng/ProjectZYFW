@@ -13,9 +13,11 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.FavoriteListAdapter
+import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.datasource.JoinedListDataSource
 import com.bigcreate.zyfw.models.Project
+import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import kotlinx.android.synthetic.main.fragment_my_favorite.*
 
@@ -57,8 +59,8 @@ class MyJoinFragment : Fragment() {
     }
 
     private fun refreshList() {
-        val adapter = FavoriteListAdapter()
-        adapter.submitList(PagedList.Builder<Int, Project>(JoinedListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
+        val adapter = ProjectListAdapter()
+        adapter.submitList(PagedList.Builder<Int, SearchModel>(JoinedListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
                 .setPageSize(10)
                 .setPrefetchDistance(20)
                 .build())

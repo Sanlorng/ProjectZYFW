@@ -19,7 +19,6 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.CommentAdapter
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.Status
-import com.bigcreate.zyfw.callback.CommentCallBack
 import com.bigcreate.zyfw.callback.FillTextCallBack
 import com.bigcreate.zyfw.datasource.CommentListDataSource
 import com.bigcreate.zyfw.models.Comment
@@ -28,6 +27,7 @@ import com.bigcreate.zyfw.models.ProjectCommentResponse
 import com.bigcreate.zyfw.mvp.project.CommentListImpl
 import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import com.google.gson.JsonObject
+import kotlinx.android.synthetic.main.activity_project_details.*
 import kotlinx.android.synthetic.main.fragment_comment_details.*
 import kotlinx.android.synthetic.main.layout_loading.*
 import kotlinx.coroutines.Deferred
@@ -49,7 +49,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, CommentCallBack {
+class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, CommentDialogFragment.CommentCallback {
 
     private val background = Executors.newFixedThreadPool(5)
     private lateinit var networkStateViewModel: NetworkStateViewModel
@@ -105,10 +105,10 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
 
         job = GlobalScope.async(Dispatchers.Main) {
             CommentDialogFragment().apply {
-                fillTextCallBack = this@CommentsFragment
                 commentCallBack = this@CommentsFragment
             }
         }
+        refreshList()
 //        buttonShowCommentDialog.setOnClickListener {
 //            GlobalScope.launch(Dispatchers.Main) {
 //                job.await().show(childFragmentManager, "commentDialog")
@@ -138,6 +138,7 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
                         .build())
             }
             listCommentsDetails.layoutManager = LinearLayoutManager(context!!)
+            swipeLayoutCommentDetails.isRefreshing = false
 //            commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = this, pageNum = 1))
         }
     }
@@ -197,10 +198,19 @@ class CommentsFragment : Fragment(), CommentListImpl.View, FillTextCallBack, Com
         return projectId!!
     }
 
-    override fun commentSuccess() {
+    override fun getCommentContent(): CharSequence {
+        return buttonShowCommentDialog.text
+    }
+
+    override fun onCommentDone(content: String) {
+
         projectId?.run {
             commentImpl.doRequest(CommentListRequest(token = Attributes.token, projectId = this, pageNum = 1))
         }
+    }
+
+    override fun setCommentContent(content: String) {
+        buttonShowCommentDialog.text = content
     }
 
     /**

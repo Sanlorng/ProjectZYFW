@@ -12,16 +12,18 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.toast
 import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RequestCode
-import com.bigcreate.zyfw.base.ResultCode
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
 import com.bigcreate.zyfw.mvp.user.LoginImpl
+import com.bigcreate.zyfw.viewmodel.LoginStatus
+import com.bigcreate.zyfw.viewmodel.LoginViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_login.*
@@ -34,11 +36,29 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private val loginPresenter = LoginImpl(this)
-
+    private lateinit var loginViewModel: LoginViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbarLogin)
+        loginViewModel = ViewModelHelper.getAppViewModelProvider(application as MyApplication)[LoginViewModel::class.java]
+        if (loginViewModel.userInfo.value != null) {
+            finish()
+        }
+        loginViewModel.loginStatus.observe(this, Observer {
+            when(it) {
+                LoginStatus.STATUS_LOGIN -> {
+                    showProgress(true)
+                }
+                LoginStatus.SUCCESS -> {
+                    showProgress(false)
+                    finish()
+                }
+                else -> {
+
+                }
+            }
+        })
         window.translucentSystemUI(true)
         toolbarLogin.setNavigationOnClickListener {
             finish()
@@ -59,7 +79,7 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
             attemptLogin()
         }
         textStartSignUpLogin.setOnClickListener {
-            startActivity(RegisterActivity::class.java)
+            startActivity<RegisterActivity>()
         }
         textStartResetLogin.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java).apply {
@@ -69,8 +89,8 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
     }
 
     override fun onResume() {
-        if (Attributes.loginUserInfo != null)
-            finish()
+//        if (Attributes.loginUserInfo != null)
+//            finish()
         super.onResume()
     }
 
@@ -185,7 +205,8 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
             focusView?.requestFocus()
         } else {
             showProgress(true)
-            loginPresenter.doRequest(LoginRequest(emailStr, passwordStr))
+            loginPresenter.doRequest(LoginRequest(emailStr,passwordStr))
+            //loginViewModel.tryLogin(emailStr, passwordStr)
         }
         buttonActionLogin.isEnabled = true
     }

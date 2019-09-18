@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.lifecycle.Observer
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -21,16 +22,20 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MyDetailsActivity
 import com.bigcreate.zyfw.activities.UpdateManagerActivity
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.MyApplication
+import com.bigcreate.zyfw.base.ViewModelHelper
 import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.models.RestResult
 import com.bigcreate.zyfw.models.UpdateInfo
 import com.bigcreate.zyfw.mvp.app.UpdateImpl
+import com.bigcreate.zyfw.viewmodel.LoginViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 
 class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
     private val updateImpl = UpdateImpl(this)
+    private lateinit var loginViewModel:LoginViewModel
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.setting, rootKey)
 
@@ -71,7 +76,7 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        loginViewModel = ViewModelHelper.getAppViewModelProvider(activity!!.application as MyApplication)[LoginViewModel::class.java]
         findPreference<Preference>("about")?.summary = "版本号：" + try {
             context!!.run {
                 packageManager.getPackageInfo(applicationInfo.packageName, 0).versionName
@@ -106,12 +111,12 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
         }
         val accountSetting = findPreference<Preference>("account_settings")
         accountSetting?.setOnPreferenceClickListener {
-            context?.startActivity(MyDetailsActivity::class.java)
+            context?.startActivity<MyDetailsActivity>()
             true
         }
         findPreference<Preference>("category_account")?.isVisible = false
         findPreference<Preference>("appUpdate")?.setOnPreferenceClickListener {
-            context?.startActivity(UpdateManagerActivity::class.java)
+            context?.startActivity<UpdateManagerActivity>()
             true
         }
         findPreference<SwitchPreference>("switch_night_mode")?.setOnPreferenceChangeListener { preference, newValue ->
@@ -122,7 +127,7 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
             }
             true
         }
-        if (Attributes.loginUserInfo != null)
+        if (Attributes.loginUserInfo!=null) {
             Attributes.loginUserInfo?.run {
                 accountSetting?.summary = username
                 accountSetting?.title = Attributes.userInfo?.userNick
@@ -141,6 +146,7 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
                 findPreference<PreferenceCategory>("category_account")?.isVisible = true
                 findPreference<Preference>("exit_account")?.setOnPreferenceClickListener {
                     Attributes.loginUserInfo = null
+
                     context!!.defaultSharedPreferences.edit {
                         putString("username", "")
                         putString("password", "")
@@ -150,7 +156,8 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
                     true
                 }
                 findPreference<Preference>("exit_account")
-            } else {
+            }
+        }else {
             findPreference<PreferenceCategory>("category_account")?.isVisible = false
         }
 

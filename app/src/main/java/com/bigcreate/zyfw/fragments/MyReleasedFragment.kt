@@ -7,12 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.FavoriteListAdapter
+import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.datasource.ReleasedListDataSource
 import com.bigcreate.zyfw.models.Project
+import com.bigcreate.zyfw.models.SearchModel
 import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import kotlinx.android.synthetic.main.fragment_my_favorite.*
 
@@ -28,9 +31,14 @@ class MyReleasedFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_my_favorite, container, false)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        networkStateViewModel = ViewModelProvider(this)[NetworkStateViewModel::class.java]
+        refreshList()
+    }
     private fun refreshList() {
-        val adapter = FavoriteListAdapter()
-        adapter.submitList(PagedList.Builder<Int, Project>(ReleasedListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
+        val adapter = ProjectListAdapter()
+        adapter.submitList(PagedList.Builder<Int, SearchModel>(ReleasedListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
                 .setPageSize(10)
                 .setPrefetchDistance(20)
                 .build())

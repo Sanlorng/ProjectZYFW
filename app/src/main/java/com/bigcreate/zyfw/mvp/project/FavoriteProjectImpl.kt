@@ -10,7 +10,7 @@ import com.bigcreate.zyfw.mvp.base.BaseNetworkView
 import com.bigcreate.zyfw.mvp.base.PresenterInter
 import com.google.gson.JsonObject
 
-class FavoriteProjectImpl(mView: View?) : BaseMultiPresenterImpl<FavoriteProjectImpl.View>(mView) {
+class FavoriteProjectImpl(view: View?) : BaseMultiPresenterImpl<FavoriteProjectImpl.View>(view) {
     private val favoriteInter = object : PresenterInter<ProjectFavoriteRequest, JsonObject?> {
         override fun afterRequestSuccess(data: JsonObject?) {
             mView?.run {

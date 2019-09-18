@@ -37,13 +37,13 @@ class DetailsMediaAdapter(private val listMedia: ArrayList<Model>) : RecyclerVie
 
                     is Header -> project.run {
                         context.apply {
-                            locationDetails.text = getString(R.string.localeProjectVar, projectAddress)
-                            typeDetails.text = getString(R.string.typeProjectVar, resources.getStringArray(R.array.project_type_id)[projectTypeId - 1])
-                            textNameDetails.text = getString(R.string.contactNameVar, projectPrincipalName)
+                            //locationDetails.text = getString(R.string.localeProjectVar, projectAddress)
+                            //typeDetails.text = getString(R.string.typeProjectVar, resources.getStringArray(R.array.project_type_id)[projectTypeId - 1])
+                            //textNameDetails.text = getString(R.string.contactNameVar, projectPrincipalName)
                             textDescriptionDetails.text = projectContent
-                            textNumberDetails.text = getString(R.string.needPeoleNumVar, projectPeopleNumbers)
-                            textPhoneDetails.text = projectPrincipalPhone
-                            textTimeDetails.text = projectIssueTime
+                            //textNumberDetails.text = getString(R.string.needPeoleNumVar, projectPeopleNumbers)
+                            //textPhoneDetails.text = projectPrincipalPhone
+                            //textTimeDetails.text = projectIssueTime
                             testShowInfo.text = projectTopic
                         }
                     }

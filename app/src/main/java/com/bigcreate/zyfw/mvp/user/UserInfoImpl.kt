@@ -81,9 +81,9 @@ class UserInfoImpl(mView: View?) : BaseMultiPresenterImpl<UserInfoImpl.View>(mVi
         addJob(updateInter.doRequest(mView, updateInfoRequest))
     }
 
-    fun doSetupAvatar(file: File, token: String, username: String) {
+    fun doSetupAvatar(file: File, token: String, userId: Int) {
         addJob(setupAvatarInter.doRequest(mView, FileUploadRequest(
-                file, token, username
+                file, token, userId
         )))
 
     }

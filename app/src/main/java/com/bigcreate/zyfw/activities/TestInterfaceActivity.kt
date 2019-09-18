@@ -69,7 +69,7 @@ class TestInterfaceActivity : AppCompatActivity() {
                     }
                 }
                 R.id.testRegister -> {
-                    startActivity(RegisterActivity::class.java)
+                    startActivity<RegisterActivity>()
                 }
                 R.id.testAuthLogin -> {
                     Attributes.loginUserInfo = null

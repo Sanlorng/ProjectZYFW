@@ -10,8 +10,8 @@
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="colorControlNormal">?attr/colorPrimary</item>
         <item name="toolbarStyle">@style/toolBar</item>
-        <item name="actionBarStyle">@style/toolBar</item>
-        <item name="actionBarTheme">@style/toolBar</item>
+<!--        <item name="actionBarStyle">@style/toolBar</item>-->
+<!--        <item name="actionBarTheme">@style/toolBar</item>-->
         <item name="appBarLayoutStyle">@style/appBar</item>
         <item name="android:windowBackground">?attr/colorSurface</item>
         <item name="preferenceStyle">@style/preference</item>
@@ -28,12 +28,13 @@
         <item name="android:layout_gravity">center</item>
     </style>
     <style name="preference" parent="Preference.Material">
-        <item name="android:iconTint">?attr/colorOnSurface</item>
+<!--        <item name="android:iconTint">?attr/colorOnSurface</item>-->
     </style>
     
 <!--    <style name=""-->
 
     <style name="toolBar" parent="Widget.MaterialComponents.Toolbar.Primary" >
+        <item name="android:colorControlNormal">?attr/colorOnPrimary</item>
         <item name="android:contentInsetStart">0dp</item>
         <item name="contentInsetStartWithNavigation">0dp</item>
         <item name="android:background">?attr/colorOnPrimary</item>
@@ -82,7 +83,7 @@
         <item name="itemIconTint">@color/bottom_nav_item_fix</item>
         <item name="itemTextColor">@color/bottom_nav_item_fix</item>
     </style>
-    <style name="bottomDialog" parent="AppTheme.Light">
+    <style name="bottomDialog" parent="AppTheme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:windowIsFloating">true</item>
@@ -90,5 +91,15 @@
     <style name="shape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="user_share_action_style">
+        <item name="android:padding">16dp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:contentDescription">TODO</item>
     </style>
 </resources>

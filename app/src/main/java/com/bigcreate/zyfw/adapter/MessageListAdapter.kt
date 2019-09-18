@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ChatActivity
+import com.bigcreate.zyfw.base.RemoteService
+import com.bigcreate.zyfw.callback.enqueue
 import com.bigcreate.zyfw.models.MessageHeader
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_message_header.view.*
 
 /**
@@ -34,6 +37,37 @@ class MessageListAdapter(private val messageMap: ArrayList<MessageHeader>) : Rec
                     val intent = Intent(context, ChatActivity::class.java)
                     intent.putExtra("chatId", this.id)
                     context.startActivity(intent)
+                }
+                if (id == MessageHeader.GROUP_ID) {
+                    nickMessageItem.text = "全国群聊"
+                    avatarMessageItem.setImageResource(R.drawable.ic_outline_group_24px)
+                }else {
+                    if (userImg.isEmpty() || userNick.isEmpty()) {
+//                        RemoteService.getHeadLinkAndNick(id).enqueue {
+//                            response {
+//                                val info = body()
+//                                if (info != null) {
+//                                    userImg = info.userHeadPictureLink ?: ""
+//                                    userNick = info.userNick ?: ""
+//                                    nickMessageItem?.text = userNick
+//                                    if (userImg.isNotEmpty() && userImg.endsWith("null").not()) {
+//                                        Glide.with(context)
+//                                                .load(userImg)
+//                                                .circleCrop()
+//                                                .into(avatarMessageItem)
+//                                    }
+//                                }
+//                            }
+//                        }
+                    } else {
+                        nickMessageItem?.text = userNick
+                        if (userImg.endsWith("null").not()) {
+                            Glide.with(context)
+                                    .load(userImg)
+                                    .circleCrop()
+                                    .into(avatarMessageItem)
+                        }
+                    }
                 }
             }
 

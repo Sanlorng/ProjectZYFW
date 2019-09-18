@@ -4,11 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.bigcreate.library.startActivity
+import com.bigcreate.library.toast
 import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
 import com.bigcreate.zyfw.mvp.user.LoginImpl
+import com.bigcreate.zyfw.viewmodel.LoginStatus
+import com.bigcreate.zyfw.viewmodel.LoginViewModel
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -38,6 +44,23 @@ abstract class AuthLoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView()
+//        val viewModel = ViewModelProvider(application as MyApplication)[LoginViewModel::class.java]
+//        viewModel.loginStatus.observe(this, Observer {
+//            when(it) {
+//                LoginStatus.SUCCESS -> afterCheckLoginSuccess()
+//                LoginStatus.ERROR_NETWORK -> {
+//                    toast("网络问题，登陆失败")
+//                }
+//                LoginStatus.ERROR_UNKNOWN -> {
+//                    toast("未知问题，登录失败")
+//                }
+//                else -> {
+//                    startActivity(LoginActivity::class.java)
+//                }
+//            }
+//        })
+//        viewModel.tryLogin(defaultSharedPreferences.getString("username", "")?:"",
+//                    defaultSharedPreferences.getString("password", "")?:"")
         checkLogin()
     }
 

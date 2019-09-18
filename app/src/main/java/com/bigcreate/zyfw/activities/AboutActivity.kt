@@ -19,7 +19,7 @@ class AboutActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         textUpdateHistory.setOnClickListener {
-            startActivity(AppUpdateHistoryActivity::class.java)
+            startActivity<AppUpdateHistoryActivity>()
         }
     }
 }

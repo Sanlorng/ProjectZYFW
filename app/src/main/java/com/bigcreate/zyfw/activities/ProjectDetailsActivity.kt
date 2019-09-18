@@ -5,32 +5,32 @@ package com.bigcreate.zyfw.activities
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.bigcreate.library.startActivity
+import com.bigcreate.library.statusBarHeight
 import com.bigcreate.library.toJson
 import com.bigcreate.library.toast
+import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.FragmentAdapter
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RemoteService
-import com.bigcreate.zyfw.base.RequestCode
-import com.bigcreate.zyfw.base.ResultCode
-import com.bigcreate.zyfw.callback.CommentCallBack
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.callback.FillTextCallBack
-import com.bigcreate.zyfw.fragments.CommentDialogFragment
-import com.bigcreate.zyfw.fragments.CommentsFragment
-import com.bigcreate.zyfw.fragments.DetailsFragment
-import com.bigcreate.zyfw.fragments.ProjectActionItemListDialogFragment
+import com.bigcreate.zyfw.fragments.*
+import com.bigcreate.zyfw.models.CreateCommentRequest
 import com.bigcreate.zyfw.models.GetProjectRequest
 import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.models.ProjectFavoriteRequest
+import com.bigcreate.zyfw.mvp.project.CreateCommentImpl
 import com.bigcreate.zyfw.mvp.project.DetailsImpl
 import com.bigcreate.zyfw.mvp.project.FavoriteProjectImpl
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -38,9 +38,16 @@ import com.google.gson.JsonObject
 import com.tencent.mapsdk.raster.model.LatLng
 import com.tencent.mapsdk.raster.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_project_details.*
+import kotlinx.android.synthetic.main.fragment_explore.*
 import kotlinx.coroutines.*
 
-class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectActionItemListDialogFragment.Listener, FavoriteProjectImpl.View, CommentCallBack, FillTextCallBack {
+class ProjectDetailsActivity :
+        AuthLoginActivity(),
+        DetailsImpl.View,
+        ProjectActionItemListDialogFragment.Listener,
+        FavoriteProjectImpl.View,
+        CommentDialogFragment.CommentCallback,
+        CreateCommentImpl.View{
     private var project: Project? = null
     private var projectId = -1
     private lateinit var fragmentJob: Deferred<DetailsImpl.View>
@@ -48,12 +55,14 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
     private var projectName: String? = null
     private val detailsImpl = DetailsImpl(this)
     private var appbarHeight = 0
+    private var commentImpl = CreateCommentImpl(this)
     private var favoriteProjectImpl = FavoriteProjectImpl(this)
     private var isFavoriteRequest = false
     private var projectType = -1
     private var commentText = ""
     //    private lateinit var favoriteIcon: Deferred<MenuItem>
-    private lateinit var commentJob: Deferred<CommentDialogFragment>
+    private lateinit var commentDialog: CommentDialogFragment
+//    private lateinit var commentJob: Deferred<CommentDialogFragment>
     private lateinit var bottomJob: Deferred<ProjectActionItemListDialogFragment>
     private lateinit var viewPagerFragments: List<Fragment>
     private val typeValue = TypedValue()
@@ -64,10 +73,18 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
 
     override fun setContentView() {
         setContentView(R.layout.activity_project_details)
+        toolbarProjectDetails.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED)
+        toolbarProjectDetails.layoutParams.apply {
+            height = toolbarProjectDetails.measuredHeight + statusBarHeight
+            toolbarProjectDetails.layoutParams = this
+        }
+        toolbarProjectDetails.paddingStatusBar()
         bottomAppBarDetails.inflateMenu(R.menu.toolbar_project_details)
         theme.resolveAttribute(R.attr.colorOnSurface, typeValue, true)
-        bottomAppBarDetails.menu.forEach {
-            it.iconTintList = ColorStateList.valueOf(getColor(typeValue.resourceId))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bottomAppBarDetails.menu.forEach {
+                it.iconTintList = ColorStateList.valueOf(getColor(typeValue.resourceId))
+            }
         }
         bottomAppBarDetails.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -96,10 +113,10 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
             }
             true
         }
+        commentDialog = CommentDialogFragment()
         buttonShowCommentDialog.setOnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-                commentJob.await().show(supportFragmentManager, "commentDialog")
-            }
+
+            commentDialog.show(supportFragmentManager, "commentDialog")
         }
     }
 
@@ -116,8 +133,12 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
         projectId = intent?.data?.lastPathSegment?.toInt() ?: -1
         projectName = intent.type?.split("/")?.last()
         textProjectTitle.text = projectName
+//        supportActionBar?.title = projectName
+        viewPagerDetails.offscreenPageLimit = 4
         fragmentJob = GlobalScope.async(Dispatchers.Main) {
-            viewPagerFragments = listOf(DetailsFragment.newInstance(projectId.toString(), ""), CommentsFragment.newInstance(projectId.toString(), ""))
+            viewPagerFragments = listOf(DetailsFragment.newInstance(projectId.toString(), ""),
+                    ProjectImageFragment(),ProjectVideoFragment(),
+                    CommentsFragment.newInstance(projectId.toString(), ""))
             FragmentAdapter(supportFragmentManager, viewPagerFragments).let {
                 //                commentsFragment = it.list[1] as CommentsFragment
 //                commentsFragment?.marginHeight(appbarHeight)
@@ -130,12 +151,16 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
             ProjectActionItemListDialogFragment.newInstance(0)
         }
 
-        commentJob = GlobalScope.async(Dispatchers.Main) {
-            CommentDialogFragment().apply {
-                commentCallBack = this@ProjectDetailsActivity
-                fillTextCallBack = this@ProjectDetailsActivity
-            }
+        commentDialog.apply {
+            commentCallBack = this@ProjectDetailsActivity
         }
+
+//        startActivity<ProjectDetailsActivity>()
+//        commentJob = GlobalScope.async(Dispatchers.Main) {
+//            CommentDialogFragment().apply {
+//                commentCallBack = this@ProjectDetailsActivity
+//            }
+//        }
 
         Attributes.loginUserInfo?.run {
             detailsImpl.doRequest(GetProjectRequest(token = token, projectId = projectId.toString()))
@@ -155,22 +180,32 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun commentSuccess() {
-        if (viewPagerDetails.currentItem == 1)
-            if (viewPagerFragments[1] is CommentCallBack)
-                (viewPagerFragments[1] as CommentCallBack).commentSuccess()
-    }
-
-    override fun getProjectId(): String {
-        return projectId.toString()
-    }
-
-    override fun getTextContent(): CharSequence {
+    override fun getCommentContent(): CharSequence {
         return buttonShowCommentDialog.text
     }
 
-    override fun setTextContent(content: CharSequence) {
+    override fun onCommentDone(content: String) {
+        Attributes.apply {
+            commentImpl.doRequest(CreateCommentRequest(
+                    comment = content,
+                    projectId = projectId.toString(),
+                    token = token,
+                    userId = userId
+            ))
+        }
+    }
+
+    override fun setCommentContent(content: String) {
         buttonShowCommentDialog.text = content
+    }
+
+    override fun onCreateCommentFailed(jsonObject: JsonObject) {
+        toast("评论失败")
+    }
+
+    override fun onCreateCommentSuccess(jsonObject: JsonObject) {
+        toast("评论成功")
+        commentDialog.dismiss()
     }
 
     override fun onGetDetailsFailed(jsonObject: JsonObject) {
@@ -198,7 +233,12 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
 //                if (join) {
 //                    buttonJoinProjectDetails.isVisible = false
 //                }
-
+                (viewPagerFragments[1] as ProjectImageFragment).apply {
+                    refreshImages(projectPictureLinkTwo)
+                }
+                (viewPagerFragments[2] as ProjectVideoFragment).apply {
+                    refreshVideo(projectVideoLinkTwo)
+                }
                 bottomAppBarDetails.menu.apply {
                     findItem(R.id.projectDetailsAction).isVisible = Attributes.username == username
                     findItem(R.id.projectDetailsJoin).apply {
@@ -237,6 +277,7 @@ class ProjectDetailsActivity : AuthLoginActivity(), DetailsImpl.View, ProjectAct
 //                    isChecked = favorite
 //                }
             }
+            mapProjectDetails.map.clearAllOverlays()
             mapProjectDetails.map.addMarker(
                     MarkerOptions()
                             .position(LatLng(latitude, longitude))

@@ -133,9 +133,9 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
             // perform the user login attempt.
             showProgress(true)
             if (isForgetPass)
-                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr, "", inputValidCodeRegister.text.toString()))
+                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr, "","", inputValidCodeRegister.text.toString()))
             else
-                presenter.doRegister(RegisterRequest(emailStr, passwordStr, inputIdentifyRegister.text.toString(), inputValidCodeRegister.text.toString()))
+                presenter.doRegister(RegisterRequest(emailStr, passwordStr, inputIdentifyRegister.text.toString(),inputRealNameRegister.text.toString(), inputValidCodeRegister.text.toString()))
         }
         buttonSubmitRegister.isEnabled = true
     }
@@ -193,7 +193,7 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
         }
         val transaction = activity?.supportFragmentManager?.beginTransaction()
         transaction?.run {
-            replace(R.id.containerRegister, SetupInfoFragment())
+            replace(R.id.containerRegister, SetupInfoFragment("setupInfo"))
             setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             addToBackStack(null)
             commit()

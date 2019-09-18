@@ -11,7 +11,7 @@ import android.provider.MediaStore
 import android.util.Log
 
 fun Context.getPath(uri: Uri):String?{
-    var path:String? =null
+    var path:String?
     if (ContentResolver.SCHEME_CONTENT == (uri.scheme)) {
         if (DocumentsContract.isDocumentUri(this, uri)) {
             if (uri.isExternalStorageDocument()) {

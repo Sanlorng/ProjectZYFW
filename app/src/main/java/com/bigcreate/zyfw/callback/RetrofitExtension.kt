@@ -8,7 +8,7 @@ class RetrofitCallback<T> : Callback<T> {
     private var failureBlock: (Throwable.(call: Call<T>) -> Unit)? = null
     private var responseBlock: (Response<T>.(call: Call<T>) -> Unit)? = null
 
-    fun throwable(block: (Throwable.(call: Call<T>) -> Unit)) {
+    fun error(block: (Throwable.(call: Call<T>) -> Unit)) {
         failureBlock = block
     }
 

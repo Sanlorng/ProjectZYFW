@@ -2,6 +2,7 @@ package com.bigcreate.zyfw.activities
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -19,15 +20,18 @@ import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_launch.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.net.URI
 
 class LaunchActivity : AppCompatActivity(), LoginImpl.View {
     private val presenter = LoginImpl(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
         window.translucentSystemUI(true)
+
         try {
-            Log.e("startService", "true")
+            //Log.e("startService", "true")
             startService(Intent(this, CheckUpdateService::class.java))
         } catch (e: Exception) {
             e.printStackTrace()
@@ -54,7 +58,7 @@ class LaunchActivity : AppCompatActivity(), LoginImpl.View {
         when (requestCode) {
             RequestCode.LOGIN -> {
                 if (resultCode == ResultCode.OK) {
-                    startActivity(MainActivity::class.java)
+                    startActivity<MainActivity>()
                     finish()
                 }
             }
@@ -73,7 +77,7 @@ class LaunchActivity : AppCompatActivity(), LoginImpl.View {
 
     override fun onLoginSuccess(loginInfo: LoginModel) {
         Attributes.loginUserInfo = loginInfo
-        startActivity(MainActivity::class.java)
+        startActivity<MainActivity>()
         finish()
     }
 

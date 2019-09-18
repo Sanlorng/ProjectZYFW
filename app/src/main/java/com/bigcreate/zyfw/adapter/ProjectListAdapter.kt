@@ -21,11 +21,11 @@ class ProjectListAdapter(private val listener: ((Int, SearchModel) -> Unit)? = n
             holder.itemView.run {
                 topicProjectSearchItem.text = projectTopic
                 addressProjectSearchItem.text = context.getString(R.string.secondContentSearchVar,
-                        projectPrincipalName, projectAddress, projectIssueTime)
+                        projectPrincipalName, projectAddress, "")
                 contentProjectSearchItem.text = projectContent
-                numbersProjectSearchItem.text = context.getString(R.string.numberProjectSearchVar, projectPeopleNumbers)
+                peopleProjectSearchItem.text = context.getString(R.string.needPeoleNumVar, projectPeopleNumbers) + "·" + projectIssueTime
                 projectPictureLinkTwo.apply {
-                    if (size > 0)
+                    if (this != null && size > 0)
                         Glide.with(context)
                                 .load(get(0))
                                 .centerInside()

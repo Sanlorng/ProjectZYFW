@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="like"
+        android:id="@+id/bottomExploreLike"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        android:checkable="true"
+        android:iconTint="@color/color_sel_like"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:title="@string/favorite"
+        android:id="@+id/bottomExploreFavorite"
+        android:icon="@drawable/ic_star_border_black_24dp"
+        android:checkable="true"
+        android:iconTint="@color/color_sel_favorite"
+        app:showAsAction="always" />
+
+</menu>

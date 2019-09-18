@@ -40,7 +40,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             app:cornerRadius="0dp"
             app:rippleColor="#9E9E9E"
-            android:textColor="#BC000000"
+            android:textColor="?attr/colorOnSurface"
             android:text="@string/versionHistory"
             android:id="@+id/textUpdateHistory"
             android:layout_width="match_parent"
@@ -50,7 +50,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             app:cornerRadius="0dp"
             app:rippleColor="#9E9E9E"
-            android:textColor="#000000"
+            android:textColor="?attr/colorOnSurface"
             android:text="@string/developerGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
