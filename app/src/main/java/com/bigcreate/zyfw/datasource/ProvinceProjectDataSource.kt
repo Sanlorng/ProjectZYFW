@@ -31,7 +31,7 @@ class ProvinceProjectDataSource(private val area:String):PageKeyedDataSource<Int
                 body()?.apply {
                     if (code == 200) {
                         val content = jsonContentFromData.toString().fromJson<ListDataContent<ProvinceProject>>()
-                        callback.onResult(content.list,if (content.hasNextPage) content.prePage else null)
+                        callback.onResult(content.list,if (content.hasPreviousPage) content.prePage else null)
                     }
                 }
             }

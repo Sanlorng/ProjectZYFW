@@ -8,7 +8,9 @@ import android.widget.TextView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.activities.MyDetailsActivity
 import com.bigcreate.zyfw.models.Comment
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_comment.view.*
@@ -34,6 +36,11 @@ class CommentAdapter : PagedListAdapter<Comment, CommentAdapter.ViewHolder>(diff
                     .load(headPictureLink)
                     .circleCrop()
                     .into(holder.itemView.avatarComment)
+            holder.itemView.setOnClickListener {
+                it.context.startActivity<MyDetailsActivity> {
+                    putExtra("userId",userId)
+                }
+            }
         }
     }
 
