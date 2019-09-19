@@ -103,15 +103,40 @@
                     <com.bigcreate.zyfw.view.LoopViewPager
                         android:id="@+id/viewPagePictureHome"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"></com.bigcreate.zyfw.view.LoopViewPager>
+                        android:layout_height="match_parent"/>
                 </com.bigcreate.zyfw.view.ProportionView>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listActionsHome"
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    <TextView
+                        android:id="@+id/provinceProject"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="省内项目"
+                        android:background="?attr/selectableItemBackground"
+                        android:drawablePadding="16dp"
+                        android:padding="16dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:drawableTint="?attr/colorOnSurface"
+                        android:drawableTop="@drawable/ic_favorite_border_black_24dp"/>
+                    <TextView
+                        android:id="@+id/popularProject"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="热门项目"
+                        android:background="?attr/selectableItemBackground"
+                        android:drawablePadding="16dp"
+                        android:padding="16dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:drawableTint="?attr/colorOnSurface"
+                        android:drawableTop="@drawable/ic_favorite_border_black_24dp"/>
+                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

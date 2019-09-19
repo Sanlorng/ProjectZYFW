@@ -18,9 +18,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bigcreate.library.startActivity
 import com.bigcreate.library.statusBarHeight
 import com.bigcreate.library.toJson
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.activities.ChatActivity
 import com.bigcreate.zyfw.activities.MainActivity
 import com.bigcreate.zyfw.adapter.MessageListAdapter
 import com.bigcreate.zyfw.adapter.AvatarListAdapter
@@ -32,6 +34,7 @@ import com.bigcreate.zyfw.callback.enqueue
 import com.bigcreate.zyfw.models.ChatMessage
 import com.bigcreate.zyfw.models.ChatUser
 import com.bigcreate.zyfw.models.MessageHeader
+import com.bigcreate.zyfw.models.UserInfoByPart
 import com.bigcreate.zyfw.service.MessageService
 import kotlinx.android.synthetic.main.fragment_message.*
 
@@ -54,7 +57,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
     private val success = 1
     private var messageMap = SparseArray<MessageHeader>()
     private val messageList = ArrayList<MessageHeader>()
-    private val avatarArray = ArrayList<ChatUser>()
+    private val avatarArray = ArrayList<UserInfoByPart>()
     private var binder: MessageService.MessageBinder? = null
     private var messageTag = "MessageFragment"
     private var connection = object : ServiceConnection {
@@ -63,7 +66,9 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
             binder?.addOnOnlineListUpdateListener(messageTag) {
                 swipeMessage.isRefreshing = false
                 avatarArray.clear()
-                avatarArray.addAll(it)
+                it.forEach {item ->
+                    avatarArray.add(UserInfoByPart(userId = item.userId,userHeadPictureLink = "",userNick = ""))
+                }
                 avatarList?.adapter?.notifyDataSetChanged()
             }
             binder?.addOnMessageReceiveListener(messageTag) {
@@ -119,7 +124,11 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         listMessage.layoutManager = LinearLayoutManager(context)
         avatarList.itemAnimator = DefaultItemAnimator()
         avatarList.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
-        avatarList.adapter = AvatarListAdapter(avatarArray)
+        avatarList.adapter = AvatarListAdapter(avatarArray) {
+            avatarList.context.startActivity<ChatActivity> {
+                putExtra("chatId", userId)
+            }
+        }
         appBarMessage.updatePadding(top = appBarMessage.paddingTop + appBarMessage.context.statusBarHeight)
 //        val layoutParam = avatarList.layoutParams as ViewGroup.MarginLayoutParams
 //        layoutParam.updateMargins(top = layoutParam.topMargin + avatarList.context.statusBarHeight)
@@ -194,6 +203,14 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
                             }
                         }
                     }
+                }
+            }else if (item.id > 0) {
+                val index = messageList.indexOf(item)
+                if (index < 0) {
+                    messageList.add(1, item)
+                    listMessage?.adapter?.notifyItemInserted(1)
+                } else {
+                    listMessage?.adapter?.notifyItemChanged(index)
                 }
             }
             messageMap[message.chatId] = item

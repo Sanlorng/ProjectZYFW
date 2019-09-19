@@ -25,11 +25,21 @@ object Attributes {
     const val authorityProject = "$authority/project/%s"
     val backgroundExecutors: ExecutorService = Executors.newFixedThreadPool(5)
     private val listeners = HashMap<String, ((newCity: String) -> Unit)>()
+    private val provinceListeners = HashMap<String, ((newProvince: String) -> Unit)>()
     var AppCity = "桂林市"
         set(value) {
             if (field != value && value.isNotEmpty()) {
                 field = value
                 listeners.forEach {
+                    it.value.invoke(value)
+                }
+            }
+        }
+    var AppProvince = "广西"
+        set(value) {
+            if (field != value && value.isNotEmpty()) {
+                field = value
+                provinceListeners.forEach {
                     it.value.invoke(value)
                 }
             }
@@ -61,7 +71,6 @@ object Attributes {
         set(value) {
             userInfo!!.userHeadPictureLink = value
         }
-
     fun addCityListener(tag: String, value: ((newCity: String) -> Unit)) {
         listeners[tag] = value
         value.invoke(AppCity)
@@ -69,6 +78,14 @@ object Attributes {
 
     fun removeCityListener(tag: String) {
         listeners.remove(tag)
+    }
+    fun addProvinceListener(tag: String, value: ((newProvince: String) -> Unit)) {
+        provinceListeners[tag] = value
+        value.invoke(AppProvince)
+    }
+
+    fun removeProvinceListener(tag: String) {
+        provinceListeners.remove(tag)
     }
 }
 

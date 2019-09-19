@@ -86,6 +86,7 @@ class AMapLocationImpl(view: View) : BasePresenterImpl<Void, AMapLocation, AMapL
             location = p0
             p0?.apply {
                 Attributes.AppCity = city
+                Attributes.AppProvince = province
             }
             judgeLocation(p0)
         }

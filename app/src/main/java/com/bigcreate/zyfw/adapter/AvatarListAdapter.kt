@@ -13,17 +13,16 @@ import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.callback.enqueue
 import com.bigcreate.zyfw.models.ChatUser
+import com.bigcreate.zyfw.models.UserInfoByPart
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_user_avatar.view.*
 
-class AvatarListAdapter(val avatarList:ArrayList<ChatUser>):RecyclerView.Adapter<AvatarListAdapter.ViewHolder>() {
+class AvatarListAdapter(val avatarList:ArrayList<UserInfoByPart>,private val listener:(UserInfoByPart.() -> Unit)? = null):RecyclerView.Adapter<AvatarListAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.run {
             avatarList[position].apply {
                 setOnClickListener {
-                    it.context.startActivity<ChatActivity> {
-                        putExtra("chatId", userId)
-                    }
+                    listener?.invoke(this)
                 }
                 if (Attributes.userTemp.containsKey(userId).not()) {
                     RemoteService.getHeadLinkAndNick(userId).enqueue {

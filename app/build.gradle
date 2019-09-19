@@ -112,6 +112,7 @@ dependencies {
     //LifeCycle Library
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation "androidx.work:work-runtime-ktx:2.2.0"
     //Navigation Library

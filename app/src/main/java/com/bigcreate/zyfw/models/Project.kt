@@ -78,6 +78,39 @@ data class X(
         val token: Any,
         val username: String
 )
+
+data class PolularProjectResponse(
+    val content: Content,
+    val uploadApp: String
+)
+
+data class Content(
+    val near: Int,
+    val people: List<UserInfoByPart>,
+    val peopleCount: Int,
+    val popula: List<SearchModel>,
+    val populaCount: Int
+)
+data class ProvinceProjectResponse(
+        val content:ListDataContent<ProvinceProject>
+)
+
+data class ProvinceProject(
+    val area: String,
+    val contactInfor: String,
+    val contacts: String,
+    val guarantee: String,
+    val imgSrc: String,
+    val nearId: Int,
+    val projectDate: String,
+    val projectPlace: String,
+    val projectTitle: String,
+    val recruitDate: String,
+    val releaseDate: String,
+    val serviceObject: String,
+    val serviceTime: String,
+    val serviceType: String
+)
 //data class Project(
 //        val latitude: Double,
 //        val longitude: Double,
