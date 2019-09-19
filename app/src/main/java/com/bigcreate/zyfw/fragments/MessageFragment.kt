@@ -65,7 +65,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             binder = service as MessageService.MessageBinder
             binder?.addOnOnlineListUpdateListener(messageTag) {
-                swipeMessage.isRefreshing = false
+                swipeMessage?.isRefreshing = false
                 avatarArray.clear()
                 it.forEach {item ->
                     avatarArray.add(UserInfoByPart(userId = item.userId,userHeadPictureLink = "",userNick = ""))
@@ -137,6 +137,10 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         context?.bindService(Intent(context!!,MessageService::class.java),connection,Service.BIND_AUTO_CREATE)
         RemoteService.getMessageLog(Attributes.userId).enqueue {
             response {
+                messageList.clear()
+                messageMap.clear()
+                messageList.add(group)
+                messageMap[MessageHeader.GROUP_ID] = group
                 val info = body()
                 if (info.isNullOrEmpty().not()) {
                     info?.forEach {
@@ -205,6 +209,13 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
             }
         } else {
             item = MessageHeader(message.chatId, message.msg, 0)
+            val itemInfo = Attributes.userTemp[item.id]
+            item.userNick = itemInfo?.userNick?:""
+            item.userImg = itemInfo?.userHeadPictureLink ?: ""
+            messageMap[item.id] = item
+            if (messageList.add(item)) {
+                listMessage?.adapter?.notifyItemInserted(messageList.indexOf(item))
+            }
             if (item.id > 0 && Attributes.userTemp.containsKey(item.id).not()) {
                 RemoteService.getHeadLinkAndNick(item.id).enqueue {
                     response {
@@ -223,21 +234,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
                         }
                     }
                 }
-            }else if (item.id > 0) {
-                val info = Attributes.userTemp[item.id]
-                item.userNick = info.userNick ?: ""
-                item.userImg = info.userHeadPictureLink ?: ""
-                val index = messageList.indexOf(item)
-                if (index < 0) {
-                    messageList.add(1, item)
-                    listMessage?.adapter?.notifyItemInserted(1)
-                } else {
-                    listMessage?.adapter?.notifyItemChanged(index)
-                }
             }
-            messageMap[message.chatId] = item
-            messageList.add(1, item)
-            listMessage?.adapter?.notifyItemInserted(1)
         }
 
     }
