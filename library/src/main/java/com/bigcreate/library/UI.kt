@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -41,7 +42,8 @@ fun Window.statusBarTransucent(){
 
 fun Window.statusBarLight(light: Boolean){
     var ui = this.decorView.systemUiVisibility
-    ui = if (light && AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO)
+    val nightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    ui = if (light && nightMode == Configuration.UI_MODE_NIGHT_NO)
         ui or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     else
         ui and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()

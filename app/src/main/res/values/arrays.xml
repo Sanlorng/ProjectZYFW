@@ -16,4 +16,16 @@
         <item>设备维修</item>
         <item>绿化种植</item>
     </string-array>
+    <string-array name="night_mode_switch">
+        <item>日间模式</item>
+        <item>夜间模式</item>
+        <item>跟随系统</item>
+        <item>低电量时</item>
+    </string-array>
+    <string-array name="night_mode_switch_int">
+        <item>1</item>
+        <item>2</item>
+        <item>-1</item>
+        <item>3</item>
+    </string-array>
 </resources>

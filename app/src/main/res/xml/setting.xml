@@ -14,9 +14,18 @@
             android:summaryOff="沉浸式状态栏"
             android:summaryOn="带色差的状态栏"/>
         <SwitchPreference
+            app:isPreferenceVisible="false"
+            android:entryValues="@array/night_mode_switch_int"
             android:icon="@drawable/ic_outline_explore_24px"
             android:key="switch_night_mode"
             android:defaultValue="false"
+            android:title="夜间模式"
+            android:summary="开启/关闭夜间模式" />
+        <ListPreference
+            app:entries="@array/night_mode_switch"
+            app:entryValues="@array/night_mode_switch_int"
+            android:icon="@drawable/ic_night_mode_black_24px"
+            android:key="nightModeSwitch"
             android:title="夜间模式"
             android:summary="开启/关闭夜间模式" />
         <SwitchPreference

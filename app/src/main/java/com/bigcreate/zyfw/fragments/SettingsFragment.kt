@@ -8,13 +8,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.lifecycle.Observer
-import androidx.preference.Preference
-import androidx.preference.PreferenceCategory
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
+import androidx.preference.*
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.BuildConfig
@@ -127,6 +125,19 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
             }
             true
         }
+        findPreference<ListPreference>("nightModeSwitch")?.apply {
+            setOnPreferenceChangeListener { preference, newValue ->
+                //Log.e("newValue",newValue.toString())
+                AppCompatDelegate.setDefaultNightMode((newValue as String).toInt())
+                true
+            }
+
+            setSummaryProvider {
+                setNightSummary(value.toInt())
+            }
+
+
+        }
         if (Attributes.loginUserInfo!=null) {
             Attributes.loginUserInfo?.run {
                 accountSetting?.summary = username
@@ -168,5 +179,13 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
         super.onPause()
         updateImpl.detachView()
     }
-
+    private fun setNightSummary(value: Int):String {
+        return when(value) {
+            AppCompatDelegate.MODE_NIGHT_NO -> resources.getStringArray(R.array.night_mode_switch)[0]
+            AppCompatDelegate.MODE_NIGHT_YES -> resources.getStringArray(R.array.night_mode_switch)[1]
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> resources.getStringArray(R.array.night_mode_switch)[2]
+            AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY -> resources.getStringArray(R.array.night_mode_switch)[3]
+            else -> ""
+        }
+    }
 }

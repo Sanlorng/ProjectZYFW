@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.statusBarHeight
 import com.bigcreate.library.toJson
+import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ChatActivity
 import com.bigcreate.zyfw.activities.MainActivity
@@ -152,6 +153,24 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
                 }
             }
         }
+        matchChat.setOnClickListener {
+            toast("正在匹配")
+            RemoteService.getMatchUserId().enqueue {
+                error {
+                    toast("匹配失败")
+                }
+                response {
+                    val chatId = body()?:0
+                    if (chatId > 0) {
+                        startActivity<ChatActivity> {
+                            putExtra("chatId", chatId)
+                        }
+                    }else {
+                        toast("匹配失败")
+                    }
+                }
+            }
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -205,6 +224,9 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
                     }
                 }
             }else if (item.id > 0) {
+                val info = Attributes.userTemp[item.id]
+                item.userNick = info.userNick ?: ""
+                item.userImg = info.userHeadPictureLink ?: ""
                 val index = messageList.indexOf(item)
                 if (index < 0) {
                     messageList.add(1, item)
