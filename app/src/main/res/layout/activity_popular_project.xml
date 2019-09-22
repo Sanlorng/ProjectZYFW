@@ -8,7 +8,13 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+        <com.google.android.material.appbar.MaterialToolbar
+            android:fitsSystemWindows="true"
+            android:id="@+id/popularProjectToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <TextView
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
@@ -23,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <TextView
+            app:layout_scrollFlags="exitUntilCollapsed|scroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"

@@ -111,6 +111,14 @@ data class ProvinceProject(
     val serviceTime: String,
     val serviceType: String
 )
+
+data class JoinedMember(
+    val joinedTime: String,
+    val joinedUserId: Int,
+    val projectId: Int,
+    val userInfoByPart: UserInfoByPart
+)
+
 //data class Project(
 //        val latitude: Double,
 //        val longitude: Double,

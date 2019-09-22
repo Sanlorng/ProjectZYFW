@@ -7,6 +7,7 @@ import android.os.Looper
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.amap.api.col.n3.it
+import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.ProvinceProjectAdapter
 import com.bigcreate.zyfw.base.Attributes
@@ -23,6 +24,13 @@ class ProvinceProjectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_province_project)
+        window.translucentSystemUI(true)
+        setSupportActionBar(toolbarProvinceProject)
+        supportActionBar?.title = "省内项目"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbarProvinceProject.setNavigationOnClickListener {
+            finish()
+        }
         provinceProjectList.itemAnimator = DefaultItemAnimator()
         Attributes.addProvinceListener(javaClass.name) {
             province = it

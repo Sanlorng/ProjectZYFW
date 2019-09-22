@@ -19,6 +19,7 @@ import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ChatActivity
 import com.bigcreate.zyfw.activities.MyDetailsActivity
+import com.bigcreate.zyfw.activities.ProjectJoinedMemberActivity
 import com.bigcreate.zyfw.activities.RegisterActivity
 import com.bigcreate.zyfw.adapter.DetailsMediaAdapter
 import com.bigcreate.zyfw.base.Attributes
@@ -103,6 +104,12 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
                     .load(userInfoByPart.userHeadPictureLink)
                     .circleCrop()
                     .into(contactProjectDetails.getLogoView())
+            if (join) {
+                context?.getDrawable(R.drawable.ic_favorite_black_24dp)?.setTint(context!!.getColor(R.color.colorAccent))
+                otherProjectDetails.setActionIcon(R.drawable.ic_favorite_black_24dp)
+            }else {
+                otherProjectDetails.setActionIcon(R.drawable.ic_favorite_border_black_24dp)
+            }
             if (Attributes.userId == userInfoByPart.userId) {
                 contactProjectDetails.setActionIcon(R.drawable.ic_outline_edit_24px)
                 contactProjectDetails.setActionText("编辑")
@@ -111,11 +118,22 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
                         type = "updateInfo"
                     }
                 })
+                otherProjectDetails.setActionIcon(R.drawable.ic_outline_group_24px)
+                otherProjectDetails.setActionText("查看")
+                otherProjectDetails.setOnActionClick(View.OnClickListener {
+                    it.context.startActivity<ProjectJoinedMemberActivity> {
+                        putExtra("projectId",projectId)
+                        putExtra("number",projectPeopleNumbers)
+                    }
+                })
             }else {
                 contactProjectDetails.setOnActionClick(View.OnClickListener {
                     it.context.startActivity<ChatActivity> {
                         putExtra("chatId",userInfoByPart.userId)
                     }
+                })
+                otherProjectDetails.setOnActionClick(View.OnClickListener {
+                    joinPresenter.doRequest(GetProjectRequest(Attributes.token,projectId))
                 })
             }
             contactProjectDetails.setTitleText(projectPrincipalName)
@@ -141,15 +159,6 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
             otherProjectDetails.setTitleText(getString(R.string.needPeoleNumVar, projectPeopleNumbers))
             otherProjectDetails.setSubTitleText(projectIssueTime)
 
-            otherProjectDetails.setOnActionClick(View.OnClickListener {
-                joinPresenter.doRequest(GetProjectRequest(Attributes.token,projectId))
-            })
-            if (join) {
-                context?.getDrawable(R.drawable.ic_favorite_black_24dp)?.setTint(context!!.getColor(R.color.colorAccent))
-                otherProjectDetails.setActionIcon(R.drawable.ic_favorite_black_24dp)
-            }else {
-                otherProjectDetails.setActionIcon(R.drawable.ic_favorite_border_black_24dp)
-            }
 //            ArrayList<DetailsMediaAdapter.Model>().apply {
 //                add(DetailsMediaAdapter.Header("").apply {
 //                    this.project = project

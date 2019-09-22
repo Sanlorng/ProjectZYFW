@@ -133,7 +133,11 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
             }
 
             setSummaryProvider {
-                setNightSummary(value.toInt())
+                if (value != null) {
+                    setNightSummary(value.toInt())
+                }else {
+                    setNightSummary(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                }
             }
 
 

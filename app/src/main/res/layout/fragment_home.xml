@@ -69,6 +69,8 @@
                 <LinearLayout
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -93,8 +95,8 @@
                 </LinearLayout>
 
                 <com.bigcreate.zyfw.view.ProportionView
-                    app:width_weight="4"
-                    app:height_weight="3"
+                    app:width_weight="16"
+                    app:height_weight="9"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
                     android:layout_width="match_parent"
@@ -117,12 +119,12 @@
                         android:layout_height="wrap_content"
                         android:text="省内项目"
                         android:background="?attr/selectableItemBackground"
-                        android:drawablePadding="16dp"
+                        android:drawablePadding="8dp"
                         android:padding="16dp"
                         android:gravity="center"
                         android:singleLine="true"
-                        android:drawableTint="?attr/colorOnSurface"
-                        android:drawableTop="@drawable/ic_favorite_border_black_24dp"/>
+                        android:drawableTint="#2196F3"
+                        android:drawableTop="@drawable/ic__near_24px"/>
                     <TextView
                         android:id="@+id/popularProject"
                         android:layout_weight="1"
@@ -130,12 +132,12 @@
                         android:layout_height="wrap_content"
                         android:text="热门项目"
                         android:background="?attr/selectableItemBackground"
-                        android:drawablePadding="16dp"
+                        android:drawablePadding="8dp"
                         android:padding="16dp"
                         android:gravity="center"
                         android:singleLine="true"
-                        android:drawableTint="?attr/colorOnSurface"
-                        android:drawableTop="@drawable/ic_favorite_border_black_24dp"/>
+                        android:drawableTint="#FF1744"
+                        android:drawableTop="@drawable/ic_hot_24px"/>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

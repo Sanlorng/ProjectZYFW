@@ -1,6 +1,8 @@
 package com.bigcreate.zyfw.fragments
 
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,7 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.activities.ProjectDetailsActivity
 import com.bigcreate.zyfw.adapter.FavoriteListAdapter
 import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.Attributes
@@ -59,7 +63,13 @@ class MyJoinFragment : Fragment() {
     }
 
     private fun refreshList() {
-        val adapter = ProjectListAdapter()
+        val adapter = ProjectListAdapter() { position,item ->
+            startActivity<ProjectDetailsActivity> {
+                addCategory(Intent.CATEGORY_DEFAULT)
+                setDataAndType(Uri.parse(String.format(Attributes.authorityProject, item.projectId)), "prpject/${item.projectTopic}")
+                putExtra("projectId",item.projectId)
+            }
+        }
         adapter.submitList(PagedList.Builder<Int, SearchModel>(JoinedListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
                 .setPageSize(10)
                 .setPrefetchDistance(20)

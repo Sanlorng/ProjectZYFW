@@ -11,6 +11,8 @@ data class CrashLog(
         val versionCode: String,
         val crashString: String
 )
+data class ExploreRequest(var token: String, var dyId: Int)
+data class ExploreDeleteRequest(var dyId: Int,var dyReleaseUserId: Int, var token: String)
 data class ExploreCommentInfoRequest(var token: String,var dyCommentId:Int, var pageNum: Int)
 data class ExploreItemFavoriteRequest(var token:String, val dyCollectionId: Int)
 data class ExploreItemLikeRequest(var token:String, val dyPraiseId: Int)
@@ -18,6 +20,7 @@ data class ExploreCommentRequest(var token: String,val dyCommentId: Int, val dyC
 data class TokenRequest(var token: String)
 data class PageRequest(var token: String, var pageNum: Int)
 data class SimpleRequest(var token: String, var userId: Int)
+data class SimplePageRequest(var token: String, var userId: Int, var pageNum: Int)
 data class LoginRequest(var username: String, var password: String)
 data class IsSetupInfoRequest(var token: String, var username: String)
 data class RegisterRequest(var username: String, var password: String, var idNumber: String,var realName:String, var code: String)

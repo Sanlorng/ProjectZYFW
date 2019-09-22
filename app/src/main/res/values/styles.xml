@@ -39,6 +39,7 @@
         <item name="contentInsetStartWithNavigation">0dp</item>
         <item name="android:background">?attr/colorOnPrimary</item>
         <item name="titleTextColor">?attr/colorPrimary</item>
+        <item name="subtitleTextColor">?attr/colorPrimary</item>
         <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="elevation">4dp</item>
         <item name="android:fitsSystemWindows">true</item>

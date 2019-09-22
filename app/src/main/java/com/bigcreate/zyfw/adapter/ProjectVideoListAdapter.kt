@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.view.ProportionView
 import com.bumptech.glide.Glide
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard
 import kotlinx.android.synthetic.main.item_project_videos.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -25,22 +26,22 @@ class ProjectVideoListAdapter(val videos:List<String>):RecyclerView.Adapter<Proj
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.apply {
-            itemProjectVideoPreview?.setVideoPath(videos[position])
-            GlobalScope.launch(Dispatchers.Default) {
-                val retriever = MediaMetadataRetriever()
-                retriever.setDataSource(videos[position],HashMap<String,String>())
-                val bitmap = retriever.frameAtTime
-                retriever.release()
-                if (bitmap != null) {
-                    launch(Dispatchers.Main) {
+            itemProjectVideoPreview.setUp(videos[position],JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL,"宣传视频")
+//            GlobalScope.launch(Dispatchers.Default) {
+//                val retriever = MediaMetadataRetriever()
+//                retriever.setDataSource(videos[position],HashMap<String,String>())
+//                val bitmap = retriever.frameAtTime
+//                retriever.release()
+//                if (bitmap != null) {
+//                    launch(Dispatchers.Main) {
 //                        layoutItemProjectVideos?.widthWeight = bitmap.width
 //                        layoutItemProjectVideos?.heightWeight = bitmap.height
 //                        itemProjectVideoPreview?.setVideoPath(videos[position])
-                    }
-                    Log.e("videoWidth",bitmap.width.toString())
-                    Log.e("videoHeight",bitmap.height.toString())
-                }
-            }
+//                    }
+//                    Log.e("videoWidth",bitmap.width.toString())
+//                    Log.e("videoHeight",bitmap.height.toString())
+//                }
+//            }
 
 //            Glide.with(context)
 //                    .load(videos[position])

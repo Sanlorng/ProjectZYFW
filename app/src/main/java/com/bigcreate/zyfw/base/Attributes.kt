@@ -23,15 +23,19 @@ object Attributes {
     val userTemp = SparseArray<UserInfoByPart>()
     const val authority = "content://${BuildConfig.APPLICATION_ID}"
     const val authorityProject = "$authority/project/%s"
-    val backgroundExecutors: ExecutorService = Executors.newFixedThreadPool(5)
+    val backgroundExecutors: ExecutorService = Executors.newFixedThreadPool(10)
     private val listeners = HashMap<String, ((newCity: String) -> Unit)>()
     private val provinceListeners = HashMap<String, ((newProvince: String) -> Unit)>()
-    var AppCity = "桂林市"
+    var AppCity = "桂林"
         set(value) {
             if (field != value && value.isNotEmpty()) {
-                field = value
+                if (value[value.length-1] == '市') {
+                    field = value.subSequence(0,value.length-1).toString()
+                }else {
+                    field = value
+                }
                 listeners.forEach {
-                    it.value.invoke(value)
+                    it.value.invoke(field)
                 }
             }
         }

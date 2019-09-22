@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.bigcreate.library.fromJson
 import com.bigcreate.library.startActivity
+import com.bigcreate.library.translucentSystemUI
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.AvatarListAdapter
 import com.bigcreate.zyfw.adapter.ProjectAdapter
@@ -28,6 +29,13 @@ class PopularProjectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_popular_project)
+        window.translucentSystemUI(true)
+        setSupportActionBar(popularProjectToolbar)
+        supportActionBar?.title = "热门项目"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        popularProjectToolbar.setNavigationOnClickListener {
+            finish()
+        }
         popularProjectList.itemAnimator = DefaultItemAnimator()
         popularProjectList.adapter = ProjectAdapter(projectList) {
             startActivity<ProjectDetailsActivity> {

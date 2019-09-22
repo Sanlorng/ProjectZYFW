@@ -1,5 +1,7 @@
 package com.bigcreate.zyfw.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,7 +11,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
+import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.activities.ProjectDetailsActivity
 import com.bigcreate.zyfw.adapter.FavoriteListAdapter
 import com.bigcreate.zyfw.adapter.ProjectListAdapter
 import com.bigcreate.zyfw.base.Attributes
@@ -37,7 +41,15 @@ class MyReleasedFragment : Fragment() {
         refreshList()
     }
     private fun refreshList() {
-        val adapter = ProjectListAdapter()
+
+        val adapter = ProjectListAdapter() { position,item ->
+            startActivity<ProjectDetailsActivity> {
+                addCategory(Intent.CATEGORY_DEFAULT)
+                setDataAndType(Uri.parse(String.format(Attributes.authorityProject, item.projectId)), "prpject/${item.projectTopic}")
+                putExtra("projectId",item.projectId)
+            }
+        }
+        listMyFavorite.adapter = adapter
         adapter.submitList(PagedList.Builder<Int, SearchModel>(ReleasedListDataSource(networkStateViewModel.state), PagedList.Config.Builder()
                 .setPageSize(10)
                 .setPrefetchDistance(20)
@@ -47,7 +59,6 @@ class MyReleasedFragment : Fragment() {
                 }.setFetchExecutor {
                     Attributes.backgroundExecutors.execute(it)
                 }.build())
-        listMyFavorite.adapter = adapter
     }
 
     companion object {

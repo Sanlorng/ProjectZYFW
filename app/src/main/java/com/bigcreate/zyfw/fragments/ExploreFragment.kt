@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +19,7 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bigcreate.library.startActivity
 import com.bigcreate.library.toJson
 import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
@@ -41,7 +41,6 @@ import com.bigcreate.zyfw.mvp.explore.ExploreFavoriteImpl
 import com.bigcreate.zyfw.mvp.explore.ExploreLikeImpl
 import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import kotlinx.android.synthetic.main.fragment_explore.*
-import kotlinx.android.synthetic.main.item_user_share_content.view.*
 
 /**
  * A simple [Fragment] subclass.
@@ -147,16 +146,21 @@ class ExploreFragment : Fragment(), MainActivity.ChildFragment {
                 }
 
                 else -> {
-                    val intent = Intent(context!!, ExploreDetailsActivity::class.java)
-                    intent.putExtra("shareItem", item.toJson())
+              //      val intent = Intent(context!!, ExploreDetailsActivity::class.java)
+                //    intent.putExtra("shareItem", item.toJson())
                     view.apply {
-//                        startActivity(intent)
-                        startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity!!,
-                                Pair(exploreItemUserAvatar, "shareAvatar"),
-                                Pair(exploreItemContent, "shareContent"),
-                                Pair(exploreItemUserNick, "shareNick"),
-                                Pair(exploreItemCreateTime, "shareTime"),
-                                Pair(listImageExploreItem, "shareImages")).toBundle())
+                        startActivity<ExploreDetailsActivity> {
+                            putExtra("dynamicId",item.dyId)
+                            putExtra("shareItem",item.toJson())
+                        }
+//                        this@ExploreFragment.startActivity(intent)
+//                        startActivity<ProvinceProjectActivity>()
+//                        startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity!!,
+//                                Pair(exploreItemUserAvatar, "shareAvatar"),
+//                                Pair(exploreItemContent, "shareContent"),
+//                                Pair(exploreItemUserNick, "shareNick"),
+//                                Pair(exploreItemCreateTime, "shareTime"),
+//                                Pair(listImageExploreItem, "shareImages")).toBundle())
                     }
 
 //                    context?.startActivity(ExploreDetailsActivity::class.java)

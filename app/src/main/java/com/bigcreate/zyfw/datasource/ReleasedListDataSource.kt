@@ -40,7 +40,7 @@ class ReleasedListDataSource(private val networkState: MutableLiveData<NetworkSt
                     if (response.body()?.code == 200) {
                         response.body()?.jsonData.toJson().fromJson<PageListResponse<SearchModel>>().apply {
                             Attributes.token = newToken
-                            callback.onResult(content.list, null, if (content.hasNextPage) 2 else null)
+                            callback.onResult(content.list, null, if (content.hasNextPage) content.nextPage else null)
                         }
                     }
                 }

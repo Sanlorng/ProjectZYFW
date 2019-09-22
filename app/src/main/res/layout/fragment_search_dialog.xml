@@ -5,92 +5,92 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.appbar.AppBarLayout
-        app:elevation="0dp"
-        android:background="#00000000"
-        android:id="@+id/appbarSearchDialog"
-        android:fitsSystemWindows="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        app:elevation="0dp"-->
+<!--        android:background="#00000000"-->
+<!--        android:id="@+id/appbarSearchDialog"-->
+<!--        android:fitsSystemWindows="true"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
 
-        <include
-            layout="@layout/layout_search_bar"
-            app:layout_collapseMode="pin" />
+<!--        <include-->
+<!--            layout="@layout/layout_search_bar"-->
+<!--            app:layout_collapseMode="pin" />-->
 
-        <LinearLayout
-            android:id="@+id/layoutSearchHistory"
-            android:visibility="gone"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginBottom="8dp">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/layoutSearchHistory"-->
+<!--            android:visibility="gone"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="32dp"-->
+<!--            android:layout_marginBottom="8dp">-->
 
-            <TextView
-                app:layout_collapseMode="parallax"
-                android:visibility="visible"
-                android:id="@+id/textSearchHistory"
-                android:layout_width="wrap_content"
-                android:textColor="?attr/colorAccent"
-                android:text="@string/searchHistory"
-                android:layout_height="wrap_content" />
+<!--            <TextView-->
+<!--                app:layout_collapseMode="parallax"-->
+<!--                android:visibility="visible"-->
+<!--                android:id="@+id/textSearchHistory"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:textColor="?attr/colorAccent"-->
+<!--                android:text="@string/searchHistory"-->
+<!--                android:layout_height="wrap_content" />-->
 
-            <TextView
-                android:id="@+id/actionClearSearchHistory"
-                android:layout_marginStart="8dp"
-                android:textSize="12sp"
-                android:text="@string/cleanAll"
-                android:layout_gravity="center_horizontal"
-                android:gravity="start|center"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:id="@+id/actionClearSearchHistory"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:textSize="12sp"-->
+<!--                android:text="@string/cleanAll"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:gravity="start|center"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent" />-->
+<!--        </LinearLayout>-->
 
-        <com.google.android.material.chip.ChipGroup
-            app:layout_collapseMode="parallax"
-            app:itemSpacing="4dp"
-            app:chipSpacing="4dp"
-            android:visibility="gone"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:id="@+id/chipGroupSearchHistory"
-            android:theme="@style/Widget.MaterialComponents.ChipGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+<!--        <com.google.android.material.chip.ChipGroup-->
+<!--            app:layout_collapseMode="parallax"-->
+<!--            app:itemSpacing="4dp"-->
+<!--            app:chipSpacing="4dp"-->
+<!--            android:visibility="gone"-->
+<!--            android:layout_marginBottom="8dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:id="@+id/chipGroupSearchHistory"-->
+<!--            android:theme="@style/Widget.MaterialComponents.ChipGroup"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
 
-        </com.google.android.material.chip.ChipGroup>
+<!--        </com.google.android.material.chip.ChipGroup>-->
 
-        <ProgressBar
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone"
-            android:layout_marginBottom="8dp"
-            android:id="@+id/progressSearchDialog"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+<!--        <ProgressBar-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:visibility="gone"-->
+<!--            android:layout_marginBottom="8dp"-->
+<!--            android:id="@+id/progressSearchDialog"-->
+<!--            style="?android:attr/progressBarStyle"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
 
-        <TextView
-            android:text="@string/searchResultIsEmpty"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            android:gravity="center_horizontal"
-            android:id="@+id/textSearchEmpty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.appbar.AppBarLayout>
+<!--        <TextView-->
+<!--            android:text="@string/searchResultIsEmpty"-->
+<!--            android:layout_marginBottom="8dp"-->
+<!--            android:visibility="gone"-->
+<!--            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            android:id="@+id/textSearchEmpty"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content" />-->
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:id="@+id/swipeLayoutSearch"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"-->
+<!--        android:id="@+id/swipeLayoutSearch"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listSearchResult"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/listSearchResult"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent" />-->
+<!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

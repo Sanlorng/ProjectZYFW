@@ -6,5 +6,6 @@ data class ExploreCommentItem(
         val dyCommentTime:String,
         val dyCommentUserId:Int,
         val dyCommentUserNick:String,
+        val headPictureLink:String,
         val token:String ?= null
 )

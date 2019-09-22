@@ -7,19 +7,32 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.R
+import com.bigcreate.zyfw.activities.MyDetailsActivity
 import com.bigcreate.zyfw.models.ExploreCommentItem
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_comment.view.*
 
 class ExploreDetailsCommentListAdapter() : ListAdapter<ExploreCommentItem,RecyclerView.ViewHolder>(diff) {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        getItem(position).run {
+        Log.e("onBindViewHolder","")
+        getItem(position)?.run {
             holder.itemView.apply {
-               // Log.e("item", comment)
+                Log.e("item",dyCommentContent)
                 textNickCommentItem.text = dyCommentUserNick
                 textTimeCommentItem.text = dyCommentTime
                 textContentCommentItem.text = dyCommentContent
+                Glide.with(context)
+                        .load(headPictureLink)
+                        .circleCrop()
+                        .into(avatarComment)
+                avatarComment.setOnClickListener {
+                    context.startActivity<MyDetailsActivity> {
+                        putExtra("userId",dyCommentUserId)
+                    }
+                }
             }
         }
     }

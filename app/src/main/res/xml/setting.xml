@@ -24,6 +24,7 @@
         <ListPreference
             app:entries="@array/night_mode_switch"
             app:entryValues="@array/night_mode_switch_int"
+            android:defaultValue="-1"
             android:icon="@drawable/ic_night_mode_black_24px"
             android:key="nightModeSwitch"
             android:title="夜间模式"
