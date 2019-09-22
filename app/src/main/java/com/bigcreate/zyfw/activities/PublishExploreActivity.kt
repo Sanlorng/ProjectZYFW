@@ -117,6 +117,8 @@ class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View {
 
     override fun explorePublishSuccess() {
         setResult(ResultCode.OK)
+        toast("发布成功")
+        finish()
     }
 
     override fun getViewContext(): Context {

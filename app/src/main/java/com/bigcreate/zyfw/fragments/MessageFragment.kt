@@ -116,6 +116,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         val group = MessageHeader(MessageHeader.GROUP_ID,"全国群聊",System.currentTimeMillis())
         messageList.add(group)
         messageMap[MessageHeader.GROUP_ID] = group
+        Attributes.userTemp[MessageHeader.GROUP_ID] = UserInfoByPart("",MessageHeader.GROUP_ID,"全国群聊")
         textMessage.visibility = View.GONE
 //        hintSearchBar.isVisible = true
 //        inputSearchBar.isVisible = false

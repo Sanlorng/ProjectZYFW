@@ -39,7 +39,7 @@ import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.activity_search.*
 import java.lang.Exception
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AuthLoginActivity() {
     private var city = Attributes.AppCity
     private lateinit var networkState: NetworkStateViewModel
     private val searchRequest = SearchRequest("", city, "", null, 1)
@@ -47,6 +47,36 @@ class SearchActivity : AppCompatActivity() {
     private var searchHistory = ArrayList<Pair<String, Long>>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        appbarSearchDialog.updatePadding(top = appbarSearchDialog.paddingTop + statusBarHeight)
+    }
+
+    override fun afterCheckLoginSuccess() {
+        inputSearchBar.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                if (inputSearchBar.editableText.trimEnd().isNotEmpty())
+                    searchRequest.apply {
+                        searchKey = inputSearchBar.editableText.trimEnd().toString()
+                        token = Attributes.token
+                        projectRegion = searchKey
+                        projectTopic = null
+                        projectContent = null
+                        reSearch()
+                    }
+                true
+            } else
+                false
+        }
+        layoutInputSearchBar.setStartIconOnClickListener {
+            onBackPressed()
+        }
+        inputSearchBar.setOnFocusChangeListener { v, hasFocus ->
+            showSearchHistory(hasFocus)
+        }
+        inputSearchBar.requestFocus()
+        listSearchResult.itemAnimator = DefaultItemAnimator()
+    }
+
+    override fun setContentView() {
         setContentView(R.layout.activity_search)
         actionClearSearchHistory.setOnClickListener {
             searchHistory.clear()
@@ -54,7 +84,6 @@ class SearchActivity : AppCompatActivity() {
             showSearchHistory(false)
         }
         window.translucentSystemUI(true)
-//        appbarSearchDialog.updatePadding(top = appbarSearchDialog.paddingTop + statusBarHeight)
         val searchMapString = defaultSharedPreferences.getString("searchHistory", null)
         if (searchMapString != null) {
             Log.e("searchHistory", searchMapString)
@@ -80,29 +109,6 @@ class SearchActivity : AppCompatActivity() {
             city = it
             inputSearchBar.hint = "${getString(R.string.search)} $city"
         }
-        inputSearchBar.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                if (inputSearchBar.editableText.trimEnd().isNotEmpty())
-                    searchRequest.apply {
-                        searchKey = inputSearchBar.editableText.trimEnd().toString()
-                        token = Attributes.token
-                        projectRegion = searchKey
-                        projectTopic = null
-                        projectContent = null
-                        reSearch()
-                    }
-                true
-            } else
-                false
-        }
-        layoutInputSearchBar.setStartIconOnClickListener {
-            onBackPressed()
-        }
-        inputSearchBar.setOnFocusChangeListener { v, hasFocus ->
-            showSearchHistory(hasFocus)
-        }
-        inputSearchBar.requestFocus()
-        listSearchResult.itemAnimator = DefaultItemAnimator()
     }
 
     private fun reSearch() {

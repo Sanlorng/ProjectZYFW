@@ -15,7 +15,7 @@ import com.bigcreate.zyfw.mvp.project.GetJoinedMembersImpl
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_project_joined_member.*
 
-class ProjectJoinedMemberActivity : AppCompatActivity(),GetJoinedMembersImpl.View {
+class ProjectJoinedMemberActivity : AuthLoginActivity(),GetJoinedMembersImpl.View {
     private val getJoinedMembersImpl = GetJoinedMembersImpl(this)
     private var projectId = -1
     override fun onGetJoinedMemberFailed(jsonObject: JsonObject) {
@@ -26,8 +26,15 @@ class ProjectJoinedMemberActivity : AppCompatActivity(),GetJoinedMembersImpl.Vie
         supportActionBar?.subtitle = "${userList.size} 人已加入"
         listJoinedMember.adapter = ProjectJoinedMemberAdapter(userList)
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun afterCheckLoginSuccess() {
+        getJoinedMembersImpl.doRequest(GetProjectRequest(Attributes.token,projectId))
+        refreshJoinedMember.setOnRefreshListener {
+            getJoinedMembersImpl.doRequest(GetProjectRequest(Attributes.token,projectId))
+        }
+    }
+
+    override fun setContentView() {
         setContentView(R.layout.activity_project_joined_member)
         window.translucentSystemUI(true)
         setSupportActionBar(toolbarProjectJoinedMember)
@@ -37,10 +44,9 @@ class ProjectJoinedMemberActivity : AppCompatActivity(),GetJoinedMembersImpl.Vie
             finish()
         }
         projectId = intent.getIntExtra("projectId",projectId)
-        getJoinedMembersImpl.doRequest(GetProjectRequest(Attributes.token,projectId))
-        refreshJoinedMember.setOnRefreshListener {
-            getJoinedMembersImpl.doRequest(GetProjectRequest(Attributes.token,projectId))
-        }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
     override fun getViewContext(): Context {

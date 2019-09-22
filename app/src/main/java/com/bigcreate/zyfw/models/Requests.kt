@@ -12,11 +12,13 @@ data class CrashLog(
         val crashString: String
 )
 data class ExploreRequest(var token: String, var dyId: Int)
+data class ExploreEditRequest(var token: String, var dyId: Int,var dyContent: String)
 data class ExploreDeleteRequest(var dyId: Int,var dyReleaseUserId: Int, var token: String)
 data class ExploreCommentInfoRequest(var token: String,var dyCommentId:Int, var pageNum: Int)
 data class ExploreItemFavoriteRequest(var token:String, val dyCollectionId: Int)
 data class ExploreItemLikeRequest(var token:String, val dyPraiseId: Int)
 data class ExploreCommentRequest(var token: String,val dyCommentId: Int, val dyCommentContent: String)
+data class ExploreCommentDeleteRequest(var token: String,var dyCommentId: Int)
 data class TokenRequest(var token: String)
 data class PageRequest(var token: String, var pageNum: Int)
 data class SimpleRequest(var token: String, var userId: Int)
@@ -27,7 +29,7 @@ data class RegisterRequest(var username: String, var password: String, var idNum
 data class InitPersonInfoRequest(var username: String, var userNick: String, var userSexCode: Int,
                                  var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String, var userId: Int)
 
-data class UpdateInfoRequest(var username: String, var userAddress: String, var userPhone: String)
+data class UpdateInfoRequest(var userAddress: String, var userPhone: String,val userId: Int,val token: String)
 data class SearchRequest(var token: String, var projectRegion: String?, var projectTopic: String?, var projectContent: String?, var pageNum: Int)
 data class CreateProjectRequest(var projectTopic: String, var projectContent: String, var projectRegion: String,
                                 var projectAddress: String, var latitude: Double, var longitude: Double, var projectPrincipalName: String, var projectPrincipalPhone: String, var projectPeopleNumbers: String,

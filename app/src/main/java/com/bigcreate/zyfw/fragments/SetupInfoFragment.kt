@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.IntegerRes
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
@@ -19,6 +20,7 @@ import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.base.appCompactActivity
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
+import com.bigcreate.zyfw.models.UpdateInfoRequest
 import com.bigcreate.zyfw.mvp.user.UserInfoImpl
 import com.bilibili.boxing.Boxing
 import com.bilibili.boxing.BoxingMediaLoader
@@ -116,24 +118,23 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
         buttonSubmitSetupInfo.setOnClickListener {
             Log.d("click", "click ok")
             if (layoutNickSetupInfo.editText!!.isEmpty() || layoutAddressSetupInfo.editText!!.isEmpty() ||
-                    layoutPhoneSetupInfo.editText!!.isEmpty() || avatarFile == null || chipGroupGenderTypeSetupInfo.checkedChipId == -1 || chipGroupUserTypeSetupInfo.checkedChipId == -1)
+                    layoutPhoneSetupInfo.editText!!.isEmpty() || (avatarFile == null && infoType.startsWith("setupInfo")) || chipGroupGenderTypeSetupInfo.checkedChipId == -1 || chipGroupUserTypeSetupInfo.checkedChipId == -1)
                 Toast.makeText(context!!, "你还有尚未填写的资料，请填好后重试", Toast.LENGTH_SHORT).show()
             else {
-                progressSetupInfo.visibility = View.VISIBLE
-                textUserTypeSetupInfo.isEnabled = false
-                textGenderSetupInfo.isEnabled = false
-                layoutNickSetupInfo.isEnabled = false
-                layoutPhoneSetupInfo.isEnabled = false
-                layoutAddressSetupInfo.isEnabled = false
-                buttonSubmitSetupInfo.isEnabled = false
-                chipQuickLocaleSetupInfo.isEnabled = false
+                showProgress(true)
                 val userInfo = Attributes.loginUserInfo!!
-                userInfoImpl.doInitUserInfo(InitPersonInfoRequest(userInfo.username,
-                        layoutNickSetupInfo.editText!!.string().trim(),
-                        getIndexForChip(chipGroupGenderTypeSetupInfo.checkedChipId),
-                        getIndexForChip(chipGroupUserTypeSetupInfo.checkedChipId),
-                        layoutAddressSetupInfo.editText!!.string().trim(),
-                        layoutPhoneSetupInfo.editText!!.string().trim(), userInfo.token, Attributes.userId))
+                if (infoType.startsWith("updateInfo")) {
+                    userInfoImpl.doUpdateUserInfo(UpdateInfoRequest(
+                            layoutAddressSetupInfo.editText!!.string().trim(),
+                            layoutPhoneSetupInfo.editText!!.string().trim(), Attributes.userId, userInfo.token))
+                }else {
+                    userInfoImpl.doInitUserInfo(InitPersonInfoRequest(userInfo.username,
+                            layoutNickSetupInfo.editText!!.string().trim(),
+                            getIndexForChip(chipGroupGenderTypeSetupInfo.checkedChipId),
+                            getIndexForChip(chipGroupUserTypeSetupInfo.checkedChipId),
+                            layoutAddressSetupInfo.editText!!.string().trim(),
+                            layoutPhoneSetupInfo.editText!!.string().trim(), userInfo.token, Attributes.userId))
+                }
             }
         }
         chipQuickLocaleSetupInfo.setOnClickListener {
@@ -191,6 +192,19 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
         }
         tencentLocation.requestLocationUpdates(request, this)
         super.onActivityCreated(savedInstanceState)
+    }
+
+    private fun showProgress(boolean: Boolean) {
+        progressSetupInfo.isVisible = boolean
+        textUserTypeSetupInfo.isEnabled = boolean.not()
+        textGenderSetupInfo.isEnabled = boolean.not()
+        layoutNickSetupInfo.isEnabled = boolean.not()
+        layoutPhoneSetupInfo.isEnabled = boolean.not()
+        layoutAddressSetupInfo.isEnabled = boolean.not()
+        buttonSubmitSetupInfo.isEnabled = boolean.not()
+        chipQuickLocaleSetupInfo.isEnabled = boolean.not()
+        chipGroupUserTypeSetupInfo.isActivated = boolean.not()
+        chipGroupGenderTypeSetupInfo.isActivated = boolean.not()
     }
 
 
@@ -273,8 +287,10 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
 
         val userInfo = Attributes.loginUserInfo!!
         userInfo.apply {
-            userInfoImpl.doSetupAvatar(
-                    avatarFile!!, token, userId)
+            if (avatarFile != null) {
+                userInfoImpl.doSetupAvatar(
+                        avatarFile!!, token, userId)
+            }
         }
 
     }
@@ -284,11 +300,11 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
     }
 
     override fun onRequesting() {
-
+        showProgress(true)
     }
 
     override fun onRequestFinished() {
-
+        showProgress(false)
     }
 
     override fun onUpdateUserInfoFailed(jsonObject: JsonObject) {
@@ -296,7 +312,8 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
     }
 
     override fun onUpdateUserInfoSuccess(jsonObject: JsonObject) {
-        activity?.finish()
+        //activity?.finish()
+        toast("更新成功")
     }
 
     override fun onSetupAvatarSuccess() {
@@ -326,6 +343,8 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
             }
             infoType.startsWith("updateInfo") -> {
                 showInfo()
+                chipGroupGenderTypeSetupInfo.isEnabled = false
+                chipGroupUserTypeSetupInfo.isEnabled = false
             }
             infoType.startsWith("showInfo") -> {
                 showInfo()
@@ -344,6 +363,18 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
             layoutNickSetupInfo.editText?.text?.append(userNick)
             layoutAddressSetupInfo.editText?.text?.clear()
             layoutAddressSetupInfo.editText?.text?.append(userAddress)
+            if (userSex == "男") {
+                chipGroupGenderTypeSetupInfo.check(R.id.chipMaleSetupInfo)
+            }else {
+                chipGroupGenderTypeSetupInfo.check(R.id.chipFemaleSetupInfo)
+            }
+
+            when (userIdentify) {
+                "老师" -> chipGroupUserTypeSetupInfo.check(R.id.chipIdTeacherSetupInfo)
+                "学生" -> chipGroupUserTypeSetupInfo.check(R.id.chipIdStudentSetupInfo)
+                else -> chipGroupUserTypeSetupInfo.check(R.id.chipIdOtherSetupInfo)
+            }
+
 //            if (i)
             //layoutNickSetupInfo.editText.cane
         }

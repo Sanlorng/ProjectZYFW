@@ -1,6 +1,10 @@
 package com.bigcreate.zyfw.adapter
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,16 +21,19 @@ import com.bigcreate.zyfw.activities.MyDetailsActivity
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.models.DynamicPicture
 import com.bigcreate.zyfw.models.ExploreItem
+import com.bigcreate.zyfw.mvp.explore.ExploreFavoriteImpl
+import com.bigcreate.zyfw.mvp.explore.ExploreLikeImpl
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_user_share_content.view.*
 import kotlinx.android.synthetic.main.layout_item_select.view.*
 
 class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreItem, position: Int) -> Unit)? = null,
                          private val onItemImageOpenTransition: ((view: View, item: String, intent: Intent) -> Unit)? = null) : PagedListAdapter<ExploreItem, ExploreListAdapter.ViewHolder>(diff) {
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.run {
             getItem(position)?.apply {
+                Log.e("imageList",dynamicPicture.toString())
+                Log.e("item",this.toString())
                 exploreItemUserNick.text = userInfoByPart.userNick
                 exploreItemContent.text = dyContent
                 exploreItemCreateTime.text = dyReleaseTime.split(" ").first()
@@ -39,14 +46,13 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
                         putExtra("userId",userInfoByPart.userId)
                     }
                 }
-                if (listImageExploreItem.adapter == null) {
-                    listImageExploreItem.layoutManager = GridLayoutManager(context, when {
+
+                listImageExploreItem.layoutManager = GridLayoutManager(context, when {
                         dynamicPicture.size % 5 == 0 -> 5
                         dynamicPicture.size % 4 == 0 -> 4
                         else -> 3
-                    })
-                    listImageExploreItem.adapter = ExploreItemImageAdapter(onItemImageOpenTransition, dynamicPicture)
-                }
+                })
+                listImageExploreItem.adapter = ExploreItemImageAdapter(onItemImageOpenTransition, dynamicPicture)
                 if (Attributes.userId == userInfoByPart.userId) {
                     exploreItemUserAction.isVisible = true
                     exploreItemUserAction.setOnClickListener {
@@ -55,10 +61,18 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
 
                 if (favorite) {
                     exploreItemFavorite.setImageResource(R.drawable.ic_star_black_24dp)
+                    exploreItemFavorite.imageTintList = ColorStateList.valueOf(context.getColor(R.color.favorite))
+                }else {
+                    exploreItemFavorite.imageTintList = exploreItemComment.imageTintList
+                    exploreItemFavorite.setImageResource(R.drawable.ic_star_border_black_24dp)
                 }
 
                 if (praise) {
                     exploreItemLike.setImageResource(R.drawable.ic_favorite_black_24dp)
+                    exploreItemLike.imageTintList = ColorStateList.valueOf(context.getColor(R.color.like))
+                }else {
+                    exploreItemLike.imageTintList = exploreItemComment.imageTintList
+                    exploreItemLike.setImageResource(R.drawable.ic_favorite_border_black_24dp)
                 }
                 setOnClickListener {
                     onItemClick?.invoke(it, this, position)
@@ -80,8 +94,30 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
         return ViewHolder(R.layout.item_user_share_content, parent)
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view),
+        ExploreFavoriteImpl.View,
+        ExploreLikeImpl.View{
         constructor(resId: Int, parent: ViewGroup) : this(LayoutInflater.from(parent.context).inflate(resId, parent, false))
+
+        override fun getViewContext(): Context {
+            return itemView.context
+        }
+
+        override fun onFavoriteSuccess() {
+
+        }
+
+        override fun onLikeSuccess() {
+
+        }
+
+        override fun onUnFavoriteSuccess() {
+
+        }
+
+        override fun onUnlikeSuccess() {
+
+        }
     }
 
     companion object {
@@ -100,7 +136,9 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
 //        private val urlList: Array<String> = Array(list.size) {
 //            list[it].dyPictureTwoLink
 //        }
-
+init {
+    Log.e("adapteImage",list.toString())
+}
         override fun getItemCount(): Int {
             return list.size
         }
@@ -119,9 +157,9 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
                             list[it].dyPictureTwoLink
                         })
                         intent.putExtra("position", position)
-                        itemSelectedImage.transitionName = dyPictureTwoLink
                         onItemImageOpenTransition?.invoke(itemSelectedImage, dyPictureTwoLink, intent)
                     }
+                    itemSelectedImage.transitionName = dyPictureTwoLink
                 }
                 updatePadding(right = 0)
             }

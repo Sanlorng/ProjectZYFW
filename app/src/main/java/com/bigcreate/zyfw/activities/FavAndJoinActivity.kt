@@ -12,10 +12,15 @@ class FavAndJoinActivity : AuthLoginActivity() {
 
     override fun afterCheckLoginSuccess() {
         val position = intent.getIntExtra("favOrJoin", 0)
+        val identify = intent.getStringExtra("identify")
         viewpagerFavAndJoin.offscreenPageLimit = 3
         viewpagerFavAndJoin.adapter = FragmentAdapter(supportFragmentManager, listOf(
-                MyReleasedFragment.newInstance("", "")
-                , MyJoinFragment.newInstance("", ""), MyFavoriteFragment.newInstance("", "")
+                if (identify == "老师") {
+                    MyReleasedFragment.newInstance("", "")
+                }
+                else {
+                    MyJoinFragment.newInstance("", "")
+                }, MyFavoriteFragment.newInstance("", "")
         ))
         tabLayoutFavAndJoin.setupWithViewPager(viewpagerFavAndJoin)
         viewpagerFavAndJoin.currentItem = position

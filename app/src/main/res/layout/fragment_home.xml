@@ -97,8 +97,8 @@
                 <com.bigcreate.zyfw.view.ProportionView
                     app:width_weight="16"
                     app:height_weight="9"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginEnd="32dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -141,7 +141,6 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
         <include
             layout="@layout/layout_search_bar"
             app:layout_collapseMode="pin" />

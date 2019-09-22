@@ -18,7 +18,6 @@
         <item name="chipStyle">@style/chip</item>
         <item name="actionButtonStyle">@style/actionButtonStyle</item>
     </style>
-
     <style name="actionButtonStyle" parent="Widget.AppCompat.ActionButton">
         <item name="android:tint">?attr/colorOnSurface</item>
     </style>

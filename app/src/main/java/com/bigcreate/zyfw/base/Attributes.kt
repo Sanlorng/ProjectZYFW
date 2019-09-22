@@ -11,6 +11,7 @@ import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.UserInfo
 import com.bigcreate.zyfw.models.UserInfoByPart
 import com.google.gson.JsonObject
+import java.lang.Exception
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -49,10 +50,19 @@ object Attributes {
             }
         }
     var loginUserInfo: LoginModel? = null
+
     var token
-        get() = loginUserInfo!!.token
+        get() =  try {
+                loginUserInfo!!.token
+            }catch (e: Throwable) {
+                throw e
+            }
         set(value) {
-            loginUserInfo!!.token = value
+            try {
+                loginUserInfo!!.token = value
+            }catch (e : Exception) {
+                throw e
+            }
         }
     var username
         get() = loginUserInfo!!.username

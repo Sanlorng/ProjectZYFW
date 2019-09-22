@@ -57,7 +57,7 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
         }
     })
 
-    private val menuList: ArrayList<MenuListAdapter.MenuItem> = arrayListOf(
+    private var menuList: ArrayList<MenuListAdapter.MenuItem> = arrayListOf(
             MenuListAdapter.MenuItem(R.id.userReleasedNavigation,
                     R.drawable.ic_outline_send_24px,
                     R.string.releasedProject),
@@ -126,7 +126,7 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
                     .circleCrop()
                     .into(avatarNavigationHeader)
             locationNavigationHeader.text = userAddress
-            sexNavigationHeader.text = userSex
+            sexNavigationHeader.text = userSex + "性"
             identifyNavigationHeader.text = userIdentify
             listAccountMenu.layoutManager = GridLayoutManager(context, 4)
             listAccountMenu.adapter = MenuListAdapter(menuList) {
@@ -134,19 +134,63 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
                     R.id.setting_menu -> startActivity<SettingsActivity>()
                     R.id.testInterface -> startActivity<TestInterfaceActivity>()
                     R.id.userFavoriteNavigation -> startActivity(Intent(context!!, FavAndJoinActivity::class.java).apply {
-                        putExtra("favOrJoin", 2)
+                        putExtra("favOrJoin", 1)
+                        putExtra("identify",userIdentify)
                     })
                     R.id.userJoinedNavigation -> startActivity(Intent(context!!, FavAndJoinActivity::class.java).apply {
-                        putExtra("favOrJoin", 1)
+                        putExtra("favOrJoin", 0)
+                        putExtra("identify",userIdentify)
                     })
                     R.id.userReleasedNavigation -> startActivity(Intent(context!!, FavAndJoinActivity::class.java).apply {
                         putExtra("favOrJoin", 0)
+                        putExtra("identify",userIdentify)
                     })
                 }
             }
+            reloadMenuList(userIdentify)
+            listAccountMenu.adapter?.notifyDataSetChanged()
         }
     }
 
+    private fun reloadMenuList(userIdentify: String) {
+        menuList.clear()
+        menuList.addAll(when(userIdentify) {
+            "老师" -> {
+                arrayListOf(
+                        MenuListAdapter.MenuItem(R.id.userReleasedNavigation,
+                                R.drawable.ic_outline_send_24px,
+                                R.string.releasedProject),
+                        MenuListAdapter.MenuItem(R.id.userFavoriteNavigation,
+                                R.drawable.ic_star_border_black_24dp,
+                                R.string.favoriteProject),
+                        MenuListAdapter.MenuItem(R.id.setting_menu,
+                                R.drawable.ic_outline_settings_24px,
+                                R.string.settings))
+            }
+            "学生" -> {
+                arrayListOf(
+                        MenuListAdapter.MenuItem(R.id.userJoinedNavigation,
+                                R.drawable.ic_favorite_border_black_24dp,
+                                R.string.joinedProject),
+                        MenuListAdapter.MenuItem(R.id.userFavoriteNavigation,
+                                R.drawable.ic_star_border_black_24dp,
+                                R.string.favoriteProject),
+                        MenuListAdapter.MenuItem(R.id.setting_menu,
+                                R.drawable.ic_outline_settings_24px,
+                                R.string.settings))
+            }
+            else -> {
+                arrayListOf(
+                        MenuListAdapter.MenuItem(R.id.setting_menu,
+                                R.drawable.ic_outline_settings_24px,
+                                R.string.settings))
+            }
+        })
+        if (BuildConfig.DEBUG)
+            menuList.add(MenuListAdapter.MenuItem(R.id.testInterface,
+                    R.drawable.ic_outline_build_24px,
+                    R.string.interfaceTest))
+    }
     override fun onLoginSuccess() {
         if (Attributes.userInfo != null)
             Attributes.userInfo?.apply {

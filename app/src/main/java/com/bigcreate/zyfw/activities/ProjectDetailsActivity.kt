@@ -251,11 +251,17 @@ class ProjectDetailsActivity :
                     }
                     findItem(R.id.projectDetailsFavorite).apply {
                         isChecked = favorite
-                        icon = if (favorite)
+                        icon = if (favorite){
                             getDrawable(R.drawable.ic_star_black_24dp)?.apply {
                                 setTint(getColor(R.color.colorAccent))
-                            } else
+                            }
+                        }else {
                             getDrawable(R.drawable.ic_star_border_black_24dp)
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && favorite) {
+                            iconTintList = ColorStateList.valueOf(getColor(R.color.favorite))
+                        }
+
                     }
                 }
 //                if (Attributes.username == username)
@@ -325,6 +331,9 @@ class ProjectDetailsActivity :
                 icon = getDrawable(R.drawable.ic_star_black_24dp)?.apply {
                     DrawableCompat.setTint(this, getColor(R.color.colorAccent))
                 }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    iconTintList = ColorStateList.valueOf(getColor(R.color.favorite))
+                }
             }
         }
     }
@@ -338,6 +347,9 @@ class ProjectDetailsActivity :
             bottomAppBarDetails.menu.findItem(R.id.projectDetailsFavorite).apply {
                 isChecked = false
                 icon = getDrawable(R.drawable.ic_star_border_black_24dp)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    iconTintList = null
+                }
             }
         }
     }

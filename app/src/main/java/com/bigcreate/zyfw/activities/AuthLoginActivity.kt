@@ -6,9 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bigcreate.library.startActivity
-import com.bigcreate.library.toast
-import com.bigcreate.library.translucentSystemUI
+import com.bigcreate.library.*
 import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.LoginRequest
@@ -107,6 +105,18 @@ abstract class AuthLoginActivity : AppCompatActivity() {
             else
                 finish()
             isOnResume = false
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("AppLoginInfo",Attributes.loginUserInfo.toJson())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState?.getString("AppLoginInfo")?.fromJson<LoginModel>()?.apply {
+            Attributes.loginUserInfo = this
         }
     }
 }

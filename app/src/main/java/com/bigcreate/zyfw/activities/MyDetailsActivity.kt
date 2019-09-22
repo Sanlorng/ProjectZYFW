@@ -70,12 +70,14 @@ class MyDetailsActivity : AuthLoginActivity(), GetUserInfoImpl.View {
             nickNavigationHeader.text = it.userNick
             phoneNavigationHeader.text = it.userPhone
             locationNavigationHeader.text = it.userAddress
-            sexNavigationHeader.text = it.userSex
+            sexNavigationHeader.text = it.userSex + "性"
             identifyNavigationHeader.text = it.userIdentify
             if (userId != Attributes.userId) {
                 buttonEditInfoAccount.setImageResource(R.drawable.ic_outline_comment_24px)
                 buttonEditInfoAccount.setOnClickListener {
-                    startActivity<ChatActivity>()
+                    startActivity<ChatActivity> {
+                        putExtra("chatId",userId)
+                    }
                 }
             }else {
                 buttonEditInfoAccount.setOnClickListener {

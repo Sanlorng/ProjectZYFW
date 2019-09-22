@@ -28,6 +28,11 @@ class ProjectVideoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     }
+
+    override fun onDestroyView() {
+        listProjectImages.adapter = null
+        super.onDestroyView()
+    }
     fun refreshVideo(videos: List<String>) {
         listProjectImages.adapter = ProjectVideoListAdapter(videos)
     }

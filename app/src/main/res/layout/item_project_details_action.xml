@@ -9,7 +9,7 @@
     app:iconPadding="@dimen/list_item_spacing"
     app:rippleColor="@color/colorAccent"
     app:cornerRadius="0dp"
-    android:textColor="#333333"
+    android:textColor="?android:attr/textColorSecondary"
     android:textAllCaps="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

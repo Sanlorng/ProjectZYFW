@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.view.ProportionView
 import com.bumptech.glide.Glide
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard
 import kotlinx.android.synthetic.main.item_project_videos.view.*
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +48,14 @@ class ProjectVideoListAdapter(val videos:List<String>):RecyclerView.Adapter<Proj
 //                    .load(videos[position])
 //                    .into(itemProjectVideoPreview)
         }
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        JCVideoPlayer.releaseAllVideos()
+    }
+    override fun onViewDetachedFromWindow(holder: ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

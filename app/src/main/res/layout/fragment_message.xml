@@ -72,6 +72,7 @@
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         app:icon="@drawable/ic_shuffle_black_24dp"
         app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+        app:iconTint="?attr/colorAccent"
         android:id="@+id/matchChat"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"

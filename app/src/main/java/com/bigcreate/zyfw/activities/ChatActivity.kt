@@ -4,10 +4,12 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.IBinder
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -35,6 +37,10 @@ import com.bigcreate.zyfw.models.MessageHeader
 import com.bigcreate.zyfw.models.MessageType
 import com.bigcreate.zyfw.service.MessageService
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import kotlinx.android.synthetic.main.activity_chat.*
 import okhttp3.WebSocket
 import java.util.*
@@ -62,19 +68,65 @@ class ChatActivity : AuthLoginActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        chatId = intent.getIntExtra("chatId", 0)
+
         setSupportActionBar(toolbarChat)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.title = "聊天"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val userInfo = Attributes.userTemp[chatId]
+        if (userInfo == null) {
+            RemoteService.getHeadLinkAndNick(chatId).enqueue {
+                response {
+                    val info = body()
+                    if (info != null) {
+                        Attributes.userTemp[info.userId] = info
+                        supportActionBar?.title = info.userNick?:""
+                        val size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,30f,resources.displayMetrics).toInt()
+                        Glide.with(this@ChatActivity)
+                                .load(info.userHeadPictureLink?:"")
+                                .placeholder(R.drawable.ic_outline_group_24px)
+                                .circleCrop()
+                                .override(size,size)
+                                .into(object : CustomTarget<Drawable>() {
+                                    override fun onLoadCleared(placeholder: Drawable?) {
+                                        toolbarChat.logo = placeholder
+                                    }
+
+                                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                                        toolbarChat.logo = resource
+                                    }
+                                })
+                    }
+                }
+            }
+        }else {
+            supportActionBar?.title = userInfo.userNick?:""
+            val size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,30f,resources.displayMetrics).toInt()
+            Glide.with(this)
+                    .load(userInfo.userHeadPictureLink?:"")
+                    .placeholder(R.drawable.ic_outline_group_24px)
+                    .circleCrop()
+                    .override(size,size)
+                    .into(object : CustomTarget<Drawable>() {
+                        override fun onLoadCleared(placeholder: Drawable?) {
+                            toolbarChat.logo = placeholder
+                        }
+
+                        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                            toolbarChat.logo = resource
+                        }
+                    })
+        }
         val layoutParam = toolbarChat.layoutParams as ViewGroup.MarginLayoutParams
         layoutParam.height += let {
             it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
         }
         toolbarChat.layoutParams = layoutParam
-        toolbarChat.title = "聊天"
+       // toolbarChat.title = "聊天"
         toolbarChat.setNavigationOnClickListener {
             finish()
         }
-        chatId = intent.getIntExtra("chatId", 0)
+
+
 
         buttonSendChat.isEnabled = false
         bindService(Intent(this, MessageService::class.java), connection, Service.BIND_AUTO_CREATE)
@@ -177,7 +229,7 @@ class ChatActivity : AuthLoginActivity() {
             override fun afterTextChanged(s: Editable?) {
                 if (s == null || s.isEmpty()) {
                     buttonSendChat.isEnabled = false
-                    buttonSendChat.setColorFilter(ContextCompat.getColor(this@ChatActivity, R.color.color737373))
+                    buttonSendChat.colorFilter = null
                 } else {
                     buttonSendChat.isEnabled = true
                     buttonSendChat.setColorFilter(ContextCompat.getColor(this@ChatActivity, R.color.colorAccent))
