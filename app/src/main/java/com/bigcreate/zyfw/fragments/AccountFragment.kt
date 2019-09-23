@@ -85,27 +85,15 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
 
         super.onActivityCreated(savedInstanceState)
-        navigationMain.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.setting_menu -> startActivity<SettingsActivity>()
-//                R.id.startReleaseProjectNavigation -> startActivity(ReleaseProjectActivity::class.java)
-                R.id.testInterface -> startActivity<TestInterfaceActivity>()
-            }
-            true
-        }
-        navigationMain.setOnClickListener {
-            startActivity<MyDetailsActivity>()
-        }
+
         Attributes.loginUserInfo?.apply {
             onLoginSuccess()
         }
-        navigationMain.getHeaderView(0).apply {
-            buttonEditInfoAccount.setOnClickListener {
+        buttonEditInfoAccount.setOnClickListener {
                 startActivity(Intent(context!!, RegisterActivity::class.java).apply {
                     type = "updateInfo"
                 })
             }
-        }
 
         getLoginViewModel().getUserInfoStatus.observe(this, Observer {
             when(it) {
@@ -118,10 +106,10 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
     }
 
     private fun UserInfo.onUserInfoLoad() {
-        navigationMain.getHeaderView(0).apply {
+
             nickNavigationHeader.text = userNick
             phoneNavigationHeader.text = userPhone
-            Glide.with(this)
+            Glide.with(this@AccountFragment)
                     .load(userHeadPictureLink)
                     .circleCrop()
                     .into(avatarNavigationHeader)
@@ -149,7 +137,7 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
             }
             reloadMenuList(userIdentify)
             listAccountMenu.adapter?.notifyDataSetChanged()
-        }
+
     }
 
     private fun reloadMenuList(userIdentify: String) {
@@ -204,6 +192,5 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
 
     override fun onResume() {
         super.onResume()
-        navigationMain.requestApplyInsets()
     }
 }

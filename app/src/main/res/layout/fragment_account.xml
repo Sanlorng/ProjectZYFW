@@ -5,16 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.AccountFragment">
+    <include layout="@layout/layout_navigation_header" />
 
-    <com.google.android.material.navigation.NavigationView
-        android:fitsSystemWindows="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:id="@+id/navigationMain"
-        android:background="?attr/colorSurface"
-        app:itemBackground="?attr/colorSurface"
-        app:headerLayout="@layout/layout_navigation_header"
-        app:insetForeground="@color/zeroColor" />
 
 </FrameLayout>

@@ -3,6 +3,7 @@ package com.bigcreate.zyfw.activities
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -236,10 +237,11 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
         jsonObject.get("data").asJsonObject.apply {
             GlobalScope.launch {
                 launch(Dispatchers.Main) {
-                    startActivity(Intent(this@ReleaseProjectActivity, ProjectDetailsActivity::class.java).apply {
-                        putExtra("projectId", get("projectId").asInt)
-                        putExtra("projectTopic", inputTopicRelease.text.toString())
-                    })
+                    startActivity<ProjectDetailsActivity> {
+                        addCategory(Intent.CATEGORY_DEFAULT)
+                        setDataAndType(Uri.parse(String.format(Attributes.authorityProject, projectId)), "project/")
+                        putExtra("projectId", projectId)
+                    }
                 }
                 launch(Dispatchers.Main) {
                     finish()

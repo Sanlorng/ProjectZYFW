@@ -16,9 +16,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bigcreate.library.fromJson
 import com.bigcreate.library.startActivity
 import com.bigcreate.library.toJson
 import com.bigcreate.library.toast
@@ -41,6 +43,7 @@ import com.bigcreate.zyfw.mvp.explore.ExploreFavoriteImpl
 import com.bigcreate.zyfw.mvp.explore.ExploreLikeImpl
 import com.bigcreate.zyfw.viewmodel.NetworkStateViewModel
 import kotlinx.android.synthetic.main.fragment_explore.*
+import kotlinx.android.synthetic.main.item_user_share_content.*
 
 /**
  * A simple [Fragment] subclass.
@@ -146,21 +149,24 @@ class ExploreFragment : Fragment(), MainActivity.ChildFragment {
                 }
 
                 else -> {
-              //      val intent = Intent(context!!, ExploreDetailsActivity::class.java)
-                //    intent.putExtra("shareItem", item.toJson())
+                    val intent = Intent(context!!, ExploreDetailsActivity::class.java)
+                    intent.putExtra("shareItem", item.toJson())
+                    intent.putExtra("dynamicId",item.dyId)
+                    intent.putExtra("position",position)
                     view.apply {
-                        startActivity<ExploreDetailsActivity> {
-                            putExtra("dynamicId",item.dyId)
-                            putExtra("shareItem",item.toJson())
-                        }
+//                        startActivity<ExploreDetailsActivity> {
+//                            putExtra("dynamicId",item.dyId)
+//                            putExtra("shareItem",item.toJson())
+//                        }
 //                        this@ExploreFragment.startActivity(intent)
 //                        startActivity<ProvinceProjectActivity>()
-//                        startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity!!,
-//                                Pair(exploreItemUserAvatar, "shareAvatar"),
-//                                Pair(exploreItemContent, "shareContent"),
-//                                Pair(exploreItemUserNick, "shareNick"),
-//                                Pair(exploreItemCreateTime, "shareTime"),
-//                                Pair(listImageExploreItem, "shareImages")).toBundle())
+                        startActivityForResult(intent,0)
+//                        startActivityForResult(intent,RequestCode.UPDATE_OK, ActivityOptionsCompat.makeSceneTransitionAnimation(activity!!,
+//                                androidx.core.util.Pair(exploreItemUserAvatar, "shareAvatar"),
+//                                androidx.core.util.Pair(exploreItemContent, "shareContent"),
+//                                androidx.core.util.Pair(exploreItemUserNick, "shareNick"),
+//                                androidx.core.util.Pair(exploreItemCreateTime, "shareTime"),
+//                                androidx.core.util.Pair(listImageExploreItem, "shareImages")).toBundle())
                     }
 
 //                    context?.startActivity(ExploreDetailsActivity::class.java)
@@ -182,6 +188,31 @@ class ExploreFragment : Fragment(), MainActivity.ChildFragment {
                 Attributes.backgroundExecutors.execute(it)
             }
                     .build())
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(resultCode) {
+            RequestCode.UPDATE_OK -> {
+//                val position = data?.getIntExtra("position",0)?:0
+//                val  adapter = (listExplore.adapter as ExploreListAdapter)
+//                val item = adapter.getExploreItem(position)
+//                val temp = data?.getStringExtra("item")?.fromJson<ExploreItem>()
+//                if (item != null && temp != null) {
+//                    item.praise = temp.praise
+//                    item.favorite = temp.favorite
+//                    item.dyContent = temp.dyContent
+//                }
+//                listExplore.adapter?.notifyItemChanged(position)
+            }
+            RequestCode.DELETE_OK -> {
+//                val position = data?.getIntExtra("position",0)?:0
+//                val item = (listExplore.adapter as ExploreListAdapter).getExploreItem(position)
+//                item?.isDelete = true
+//                (listExplore.adapter as ExploreListAdapter).currentList?.removeAt(position)
+//                listExplore.adapter?.notifyItemRemoved(position)
+            }
         }
     }
     inner class FavoriteItemView(private val item: ExploreItem,private val position: Int):ExploreFavoriteImpl.View {

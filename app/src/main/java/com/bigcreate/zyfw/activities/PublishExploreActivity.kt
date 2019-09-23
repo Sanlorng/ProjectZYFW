@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bigcreate.library.toast
@@ -17,7 +18,9 @@ import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.base.paddingStatusBar
+import com.bigcreate.zyfw.models.ExploreEditRequest
 import com.bigcreate.zyfw.models.PublishExploreRequest
+import com.bigcreate.zyfw.mvp.explore.UpdateExploreImpl
 import com.bigcreate.zyfw.mvp.user.PublishExploreImpl
 import com.bilibili.boxing.Boxing
 import com.bilibili.boxing.BoxingMediaLoader
@@ -27,10 +30,11 @@ import com.bilibili.boxing.model.config.BoxingConfig
 import com.bilibili.boxing_impl.ui.BoxingActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_publish_explore.*
 import java.io.File
 
-class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View {
+class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View,UpdateExploreImpl.View {
 
     private var action = SelectListAdapter.Action("")
     private val list = ArrayList<SelectListAdapter.Model>().apply {
@@ -39,7 +43,10 @@ class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View {
     private lateinit var dialog: AlertDialog
     lateinit var imageConfig: BoxingConfig
     lateinit var videoConfig: BoxingConfig
+    private var editMode = false
+    private var dynamicId = 0
     private var publishExploreImpl = PublishExploreImpl(this)
+    private var editExploreImpl = UpdateExploreImpl(this)
     private val boxImpl = object : IBoxingMediaLoader {
         override fun displayRaw(img: ImageView, absPath: String, width: Int, height: Int, callback: IBoxingCallback?) {
             Glide.with(this@PublishExploreActivity)
@@ -65,7 +72,7 @@ class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View {
         }
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            title = "发表动态"
+            title = if (editMode.not())"发表动态" else "编辑动态"
         }
         listExplorePublish.layoutManager = GridLayoutManager(this, 4)
         BoxingMediaLoader.getInstance().init(boxImpl)
@@ -85,6 +92,13 @@ class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View {
 
     override fun setContentView() {
         setContentView(R.layout.activity_publish_explore)
+        editMode = intent.getBooleanExtra("editType",false)
+        dynamicId = intent.getIntExtra("dynamicId",0)
+        if (editMode) {
+            listExplorePublish.isVisible = false
+            inputExplorePublish.text?.append(intent.getStringExtra("dynamicContent"))
+
+        }
     }
 
     private fun showProgress(progressing: Boolean) {
@@ -121,6 +135,18 @@ class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View {
         finish()
     }
 
+    override fun onUpdateFailed(jsonObject: JsonObject) {
+        toast("更新失败")
+    }
+
+    override fun onUpdateSuccess() {
+        setResult(ResultCode.OK,Intent().apply {
+            putExtra("position",intent.getIntExtra("position",0))
+        })
+        toast("更新成功")
+        finish()
+    }
+
     override fun getViewContext(): Context {
         return this
     }
@@ -147,15 +173,19 @@ class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View {
                     null -> {
                     }
                     R.id.releaseCreateProject -> {
-                        publishExploreImpl.doRequest(
-                                PublishExploreRequest(list.run {
-                                    val listFile = ArrayList<File>()
-                                    forEach {
-                                        if (it !is SelectListAdapter.Action)
-                                            listFile.add(File(it.path))
-                                    }
-                                    listFile
-                                }, token, inputExplorePublish.text?.trim()?.toString() ?: ""))
+                        if (editMode.not()) {
+                            publishExploreImpl.doRequest(
+                                    PublishExploreRequest(list.run {
+                                        val listFile = ArrayList<File>()
+                                        forEach {
+                                            if (it !is SelectListAdapter.Action)
+                                                listFile.add(File(it.path))
+                                        }
+                                        listFile
+                                    }, token, inputExplorePublish.text?.trim()?.toString() ?: ""))
+                        }else {
+                            editExploreImpl.doRequest(ExploreEditRequest(Attributes.token,dynamicId,inputExplorePublish.text?.toString()?:""))
+                        }
                     }
                 }
             }

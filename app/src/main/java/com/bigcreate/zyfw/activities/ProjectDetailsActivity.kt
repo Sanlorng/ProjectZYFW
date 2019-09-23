@@ -219,6 +219,7 @@ class ProjectDetailsActivity :
         this.project = project
         project.run {
             projectType = projectTypeId
+            textProjectTitle.text = title
             GlobalScope.launch(Dispatchers.Main) {
                 fragmentJob.await().onGetDetailsSuccess(project)
 //                val menu = bottomAppBarDetails.menu

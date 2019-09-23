@@ -1,22 +1,27 @@
 package com.bigcreate.zyfw.adapter
 
+import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bigcreate.library.dialog
 import com.bigcreate.library.startActivity
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.MyDetailsActivity
+import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.models.ExploreCommentItem
+import com.bigcreate.zyfw.mvp.explore.DeleteExploreCommentImpl
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_comment.view.*
 
-class ExploreDetailsCommentListAdapter() : PagedListAdapter<ExploreCommentItem,RecyclerView.ViewHolder>(diff) {
-
+class ExploreDetailsCommentListAdapter(private val listener:((item: ExploreCommentItem, position:Int, itemView: View) -> Unit)? = null) : PagedListAdapter<ExploreCommentItem,RecyclerView.ViewHolder>(diff){
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         Log.e("onBindViewHolder","")
         getItem(position)?.run {
@@ -34,6 +39,12 @@ class ExploreDetailsCommentListAdapter() : PagedListAdapter<ExploreCommentItem,R
                         putExtra("userId",dyCommentUserId)
                     }
                 }
+                if (listener != null) {
+                    setOnLongClickListener {
+                        listener.invoke(this@run,position,this)
+                        true
+                    }
+                }
             }
         }
     }
@@ -43,6 +54,7 @@ class ExploreDetailsCommentListAdapter() : PagedListAdapter<ExploreCommentItem,R
                 LayoutInflater.from(parent.context).inflate(R.layout.item_comment,parent,false)
         ) {}
     }
+
     companion object {
         private val diff = object : DiffUtil.ItemCallback<ExploreCommentItem>() {
             override fun areItemsTheSame(oldItem: ExploreCommentItem, newItem: ExploreCommentItem): Boolean {

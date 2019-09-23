@@ -132,7 +132,7 @@
                     android:minEms="11"
                     android:id="@+id/inputIdentifyRegister"
                     android:hint="@string/Identify"
-                    android:inputType="numberPassword"
+                    android:digits="0123456789xX"
                     android:imeOptions="actionNext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

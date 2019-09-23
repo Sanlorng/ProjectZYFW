@@ -4,12 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.ColorSpace
+import android.os.Build
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.ActionMenuView
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.text.set
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.widget.PopupMenuCompat
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -53,11 +62,37 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
                         else -> 3
                 })
                 listImageExploreItem.adapter = ExploreItemImageAdapter(onItemImageOpenTransition, dynamicPicture)
-                if (Attributes.userId == userInfoByPart.userId) {
-                    exploreItemUserAction.isVisible = true
-                    exploreItemUserAction.setOnClickListener {
-                    }
-                }
+//                if (Attributes.userId == userInfoByPart.userId) {
+//                    exploreItemUserAction.isVisible = true
+//                    exploreItemUserAction.setOnClickListener {
+//                    }
+//                }
+//                if (Attributes.userId == dyReleaseUserId) {
+//                    exploreItemUserAction.isVisible = true
+//                    exploreItemUserAction.setOnClickListener {
+//                        PopupMenu(context,exploreItemUserAction).apply {
+//                            menuInflater.inflate(R.menu.explore_edit,menu)
+//                            if (menu is MenuBuilder) {
+//                                (menu as MenuBuilder).setOptionalIconsVisible(true)
+//                            }
+//                            menu.findItem(R.id.deleteExplore).apply {
+//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
+//                                    iconTintList = ColorStateList.valueOf(Color.RED)
+//                                    val string = SpannableString(context.getString(R.string.delete))
+//                                    string.setSpan(ForegroundColorSpan(Color.RED),0,string.length,SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
+//                                    title = string
+//                                }
+//                            }
+//                            setOnMenuItemClickListener {
+//
+//                                true
+//                            }
+//                            show()
+//                        }
+//                    }
+//                }else {
+//                    exploreItemUserAction.isVisible = false
+//                }
 
                 if (favorite) {
                     exploreItemFavorite.setImageResource(R.drawable.ic_star_black_24dp)
@@ -86,9 +121,14 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
                 exploreItemLike.setOnClickListener {
                     onItemClick?.invoke(it,this,position)
                 }
+                if (isDelete) {
+                    isVisible = false
+                }
             }
         }
     }
+
+    fun getExploreItem(position: Int) = getItem(position)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(R.layout.item_user_share_content, parent)

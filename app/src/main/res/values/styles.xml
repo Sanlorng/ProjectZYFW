@@ -29,7 +29,10 @@
     <style name="preference" parent="Preference.Material">
 <!--        <item name="android:iconTint">?attr/colorOnSurface</item>-->
     </style>
-    
+    <style name="AppTheme.ColorNormalFix" parent="AppTheme">
+        <item name="colorControlNormal">?attr/colorOnSurface</item>
+    </style>
+
 <!--    <style name=""-->
 
     <style name="toolBar" parent="Widget.MaterialComponents.Toolbar.Primary" >

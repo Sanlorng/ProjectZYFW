@@ -144,7 +144,7 @@ data class PageContent<T>(
 )
 
 data class ExploreItem(
-        val dyContent: String,
+        var dyContent: String,
         val dyId: Int,
         val dyOneLink: Any,
         val dyReleaseTime: String,
@@ -152,7 +152,8 @@ data class ExploreItem(
         val dynamicPicture: List<DynamicPicture>,
         var favorite: Boolean,
         var praise: Boolean,
-        val userInfoByPart: UserInfoByPart
+        val userInfoByPart: UserInfoByPart,
+        var isDelete:Boolean = false
 )
 
 data class UserInfoByPart(

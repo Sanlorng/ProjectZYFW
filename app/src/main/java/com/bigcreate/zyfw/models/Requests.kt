@@ -18,7 +18,7 @@ data class ExploreCommentInfoRequest(var token: String,var dyCommentId:Int, var 
 data class ExploreItemFavoriteRequest(var token:String, val dyCollectionId: Int)
 data class ExploreItemLikeRequest(var token:String, val dyPraiseId: Int)
 data class ExploreCommentRequest(var token: String,val dyCommentId: Int, val dyCommentContent: String)
-data class ExploreCommentDeleteRequest(var token: String,var dyCommentId: Int)
+data class ExploreCommentDeleteRequest(var token: String,var dyCommentId: Int,var dyCommentUserId: Int, var dyCommentTime: String)
 data class TokenRequest(var token: String)
 data class PageRequest(var token: String, var pageNum: Int)
 data class SimpleRequest(var token: String, var userId: Int)

@@ -117,6 +117,12 @@ object RequestCode {
     const val SELECT_VIDEO = 8
     const val INSTALL_PERMISSION = 9
     const val PUBLISH_EXPLORE = 10
+    const val DELETE_OK = 11
+    const val UPDATE_OK = 12
+    const val FAVORITE_OK = 13
+    const val UNFAVORITE_OK = 14
+    const val LIKE_OK = 15
+    const val UNLIKE_OK = 16
 }
 
 object ResultCode {

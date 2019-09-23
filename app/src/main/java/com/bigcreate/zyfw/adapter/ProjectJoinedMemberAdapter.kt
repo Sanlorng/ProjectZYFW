@@ -1,5 +1,7 @@
 package com.bigcreate.zyfw.adapter
 
+import android.content.res.ColorStateList
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -47,6 +49,10 @@ class ProjectJoinedMemberAdapter(private val list: List<JoinedMember>):RecyclerV
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ListItemView(parent.context).apply {
+            setCardBackgroundColor(TypedValue().run {
+                context.theme.resolveAttribute(R.attr.colorSurface,this,true)
+                data
+            })
             elevation = 0f
             radius = 0f
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
