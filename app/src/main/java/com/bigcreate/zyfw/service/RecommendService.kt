@@ -24,6 +24,7 @@ import com.bigcreate.zyfw.models.SimpleRequest
 import com.bigcreate.zyfw.mvp.project.RecommendImpl
 import com.bigcreate.zyfw.mvp.user.LoginImpl
 import com.google.gson.JsonObject
+import java.lang.Exception
 
 class RecommendService : JobService(), RecommendImpl.View {
     private val recommendImpl = RecommendImpl(this)
@@ -56,7 +57,11 @@ class RecommendService : JobService(), RecommendImpl.View {
                         ))
                     else {
                         recommendImpl.mView = this
-                        recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.userId))
+                        try {
+                            recommendImpl.doRequest(SimpleRequest(Attributes.token, Attributes.userId))
+                        }catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
 
             }

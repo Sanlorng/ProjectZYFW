@@ -10,6 +10,7 @@
         android:id="@+id/toolbarSetupInfo"
         android:layout_width="match_parent"
         app:title="@string/setup_info"
+        android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 

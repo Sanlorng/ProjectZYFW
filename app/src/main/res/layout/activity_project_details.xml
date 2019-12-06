@@ -13,10 +13,12 @@
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:background="?attr/colorOnPrimary"
+            android:id="@+id/textProjectTitle"
             app:contentScrim="?attr/colorOnPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:layout_scrollInterpolator="@android:anim/decelerate_interpolator"
             app:statusBarScrim="@color/zeroColor"
+            app:titleEnabled="false"
             app:toolbarId="@+id/toolbarProjectDetails">
 
             <com.tencent.tencentmap.mapsdk.map.MapView
@@ -37,14 +39,14 @@
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="pin">
 
-                <TextView
-                    android:id="@+id/textProjectTitle"
-                    android:maxLines="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:textColor="?attr/colorAccent"
-                    android:textSize="20sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/"-->
+<!--                    android:maxLines="1"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:textColor="?attr/colorAccent"-->
+<!--                    android:textSize="20sp" />-->
             </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

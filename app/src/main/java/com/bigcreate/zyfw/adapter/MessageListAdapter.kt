@@ -39,7 +39,7 @@ class MessageListAdapter(private val messageMap: ArrayList<MessageHeader>) : Rec
                     context.startActivity(intent)
                 }
                 if (id == MessageHeader.GROUP_ID) {
-                    nickMessageItem.text = "全国群聊"
+                    nickMessageItem.text = "群聊"
                     avatarMessageItem.setImageResource(R.drawable.ic_outline_group_24px)
                 }else {
                     if (userImg.isEmpty() || userNick.isEmpty()) {

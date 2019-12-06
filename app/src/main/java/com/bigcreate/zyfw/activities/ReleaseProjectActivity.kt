@@ -238,8 +238,9 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
             GlobalScope.launch {
                 launch(Dispatchers.Main) {
                     startActivity<ProjectDetailsActivity> {
+                        val projectId = get("projectId").asInt
                         addCategory(Intent.CATEGORY_DEFAULT)
-                        setDataAndType(Uri.parse(String.format(Attributes.authorityProject, projectId)), "project/")
+                        setDataAndType(Uri.parse(String.format(Attributes.authorityProject, projectId)), "project/${inputTopicRelease.text.toString()}")
                         putExtra("projectId", projectId)
                     }
                 }

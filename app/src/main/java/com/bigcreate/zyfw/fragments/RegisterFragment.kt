@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.bigcreate.library.toast
@@ -58,8 +59,10 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
         appCompactActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (isForgetPass) {
             appCompactActivity?.supportActionBar?.title = "忘记密码"
-            inputPassRegister.hint = "新密码"
+            layoutPassRegister.hint = "新密码"
             buttonSubmitRegister.text = "立即更改"
+            layoutIdentifyRegister.isVisible = false
+            layoutRealNameRegister.isVisible = false
         }
         toolbarRegister.setNavigationOnClickListener {
             activity?.finish()
@@ -215,13 +218,13 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
         GlobalScope.launch {
             for (i in 60 downTo 1) {
                 withContext(Dispatchers.Main) {
-                    buttonSendValidCodeRegister.text = getString(R.string.reSendTimeVar, i)
+                    buttonSendValidCodeRegister?.text = getString(R.string.reSendTimeVar, i)
                 }
                 delay(1000)
             }
             withContext(Dispatchers.Main) {
-                buttonSendValidCodeRegister.text = "重新发送"
-                buttonSendValidCodeRegister.isEnabled = true
+                buttonSendValidCodeRegister?.text = "重新发送"
+                buttonSendValidCodeRegister?.isEnabled = true
             }
         }
     }

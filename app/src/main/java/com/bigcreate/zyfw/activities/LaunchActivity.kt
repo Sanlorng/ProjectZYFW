@@ -1,8 +1,10 @@
 package com.bigcreate.zyfw.activities
 
+import android.app.NotificationChannelGroup
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -29,7 +31,6 @@ class LaunchActivity : AppCompatActivity(), LoginImpl.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
         window.translucentSystemUI(true)
-
         try {
             //Log.e("startService", "true")
             startService(Intent(this, CheckUpdateService::class.java))

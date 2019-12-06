@@ -47,9 +47,9 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
         }
 
         override fun onUserInfoIsEmpty() {
-            startActivityForResult(Intent(context!!, RegisterActivity::class.java).apply {
-                type = "setupInfo"
-            }, RequestCode.SETUP_USER_INFO)
+//            startActivityForResult(Intent(context!!, RegisterActivity::class.java).apply {
+//                type = "setupInfo"
+//            }, RequestCode.SETUP_USER_INFO)
         }
 
         override fun getViewContext(): Context {

@@ -9,16 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IntegerRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bigcreate.library.*
 import com.bigcreate.zyfw.R
-import com.bigcreate.zyfw.base.Attributes
-import com.bigcreate.zyfw.base.RequestCode
-import com.bigcreate.zyfw.base.ResultCode
-import com.bigcreate.zyfw.base.appCompactActivity
+import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
 import com.bigcreate.zyfw.models.UpdateInfoRequest
 import com.bigcreate.zyfw.mvp.user.UserInfoImpl
@@ -49,7 +47,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocationListener, UserInfoImpl.View {
+class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocationListener, UserInfoImpl.View{
     private var param1: String? = null
     private var param2: String? = null
     private var tencentLocation: TencentLocation? = null
@@ -99,8 +97,15 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
                 else
                     activity?.finish()
             }
+        }else if (isSetup == "setupInfo") {
+            activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+
+                }
+            })
         }
-        toolbarSetupInfo.requestApplyInsets()
+//        toolbarSetupInfo.requestApplyInsets()
+        toolbarSetupInfo.paddingStatusBar()
         BoxingMediaLoader.getInstance().init(boxImpl)
         imageAvatarSetupInfo.setOnClickListener {
             //            val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -191,6 +196,7 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
             isAllowDirection = true
         }
         tencentLocation.requestLocationUpdates(request, this)
+
         super.onActivityCreated(savedInstanceState)
     }
 

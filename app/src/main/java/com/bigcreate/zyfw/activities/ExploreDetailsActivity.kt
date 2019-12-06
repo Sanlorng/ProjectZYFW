@@ -68,7 +68,6 @@ class ExploreDetailsActivity : AuthLoginActivity(),
                     dialog.dismiss()
                 })
         }
-        refreshDetails()
     }
     private var item : ExploreItem? = null
     private lateinit var popupMenu: PopupMenu

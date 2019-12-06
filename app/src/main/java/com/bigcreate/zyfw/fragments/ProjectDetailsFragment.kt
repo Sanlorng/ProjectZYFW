@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.core.content.edit
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,11 +26,13 @@ import com.bigcreate.zyfw.activities.ProjectJoinedMemberActivity
 import com.bigcreate.zyfw.activities.RegisterActivity
 import com.bigcreate.zyfw.adapter.DetailsMediaAdapter
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.defaultSharedPreferences
 import com.bigcreate.zyfw.models.GetProjectRequest
 import com.bigcreate.zyfw.models.Project
 import com.bigcreate.zyfw.mvp.project.DetailsImpl
 import com.bigcreate.zyfw.mvp.project.JoinProjectImpl
 import com.bumptech.glide.Glide
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_project_details.*
 import kotlinx.android.synthetic.main.item_project_details_header.*
@@ -107,8 +112,10 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
             if (join) {
                 context?.getDrawable(R.drawable.ic_favorite_black_24dp)?.setTint(context!!.getColor(R.color.colorAccent))
                 otherProjectDetails.setActionIcon(R.drawable.ic_favorite_black_24dp)
+                otherProjectDetails.setActionText("已加入")
             }else {
                 otherProjectDetails.setActionIcon(R.drawable.ic_favorite_border_black_24dp)
+                otherProjectDetails.setActionText("加入")
             }
             if (Attributes.userId == userInfoByPart.userId) {
                 contactProjectDetails.setActionIcon(R.drawable.ic_outline_edit_24px)
@@ -118,6 +125,7 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
                         type = "updateInfo"
                     }
                 })
+                otherProjectDetails.showAction(true)
                 otherProjectDetails.setActionIcon(R.drawable.ic_outline_group_24px)
                 otherProjectDetails.setActionText("查看")
                 otherProjectDetails.setOnActionClick(View.OnClickListener {
@@ -126,15 +134,20 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
                         putExtra("number",projectPeopleNumbers)
                     }
                 })
-            }else {
+            }else{
                 contactProjectDetails.setOnActionClick(View.OnClickListener {
                     it.context.startActivity<ChatActivity> {
                         putExtra("chatId",userInfoByPart.userId)
                     }
                 })
-                otherProjectDetails.setOnActionClick(View.OnClickListener {
-                    joinPresenter.doRequest(GetProjectRequest(Attributes.token,projectId))
-                })
+                if (Attributes.userInfo?.userIdentify == "老师") {
+                    otherProjectDetails.showAction(false)
+                }else {
+                    otherProjectDetails.showAction(true)
+                    otherProjectDetails.setOnActionClick(View.OnClickListener {
+                        joinPresenter.doRequest(GetProjectRequest(Attributes.token, projectId))
+                    })
+                }
             }
             contactProjectDetails.setTitleText(projectPrincipalName)
             contactProjectDetails.setSubTitleText(projectPrincipalPhone)
@@ -149,7 +162,59 @@ class DetailsFragment : Fragment(), DetailsImpl.View, JoinProjectImpl.View {
 
             navigationProjectDetails.setOnActionClick(View.OnClickListener {
                 val endPoi = Poi(projectAddress, LatLng(latitude,longitude),"")
-                AmapNaviPage.getInstance().showRouteActivity(it.context, AmapNaviParams(null,null,endPoi,AmapNaviType.WALK,AmapPageType.NAVI),null)
+                when((context?.defaultSharedPreferences?.getString("navigationWay","0")?:"0").toInt()) {
+                    0 -> {
+                        PopupMenu(it.context,it).apply {
+                            inflate(R.menu.navigation_way)
+                            if (menu is MenuBuilder) {
+                                (menu as MenuBuilder).setOptionalIconsVisible(true)
+                            }
+                            setOnMenuItemClickListener {item ->
+                                when(item.itemId) {
+                                    R.id.navigationWalk -> {
+                                        AmapNaviPage.getInstance().showRouteActivity(it.context, AmapNaviParams(null,null,endPoi,AmapNaviType.WALK,AmapPageType.NAVI),null)
+                                    }
+                                    R.id.navigationRide -> {
+                                        AmapNaviPage.getInstance().showRouteActivity(it.context, AmapNaviParams(null,null,endPoi,AmapNaviType.RIDE,AmapPageType.NAVI),null)
+                                    }
+                                    R.id.navigationDrive -> {
+                                        AmapNaviPage.getInstance().showRouteActivity(it.context, AmapNaviParams(null,null,endPoi,AmapNaviType.DRIVER,AmapPageType.NAVI),null)
+                                    }
+                                    R.id.rememberNavigation -> {
+                                        ( item.actionView as MaterialCheckBox).apply {
+                                            isChecked = isChecked.not()
+                                        }
+                                        return@setOnMenuItemClickListener false
+                                    }
+                                }
+//                                if ((menu.findItem(R.id.rememberNavigation).actionView as MaterialCheckBox).isChecked) {
+//                                    context?.defaultSharedPreferences?.edit {
+//                                        putString("navigationWay",when(item.itemId) {
+//                                            R.id.navigationDrive -> "3"
+//                                            R.id.navigationRide -> "2"
+//                                            R.id.navigationWalk -> "1"
+//                                            else -> "0"
+//                                        })
+//                                    }
+//                                    toast("可以在设置中更改导航方式")
+//                                }
+                                true
+                            }
+                            show()
+                        }
+                    }
+                    1 -> {
+                        AmapNaviPage.getInstance().showRouteActivity(it.context, AmapNaviParams(null,null,endPoi,AmapNaviType.WALK,AmapPageType.NAVI),null)
+                    }
+
+                    2 -> {
+                        AmapNaviPage.getInstance().showRouteActivity(it.context, AmapNaviParams(null,null,endPoi,AmapNaviType.RIDE,AmapPageType.NAVI),null)
+                    }
+
+                    3 -> {
+                        AmapNaviPage.getInstance().showRouteActivity(it.context, AmapNaviParams(null,null,endPoi,AmapNaviType.DRIVER,AmapPageType.NAVI),null)
+                    }
+                }
             })
 
             //navigationProjectDetails.setTitleText(getString(R.string.localeProjectVar, projectAddress))

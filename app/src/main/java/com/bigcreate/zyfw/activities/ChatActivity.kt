@@ -59,6 +59,7 @@ class ChatActivity : AuthLoginActivity() {
             binder?.addOnMessageReceiveListener(messageTag) {
                 onNewMessage(it)
             }
+            binder?.cleanBadge(chatId)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -72,6 +73,36 @@ class ChatActivity : AuthLoginActivity() {
 
         setSupportActionBar(toolbarChat)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val layoutParam = toolbarChat.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParam.height += let {
+            it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
+        }
+        toolbarChat.layoutParams = layoutParam
+       // toolbarChat.title = "聊天"
+        toolbarChat.setNavigationOnClickListener {
+            finish()
+        }
+
+        buttonSendChat.isEnabled = false
+        bindService(Intent(this, MessageService::class.java), connection, Service.BIND_AUTO_CREATE)
+        listChatHistory.layoutManager = LinearLayoutManager(this).apply {
+            stackFromEnd = true
+        }
+        listChatHistory.adapter = ChatMessageAdapter()
+        textUnreadChat.isVisible = false
+        listChatHistory.itemAnimator = DefaultItemAnimator()
+        initLayout()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        chatId = intent?.getIntExtra("chatId",0)?: chatId
+        chatMessages.clear()
+        binder?.cleanBadge(chatId)
+        listChatHistory.adapter = ChatMessageAdapter()
+        initLayout()
+    }
+    private fun  initLayout() {
         val userInfo = Attributes.userTemp[chatId]
         if (userInfo == null) {
             RemoteService.getHeadLinkAndNick(chatId).enqueue {
@@ -116,52 +147,31 @@ class ChatActivity : AuthLoginActivity() {
                         }
                     })
         }
-        val layoutParam = toolbarChat.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParam.height += let {
-            it.resources.getDimensionPixelOffset(it.resources.getIdentifier("status_bar_height", "dimen", "android"))
-        }
-        toolbarChat.layoutParams = layoutParam
-       // toolbarChat.title = "聊天"
-        toolbarChat.setNavigationOnClickListener {
-            finish()
-        }
-
-
-
-        buttonSendChat.isEnabled = false
-        bindService(Intent(this, MessageService::class.java), connection, Service.BIND_AUTO_CREATE)
-
-        listChatHistory.layoutManager = LinearLayoutManager(this).apply {
-            stackFromEnd = true
-        }
-        listChatHistory.adapter = ChatMessageAdapter()
-        textUnreadChat.isVisible = false
-        listChatHistory.itemAnimator = DefaultItemAnimator()
         if (chatId != MessageHeader.GROUP_ID) {
-        RemoteService.getMessageSingle(Attributes.userId,chatId).enqueue {
-            response {
-                val info = body()
-                if (info.isNullOrEmpty().not()) {
-                    info?.forEach {
-                        onNewMessage(ChatMessage(
-                                msg = it.getAsString("message"),
-                                sendUserId = it.getAsInt("sendUserId"),
-                                receiveUserId = it.getAsInt("receiveUserId"),
-                                time = it.get("sendTime").asLong,
-                                to = it.get("type").asBoolean
-                        ).apply {
-                            chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
-                        })
-                        listChatHistory.smoothScrollToPosition(chatMessages.lastIndex)
+            RemoteService.getMessageSingle(Attributes.userId,chatId).enqueue {
+                response {
+                    val info = body()
+                    if (info.isNullOrEmpty().not()) {
+                        info?.forEach {
+                            chatMessages.add(ChatMessage(
+                                    msg = it.getAsString("message"),
+                                    sendUserId = it.getAsInt("sendUserId"),
+                                    receiveUserId = it.getAsInt("receiveUserId"),
+                                    time = it.get("sendTime").asLong,
+                                    to = it.get("type").asBoolean
+                            ).apply {
+                                chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
+                            })
+                        }
+                        listChatHistory.adapter?.notifyDataSetChanged()
                     }
                 }
             }
-        }
         }else {
             RemoteService.getMessageGroup().enqueue {
                 response {
                     body()?.forEach {
-                        onNewMessage(ChatMessage(
+                        chatMessages.add(ChatMessage(
                                 msg = it.getAsString("message"),
                                 sendUserId = it.getAsInt("sendUserId"),
                                 receiveUserId = it.getAsInt("receiveUserId"),
@@ -170,8 +180,19 @@ class ChatActivity : AuthLoginActivity() {
                         ).apply {
                             chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
                         })
-                        listChatHistory.smoothScrollToPosition(chatMessages.lastIndex)
+
+//                        onNewMessage(ChatMessage(
+//                                msg = it.getAsString("message"),
+//                                sendUserId = it.getAsInt("sendUserId"),
+//                                receiveUserId = it.getAsInt("receiveUserId"),
+//                                time = it.get("sendTime").asLong,
+//                                to = it.get("type").asBoolean
+//                        ).apply {
+//                            chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
+//                        })
+//                        listChatHistory.scrollToPosition(chatMessages.lastIndex)
                     }
+                    listChatHistory.adapter?.notifyDataSetChanged()
                 }
             }
         }
@@ -193,6 +214,7 @@ class ChatActivity : AuthLoginActivity() {
             if (manager.findLastVisibleItemPosition() == chatMessages.lastIndex -1 || message.sendUserId == Attributes.userId)
                 listChatHistory.scrollToPosition(chatMessages.lastIndex)
         }
+        binder?.cleanBadge(chatId)
     }
 
     override fun afterCheckLoginSuccess() {

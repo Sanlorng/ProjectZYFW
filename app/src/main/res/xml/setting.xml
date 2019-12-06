@@ -22,6 +22,14 @@
             android:title="夜间模式"
             android:summary="开启/关闭夜间模式" />
         <ListPreference
+            android:title="导航模式"
+            android:icon="@drawable/ic_outline_navigation_24px"
+            android:defaultValue="0"
+            android:key="navigationWay"
+            android:summary="手动选择"
+            app:entryValues="@array/navigation_way_switch_int"
+            app:entries="@array/navigation_way_switch" />
+        <ListPreference
             app:entries="@array/night_mode_switch"
             app:entryValues="@array/night_mode_switch_int"
             android:defaultValue="-1"

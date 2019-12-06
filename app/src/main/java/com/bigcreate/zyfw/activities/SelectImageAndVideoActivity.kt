@@ -3,6 +3,7 @@ package com.bigcreate.zyfw.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -10,10 +11,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bigcreate.library.setIconTint
+import com.bigcreate.library.startActivity
 import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.SelectListAdapter
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.Glide4Engine
 import com.bigcreate.zyfw.base.RequestCode
 import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.models.FilesUploadRequest
@@ -25,6 +28,10 @@ import com.bilibili.boxing.loader.IBoxingMediaLoader
 import com.bilibili.boxing.model.config.BoxingConfig
 import com.bilibili.boxing_impl.ui.BoxingActivity
 import com.bumptech.glide.Glide
+import com.zhihu.matisse.Matisse
+import com.zhihu.matisse.MimeType
+import com.zhihu.matisse.engine.impl.GlideEngine
+import com.zhihu.matisse.engine.impl.PicassoEngine
 import kotlinx.android.synthetic.main.activity_select_image_and_video.*
 import java.io.File
 
@@ -73,12 +80,22 @@ class SelectImageAndVideoActivity : AuthLoginActivity(), UploadProjectMediaImpl.
         imageConfig = BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
         videoConfig = BoxingConfig(BoxingConfig.Mode.VIDEO)
         listSelectItem.adapter = SelectListAdapter(list) {
-            if (intent.type == "image")
-                Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity, BoxingActivity::class.java)
-                        .start(this@SelectImageAndVideoActivity, RequestCode.SELECT_IMAGE)
-            else
+            if (intent.type == "image") {
+                startActivity<MediaPickerActivity>()
+//                Matisse.from(this)
+//                        .choose(MimeType.ofImage())
+//                        .countable(true)
+//                        .maxSelectable(9)
+//                        .imageEngine(Glide4Engine())
+//                        .forResult(RequestCode.SELECT_IMAGE)
+//                Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity, BoxingActivity::class.java)
+//                        .start(this@SelectImageAndVideoActivity, RequestCode.SELECT_IMAGE)
+            }
+
+            else {
                 Boxing.of(videoConfig).withIntent(this@SelectImageAndVideoActivity, BoxingActivity::class.java)
                         .start(this@SelectImageAndVideoActivity, RequestCode.SELECT_VIDEO)
+            }
 
         }
         listSelectItem.itemAnimator = DefaultItemAnimator()
@@ -90,6 +107,10 @@ class SelectImageAndVideoActivity : AuthLoginActivity(), UploadProjectMediaImpl.
                 resultCode != Activity.RESULT_OK -> {
                 }
                 requestCode == RequestCode.SELECT_IMAGE -> {
+//                    val array = Matisse.obtainPathResult(data)
+//                    list.addAll(List(array.size) {
+//                        SelectListAdapter.Image(array[it])
+//                    })
                     list.add(SelectListAdapter.Image(get(0).path))
                     list.remove(action)
                     list.add(action)

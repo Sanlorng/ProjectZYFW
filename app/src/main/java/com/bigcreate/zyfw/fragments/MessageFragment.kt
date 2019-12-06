@@ -113,10 +113,10 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
             binder?.getUserList()
         }
 //        initHashSet()
-        val group = MessageHeader(MessageHeader.GROUP_ID,"全国群聊",System.currentTimeMillis())
+        val group = MessageHeader(MessageHeader.GROUP_ID,"群聊",System.currentTimeMillis())
         messageList.add(group)
         messageMap[MessageHeader.GROUP_ID] = group
-        Attributes.userTemp[MessageHeader.GROUP_ID] = UserInfoByPart("",MessageHeader.GROUP_ID,"全国群聊")
+        Attributes.userTemp[MessageHeader.GROUP_ID] = UserInfoByPart("",MessageHeader.GROUP_ID,"群聊")
         textMessage.visibility = View.GONE
 //        hintSearchBar.isVisible = true
 //        inputSearchBar.isVisible = false
@@ -127,6 +127,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         avatarList.itemAnimator = DefaultItemAnimator()
         avatarList.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         avatarList.adapter = AvatarListAdapter(avatarArray) {
+            binder?.cleanBadge(userId)
             avatarList.context.startActivity<ChatActivity> {
                 putExtra("chatId", userId)
             }

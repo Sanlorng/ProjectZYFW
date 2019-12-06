@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/navigationWalk" android:title="步行" />
+    <item android:id="@+id/navigationRide" android:title="骑行" />
+    <item android:id="@+id/navigationDrive" android:title="驾车" />
+    <item android:id="@+id/rememberNavigation" android:title="记住我的选择" android:visible="false" app:actionViewClass="com.google.android.material.checkbox.MaterialCheckBox" />
+</menu>

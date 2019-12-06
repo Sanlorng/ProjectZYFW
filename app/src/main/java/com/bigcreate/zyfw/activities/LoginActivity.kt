@@ -127,8 +127,11 @@ class LoginActivity : AppCompatActivity(), LoginImpl.View {
     }
 
     override fun onLoginFailed(response: JsonObject) {
-        toast("登录失败")
-        toast("s")
+        toast("登录失败 " + when(response.code) {
+            404 -> "密码错误"
+            else -> response.jsonContentFromData
+        })
+
     }
 
     override fun onLoginSuccess(loginInfo: LoginModel) {

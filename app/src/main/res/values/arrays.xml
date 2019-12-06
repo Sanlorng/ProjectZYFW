@@ -28,4 +28,16 @@
         <item>-1</item>
         <item>3</item>
     </string-array>
+    <string-array name="navigation_way_switch">
+        <item>手动选择</item>
+        <item>步行</item>
+        <item>骑行</item>
+        <item>驾车</item>
+    </string-array>
+    <string-array name="navigation_way_switch_int">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>

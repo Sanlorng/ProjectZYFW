@@ -142,6 +142,15 @@ class SettingsFragment : PreferenceFragmentCompat(), UpdateImpl.View {
 
 
         }
+        val navigationWay = findPreference<ListPreference>("navigationWay")
+        navigationWay?.setSummaryProvider {
+            when(navigationWay.value) {
+                "1" -> "步行"
+                "2" -> "骑行"
+                "3" -> "驾车"
+                else -> "手动选择"
+            }
+        }
         if (Attributes.loginUserInfo!=null) {
             Attributes.loginUserInfo?.run {
                 accountSetting?.summary = username

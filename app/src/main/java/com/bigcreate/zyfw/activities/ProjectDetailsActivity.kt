@@ -129,10 +129,10 @@ class ProjectDetailsActivity :
         intent?.data?.pathSegments?.forEachIndexed { index, s ->
             Log.e("aaaaaaa", "$index is $s")
         }
-        Log.e("uri", "${intent.data?.toString()}")
+        Log.e("uri", "${intent.toString()}")
         projectId = intent?.data?.lastPathSegment?.toInt() ?: -1
-        projectName = intent.type?.split("/")?.last()
-        textProjectTitle.text = projectName
+        projectName = intent.type?.removePrefix("project/")
+        toolbarProjectDetails.title = projectName
 //        supportActionBar?.title = projectName
         viewPagerDetails.offscreenPageLimit = 4
         fragmentJob = GlobalScope.async(Dispatchers.Main) {
@@ -219,7 +219,8 @@ class ProjectDetailsActivity :
         this.project = project
         project.run {
             projectType = projectTypeId
-            textProjectTitle.text = title
+            textProjectTitle.title = projectTopic
+            toolbarProjectDetails.title = projectTopic
             GlobalScope.launch(Dispatchers.Main) {
                 fragmentJob.await().onGetDetailsSuccess(project)
 //                val menu = bottomAppBarDetails.menu
