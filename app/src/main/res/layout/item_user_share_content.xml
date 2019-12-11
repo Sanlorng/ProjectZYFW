@@ -103,7 +103,7 @@
             android:tint="?android:attr/textColorSecondary"
             android:id="@+id/exploreItemComment"
             style="@style/user_share_action_style"
-            android:src="@drawable/ic_outline_comment_24px"
+            android:src="@drawable/ic_outline_comment_explore_24px"
             android:contentDescription="TODO" />
 
         <ImageButton
