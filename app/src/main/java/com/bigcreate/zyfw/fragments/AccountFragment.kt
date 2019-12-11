@@ -20,6 +20,7 @@ import com.bigcreate.zyfw.adapter.MenuListAdapter
 import com.bigcreate.zyfw.base.Attributes
 import com.bigcreate.zyfw.base.MyApplication
 import com.bigcreate.zyfw.base.RequestCode
+import com.bigcreate.zyfw.base.ResultCode
 import com.bigcreate.zyfw.models.SimpleRequest
 import com.bigcreate.zyfw.models.UserInfo
 import com.bigcreate.zyfw.mvp.user.GetUserInfoImpl
@@ -92,9 +93,9 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
             onLoginSuccess()
         }
         buttonEditInfoAccount.setOnClickListener {
-                startActivity(Intent(context!!, RegisterActivity::class.java).apply {
+                startActivityForResult(Intent(context!!, RegisterActivity::class.java).apply {
                     type = "updateInfo"
-                })
+                },0)
             }
 
         getLoginViewModel().getUserInfoStatus.observe(this, Observer {
@@ -192,6 +193,13 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
             Attributes.loginUserInfo?.apply {
                 getUserInfoImpl.doRequest(SimpleRequest(token, userId))
             }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == ResultCode.OK) {
+            getUserInfoImpl.doRequest(SimpleRequest(Attributes.token,Attributes.userId))
+        }
     }
 
     override fun onResume() {

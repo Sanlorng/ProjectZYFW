@@ -75,6 +75,22 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
             binder?.addOnMessageReceiveListener(messageTag) {
                 onNewMessage(it)
             }
+            binder?.addBadgeListener(messageTag,object : MessageService.BadgeListener {
+                override fun addBadge(uid: Int) {
+
+                }
+
+                override fun cleanBadge(uid: Int) {
+                    for( i in messageList.indices) {
+                        val item = messageList[i]
+                        if (item.id == uid) {
+                            item.unreadCount = 0
+                            listMessage?.adapter?.notifyItemChanged(i)
+                            break
+                        }
+                    }
+                }
+            })
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -154,7 +170,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
                                 to = it.get("type").asBoolean
                         ).apply {
                             chatId = if (sendUserId != Attributes.userId) sendUserId else receiveUserId
-                        })
+                        },true)
                     }
                 }
             }
@@ -194,11 +210,15 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         super.onStart()
     }
 
-    fun onNewMessage(message: ChatMessage) {
+    fun onNewMessage(message: ChatMessage, isFirst: Boolean = false) {
         var item = messageMap[if (message.to) message.chatId else MessageHeader.GROUP_ID]
         Log.e("xxxxx", message.toJson())
         if (item != null) {
             item.message = message.msg
+            if (!isFirst) {
+                item.unreadCount = item.unreadCount + 1
+//                item.unreadCount = item.unreadCount / 2
+            }
 //			item.time = SimpleDateFormat("yyyy.MM.dd hh:mm:ss", Locale.getDefault()).parse(message.time).time
             val index = messageList.indexOf(item)
             if (index == 0) {
@@ -211,6 +231,10 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
             }
         } else {
             item = MessageHeader(message.chatId, message.msg, 0)
+            if (!isFirst) {
+                item.unreadCount = item.unreadCount + 1
+//                item.unreadCount = item.unreadCount / 2
+            }
             val itemInfo = Attributes.userTemp[item.id]
             item.userNick = itemInfo?.userNick?:""
             item.userImg = itemInfo?.userHeadPictureLink ?: ""

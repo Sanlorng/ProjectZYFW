@@ -48,7 +48,8 @@ class CheckUpdateService : Service(), UpdateImpl.View {
                         .setContentTitle("检查到新版本")
                         .setContentText("版本号：$versionName")
                         .setStyle(NotificationCompat.BigTextStyle()
-                                .bigText("版本号：$versionName\n$changelog"))
+                                .bigText("版本号：$versionName\n$changelog")
+                                .setSummaryText("应用更新"))
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setContentIntent(PendingIntent.getActivity(this@CheckUpdateService, 0, Intent(this@CheckUpdateService, UpdateManagerActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

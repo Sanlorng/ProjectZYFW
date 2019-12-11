@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater

@@ -4,8 +4,11 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.job.JobInfo
 import android.app.job.JobParameters
+import android.app.job.JobScheduler
 import android.app.job.JobService
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -13,6 +16,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.NetworkType
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ProjectDetailsActivity
 import com.bigcreate.zyfw.base.Attributes
@@ -28,6 +32,7 @@ import java.lang.Exception
 
 class RecommendService : JobService(), RecommendImpl.View {
     private val recommendImpl = RecommendImpl(this)
+    private var jobId = 2
     private val loginImpl = LoginImpl(object : LoginImpl.View {
         override fun getViewContext(): Context {
             return this@RecommendService
@@ -46,9 +51,9 @@ class RecommendService : JobService(), RecommendImpl.View {
     override fun onStartJob(params: JobParameters?): Boolean {
         val lastLaunchTime = defaultSharedPreferences.getLong("last_launch", -1)
         Log.d("onJob", "On")
-        if (lastLaunchTime > 0) {
+//        if (lastLaunchTime > 0) {
             val relativeTime = System.currentTimeMillis() - lastLaunchTime
-            if (relativeTime > 100) {
+//            if (relativeTime > 100) {
                 if (Attributes.loginUserInfo == null)
                     if (defaultSharedPreferences.getBoolean("saved_account", false))
                         loginImpl.doRequest(LoginRequest(
@@ -64,15 +69,36 @@ class RecommendService : JobService(), RecommendImpl.View {
                         }
                     }
 
-            }
-        }
+//            }
+//        }
 
         return true
     }
 
     override fun onStopJob(params: JobParameters?): Boolean {
-        recommendImpl.detachView()
+//        recommendImpl.detachView()
+        scheeduleJob(getJobInfo())
         return true
+    }
+
+    private fun getJobInfo():JobInfo {
+        return JobInfo.Builder(jobId ++ , ComponentName(this,RecommendService::class.java))
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+                .setPeriodic(100)
+                .build()
+    }
+
+    private fun scheeduleJob(jobInfo: JobInfo) {
+        val jobScheduler = getSystemService(JobScheduler::class.java)
+        jobScheduler.schedule(jobInfo)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        recommendImpl.detachView()
     }
 
     override fun onGetRecommendFailed(jsonObject: JsonObject) {

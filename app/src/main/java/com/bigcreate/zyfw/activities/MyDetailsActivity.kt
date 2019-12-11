@@ -164,9 +164,11 @@ class MyDetailsActivity : AuthLoginActivity(), GetUserInfoImpl.View {
     }
 
     override fun onUserInfoIsEmpty() {
-        startActivityForResult(Intent(this@MyDetailsActivity, RegisterActivity::class.java).apply {
-            type = "setupInfo"
-        }, RequestCode.SETUP_USER_INFO)
+        if (userId == Attributes.userId) {
+            startActivityForResult(Intent(this@MyDetailsActivity, RegisterActivity::class.java).apply {
+                type = "setupInfo"
+            }, RequestCode.SETUP_USER_INFO)
+        }
 
     }
 

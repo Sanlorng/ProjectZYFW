@@ -9,6 +9,7 @@ import android.os.Build
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,6 +110,9 @@ class ExploreListAdapter(private val onItemClick: ((view: View, item: ExploreIte
                     exploreItemLike.imageTintList = exploreItemComment.imageTintList
                     exploreItemLike.setImageResource(R.drawable.ic_favorite_border_black_24dp)
                 }
+                val typedValue = TypedValue()
+                context.theme.resolveAttribute(android.R.attr.textColorSecondary,typedValue,true)
+                exploreItemComment.imageTintList = ColorStateList.valueOf(context.getColor(typedValue.resourceId))
                 setOnClickListener {
                     onItemClick?.invoke(it, this, position)
                 }

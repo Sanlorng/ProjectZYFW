@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.activities.ChatActivity
@@ -11,6 +12,8 @@ import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.callback.enqueue
 import com.bigcreate.zyfw.models.MessageHeader
 import com.bumptech.glide.Glide
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import kotlinx.android.synthetic.main.item_message_header.view.*
 
 /**
@@ -19,8 +22,12 @@ import kotlinx.android.synthetic.main.item_message_header.view.*
 class MessageListAdapter(private val messageMap: ArrayList<MessageHeader>) : RecyclerView.Adapter<MessageListAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val badgeDrawable = BadgeDrawable.create(view.context)
         init {
-
+//            view.overlay.add(badgeDrawable)
+//            badgeDrawable.badgeGravity = BadgeDrawable.TOP_END
+//            badgeDrawable.backgroundColor = view.context.getColor(R.color.colorAccent)
+//            badgeDrawable.updateBadgeCoordinates(view.frameBadge,null)
         }
     }
 
@@ -32,6 +39,13 @@ class MessageListAdapter(private val messageMap: ArrayList<MessageHeader>) : Rec
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.run {
             messageMap[position].apply {
+                frameBadge.isVisible = unreadCount != 0
+//                holder.badgeDrawable.number = 30
+                frameBadge.text = if (unreadCount > 99) {
+                    "99+"
+                }else {
+                    unreadCount.toString()
+                }
                 hintMessageItem.text = message
                 setOnClickListener {
                     val intent = Intent(context, ChatActivity::class.java)

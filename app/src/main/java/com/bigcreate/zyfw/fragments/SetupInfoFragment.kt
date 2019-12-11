@@ -1,5 +1,6 @@
 package com.bigcreate.zyfw.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,8 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.*
 import com.bigcreate.zyfw.models.InitPersonInfoRequest
 import com.bigcreate.zyfw.models.UpdateInfoRequest
+import com.bigcreate.zyfw.models.UserInfo
+import com.bigcreate.zyfw.mvp.user.GetUserInfoImpl
 import com.bigcreate.zyfw.mvp.user.UserInfoImpl
 import com.bilibili.boxing.Boxing
 import com.bilibili.boxing.BoxingMediaLoader
@@ -140,7 +143,7 @@ class SetupInfoFragment(private val infoType:String,private val schoolName: Stri
         buttonSubmitSetupInfo.setOnClickListener {
             Log.d("click", "click ok")
             if (layoutNickSetupInfo.editText!!.isEmpty() || layoutAddressSetupInfo.editText!!.isEmpty() || layoutUserEmailSetupInfo.editText!!.isEmpty()||
-                    layoutPhoneSetupInfo.editText!!.isEmpty() || (avatarFile == null && infoType.startsWith("setupInfo")) || identifyId == -1 || sexId == -1)
+                    layoutPhoneSetupInfo.editText!!.isEmpty() || (avatarFile == null && infoType.startsWith("setupInfo")) || identifyId == -1 && infoType.startsWith("setupInfo") || sexId == -1 && infoType.startsWith("setupInfo"))
                 Toast.makeText(context!!, "你还有尚未填写的资料，请填好后重试", Toast.LENGTH_SHORT).show()
             else {
                 showProgress(true)
@@ -221,8 +224,10 @@ class SetupInfoFragment(private val infoType:String,private val schoolName: Stri
         progressSetupInfo.isVisible = boolean
 //        textUserTypeSetupInfo.isEnabled = boolean.not()
 //        textGenderSetupInfo.isEnabled = boolean.not()
-        layoutDropdownIdentify.isEnabled = boolean.not()
-        layoutDropdownSex.isEnabled = boolean.not()
+        if (infoType.startsWith("setupInfo")) {
+            layoutDropdownIdentify.isEnabled = boolean.not()
+            layoutDropdownSex.isEnabled = boolean.not()
+        }
         layoutNickSetupInfo.isEnabled = boolean.not()
         layoutPhoneSetupInfo.isEnabled = boolean.not()
         layoutAddressSetupInfo.isEnabled = boolean.not()
@@ -340,6 +345,33 @@ class SetupInfoFragment(private val infoType:String,private val schoolName: Stri
     override fun onUpdateUserInfoSuccess(jsonObject: JsonObject) {
         //activity?.finish()
         toast("更新成功")
+        if (avatarFile != null) {
+            val userInfo = Attributes.loginUserInfo!!
+            userInfo.apply {
+                if (avatarFile != null) {
+                    userInfoImpl.doSetupAvatar(
+                            avatarFile!!, token, userId)
+                }
+            }
+        }else {
+//            GetUserInfoImpl(object : GetUserInfoImpl.View {
+//                override fun getViewContext(): Context {
+//                    return context!!
+//                }
+//
+//                override fun onGetUserInfoFailed() {
+//
+//                }
+//
+//                override fun onGetUserInfoSuccess(userInfo: UserInfo) {
+//
+//                }
+//
+//                override fun onUserInfoIsEmpty() {
+//
+//                }
+//            })
+        }
     }
 
     override fun onSetupAvatarSuccess() {

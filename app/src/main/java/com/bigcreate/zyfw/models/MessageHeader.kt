@@ -8,7 +8,8 @@ data class MessageHeader(
         var message: String = "",
         var time: Long,
         var userImg: String = "",
-        var userNick: String = ""
+        var userNick: String = "",
+        var unreadCount: Int = 0
 ){
     companion object {
         const val GROUP_ID = 0

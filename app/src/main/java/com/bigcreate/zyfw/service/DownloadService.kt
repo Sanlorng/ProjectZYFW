@@ -70,7 +70,8 @@ class DownloadService : Service() {
             notificationBuilder = NotificationCompat.Builder(this@DownloadService,"3")
             notificationBuilder
                     .setSmallIcon(R.drawable.ic_file_download_black_24dp)
-                    .setStyle(NotificationCompat.BigTextStyle())
+                    .setStyle(NotificationCompat.BigTextStyle()
+                            .setSummaryText("下载"))
                     .setContentTitle("准备下载")
                     .setContentText(downloadTitle)
                     .setOngoing(false)
