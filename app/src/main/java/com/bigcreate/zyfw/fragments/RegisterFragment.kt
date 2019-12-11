@@ -129,6 +129,9 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
                     }
                 }
                 dialog.show()
+                dialog.dropdownOrg.dropDownHeight = resources.displayMetrics.heightPixels / 3
+                dialog.dropdownOrgCity.dropDownHeight = resources.displayMetrics.heightPixels / 3
+                dialog.dropdownOrgProvince.dropDownHeight = resources.displayMetrics.heightPixels / 3
             }
             layoutSchoolNameRegister.setEndIconOnClickListener {
                 lifecycleScope.launch(Dispatchers.Main) {
@@ -142,6 +145,9 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
                     }
                 }
                 dialog.show()
+                dialog.dropdownOrg.dropDownHeight = resources.displayMetrics.heightPixels / 3
+                dialog.dropdownOrgCity.dropDownHeight = resources.displayMetrics.heightPixels / 3
+                dialog.dropdownOrgProvince.dropDownHeight = resources.displayMetrics.heightPixels / 3
             }
         }
         toolbarRegister.setNavigationOnClickListener {
