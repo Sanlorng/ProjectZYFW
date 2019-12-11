@@ -33,6 +33,7 @@ class DownloadService : Service() {
             toast("下载完成")
             notificationBuilder.setProgress(100,100,false)
                     .setContentTitle("下载完成")
+                    .setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE)
             manageService.notify(3,notificationBuilder.build())
             if (BuildConfig.DEBUG)
                 Log.e("type", type)
@@ -75,6 +76,7 @@ class DownloadService : Service() {
                     .setContentTitle("准备下载")
                     .setContentText(downloadTitle)
                     .setOngoing(false)
+                    .setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE)
                     .setProgress(0,0,true)
             downloadJob = DownloadImpl.startDownload(savePath, downloadUrl, downloadCallBack)
         }
