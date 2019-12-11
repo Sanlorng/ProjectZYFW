@@ -215,7 +215,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
         Log.e("xxxxx", message.toJson())
         if (item != null) {
             item.message = message.msg
-            if (!isFirst) {
+            if (!isFirst && Attributes.userId != message.sendUserId) {
                 item.unreadCount = item.unreadCount + 1
 //                item.unreadCount = item.unreadCount / 2
             }
@@ -231,7 +231,7 @@ class MessageFragment : Fragment(), MainActivity.ChildFragment {
             }
         } else {
             item = MessageHeader(message.chatId, message.msg, 0)
-            if (!isFirst) {
+            if (!isFirst && Attributes.userId != message.sendUserId) {
                 item.unreadCount = item.unreadCount + 1
 //                item.unreadCount = item.unreadCount / 2
             }
