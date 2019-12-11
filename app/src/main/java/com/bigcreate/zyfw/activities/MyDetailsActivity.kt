@@ -72,6 +72,8 @@ class MyDetailsActivity : AuthLoginActivity(), GetUserInfoImpl.View {
             locationNavigationHeader.text = it.userAddress
             sexNavigationHeader.text = it.userSex + "性"
             identifyNavigationHeader.text = it.userIdentify
+            emailNavigationHeader.text = it.userEmail
+            userSchoolNavigationHeader.text = it.schoolName
             if (userId != Attributes.userId) {
                 buttonEditInfoAccount.setImageResource(R.drawable.ic_outline_comment_24px)
                 buttonEditInfoAccount.setOnClickListener {

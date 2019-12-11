@@ -26,6 +26,7 @@ object Attributes {
     const val authorityProject = "$authority/project/%s"
     val backgroundExecutors: ExecutorService = Executors.newFixedThreadPool(10)
     private val listeners = HashMap<String, ((newCity: String) -> Unit)>()
+    private val userinfoListeners = HashMap<String,((userInfo: UserInfo?) -> Unit)>()
     private val provinceListeners = HashMap<String, ((newProvince: String) -> Unit)>()
     var AppCity = "桂林"
         set(value) {
@@ -80,6 +81,12 @@ object Attributes {
             loginUserInfo!!.userId = value
         }
     var userInfo: UserInfo? = null
+    set(value) {
+        field = value
+        userinfoListeners.forEach {
+            it.value.invoke(field)
+        }
+    }
     var userImg
         get() = userInfo!!.userHeadPictureLink
         set(value) {
@@ -92,6 +99,14 @@ object Attributes {
 
     fun removeCityListener(tag: String) {
         listeners.remove(tag)
+    }
+    fun addUserInfoListener(tag: String, value: ((userInfo: UserInfo?) -> Unit)) {
+        userinfoListeners[tag] = value
+        value.invoke(userInfo)
+    }
+
+    fun removeUserInfoListener(tag: String) {
+        userinfoListeners.remove(tag)
     }
     fun addProvinceListener(tag: String, value: ((newProvince: String) -> Unit)) {
         provinceListeners[tag] = value

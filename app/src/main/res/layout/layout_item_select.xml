@@ -8,9 +8,10 @@
     android:layout_height="wrap_content">
 
     <com.bigcreate.zyfw.view.ProportionView
+        android:backgroundTint="@color/color_on_surface_40"
+        android:background="#ffffff"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#e0e0e0">
+        android:layout_height="wrap_content">
 
         <ImageView
             tools:src="@drawable/ic_add_black_48dp"

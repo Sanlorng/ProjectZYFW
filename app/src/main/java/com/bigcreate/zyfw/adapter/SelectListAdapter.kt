@@ -1,9 +1,12 @@
 package com.bigcreate.zyfw.adapter
 
+import android.content.res.ColorStateList
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import com.bigcreate.zyfw.R
 import com.bumptech.glide.Glide
@@ -32,9 +35,9 @@ class SelectListAdapter(val list: ArrayList<Model>, var onItemClickListener: ((I
                         cancelImage.isVisible = true
                     }
                     else -> {
-                        Glide.with(context)
-                                .load(R.drawable.ic_add_black_48dp)
-                                .into(itemSelectedImage)
+                        itemSelectedImage.setImageResource(R.drawable.ic_add_black_48dp)
+                        itemSelectedImage.setPadding(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8f,resources.displayMetrics).toInt())
+                        itemSelectedImage.imageTintList = ColorStateList.valueOf(context.getColor(R.color.color_surface_80))
                         cancelImage.isVisible = false
                         setOnClickListener {
                             onItemClickListener?.invoke(position)

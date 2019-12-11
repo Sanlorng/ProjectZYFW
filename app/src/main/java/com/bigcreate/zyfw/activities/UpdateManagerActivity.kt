@@ -26,6 +26,7 @@ import java.io.File
 
 class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
     var path = ""
+    var versionName = ""
     private val updateImpl = UpdateImpl(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +85,7 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
 
     override fun onUpdateCheckSuccess(updateInfo: UpdateInfo) {
         path = updateInfo.path
+        versionName = updateInfo.versionName
         textChangelogUpdate.text = getString(R.string.textChangelogVar, updateInfo.versionName, updateInfo.changelog)
         buttonDownloadUpdate.setOnClickListener {
 //                        startActivity(Intent(Intent.ACTION_VIEW, updateInfo.path.toUri()))
@@ -97,6 +99,7 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
                         putExtra("downloadType", "update")
                         putExtra("savePath", externalCacheDir?.absolutePath + "/update/appUpdate.apk")
                         putExtra("downloadUrl", path)
+                        putExtra("downloadTitle","应用更新 - ${updateInfo.versionName}")
                         startService(this)
                     } else {
                     dialog("请求安装权限",
@@ -127,6 +130,7 @@ class UpdateManagerActivity : AppCompatActivity(), UpdateImpl.View {
                 putExtra("downloadType", "update")
                 putExtra("savePath", externalCacheDir!!.absolutePath + "/update/appUpdate.apk")
                 putExtra("downloadUrl", path)
+                putExtra("downloadTitle","应用更新 - $versionName")
                 startService(this)
             }
     }

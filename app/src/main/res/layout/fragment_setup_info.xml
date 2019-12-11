@@ -80,108 +80,152 @@
                             android:maxLength="12" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <TextView
-                        android:gravity="center_vertical"
-                        android:id="@+id/textGenderSetupInfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/gender"
-                        android:textSize="18sp"
+                    <com.google.android.material.textfield.TextInputLayout
                         app:layout_constraintStart_toStartOf="@+id/layoutNickSetupInfo"
-                        app:layout_constraintTop_toBottomOf="@+id/layoutPhoneSetupInfo" />
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroupGenderTypeSetupInfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="@+id/layoutNickSetupInfo"
+                        app:layout_constraintTop_toBottomOf="@+id/layoutPhoneSetupInfo"
                         android:layout_marginTop="8dp"
-                        style="@style/Widget.MaterialComponents.ChipGroup"
-                        app:checkedChip="@id/chipMaleSetupInfo"
-                        app:layout_constraintStart_toStartOf="@+id/textGenderSetupInfo"
-                        app:layout_constraintTop_toBottomOf="@+id/textGenderSetupInfo"
-                        app:singleSelection="true">
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipMaleSetupInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/male"
-                            android:checkable="true"
-                            app:checkedIconVisible="false" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipFemaleSetupInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/female"
-                            android:checkable="true"
-                            app:checkedIconVisible="false" />
-                    </com.google.android.material.chip.ChipGroup>
-
-                    <TextView
-                        android:id="@+id/textUserTypeSetupInfo"
-                        android:layout_marginTop="8dp"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/layoutUserEmailSetupInfo"
+                        android:hint="邮箱"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/inputUserEmailSetupInfo"
+                            android:inputType="textEmailAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:text="@string/identity"
-                        android:textSize="18sp"
-                        app:layout_constraintStart_toStartOf="@+id/textGenderSetupInfo"
-                        app:layout_constraintTop_toBottomOf="@+id/chipGroupGenderTypeSetupInfo" />
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroupUserTypeSetupInfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/layoutDropdownSex"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                         android:layout_marginTop="8dp"
-                        app:checkedChip="@id/chipIdStudentSetupInfo"
-                        app:singleSelection="true"
-                        app:layout_constraintStart_toStartOf="@+id/textUserTypeSetupInfo"
-                        app:layout_constraintTop_toBottomOf="@+id/textUserTypeSetupInfo">
+                        android:hint="性别"
+                        app:layout_constraintStart_toStartOf="@+id/layoutUserEmailSetupInfo"
+                        app:layout_constraintEnd_toEndOf="@+id/layoutUserEmailSetupInfo"
+                        app:layout_constraintTop_toBottomOf="@+id/layoutUserEmailSetupInfo">
+                        <AutoCompleteTextView
+                            android:id="@+id/dropdownSex"
+                            android:editable="false"
+                            android:paddingStart="12dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/layoutDropdownIdentify"
+                        android:layout_marginTop="8dp"
+                        android:hint="身份"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                        app:layout_constraintStart_toStartOf="@+id/layoutDropdownSex"
+                        app:layout_constraintEnd_toEndOf="@+id/layoutDropdownSex"
+                        app:layout_constraintTop_toBottomOf="@+id/layoutDropdownSex">
+                        <AutoCompleteTextView
+                            android:id="@+id/dropdownIdentify"
+                            android:editable="false"
+                            android:paddingStart="12dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <!--                    <TextView-->
+<!--                        android:gravity="center_vertical"-->
+<!--                        android:id="@+id/textGenderSetupInfo"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        android:text="@string/gender"-->
+<!--                        android:textSize="16sp"-->
+<!--                        app:layout_constraintStart_toStartOf="@+id/layoutUserEmailSetupInfo"-->
+<!--                        app:layout_constraintTop_toBottomOf="@+id/layoutUserEmailSetupInfo" />-->
+<!--                    <com.google.android.material.chip.ChipGroup-->
+<!--                        android:id="@+id/chipGroupGenderTypeSetupInfo"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        style="@style/Widget.MaterialComponents.ChipGroup"-->
+<!--                        app:checkedChip="@id/chipMaleSetupInfo"-->
+<!--                        app:layout_constraintStart_toStartOf="@+id/textGenderSetupInfo"-->
+<!--                        app:layout_constraintTop_toBottomOf="@+id/textGenderSetupInfo"-->
+<!--                        app:singleSelection="true">-->
 
-                        <com.google.android.material.chip.Chip
-                            app:checkedIconVisible="false"
-                            android:checkable="true"
-                            android:id="@+id/chipIdStudentSetupInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/student" />
+<!--                        <com.google.android.material.chip.Chip-->
+<!--                            android:id="@+id/chipMaleSetupInfo"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="@string/male"-->
+<!--                            android:checkable="true"-->
+<!--                            app:checkedIconVisible="false" />-->
 
-                        <com.google.android.material.chip.Chip
-                            app:checkedIconVisible="false"
-                            android:checkable="true"
-                            android:id="@+id/chipIdTeacherSetupInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/teacher" />
+<!--                        <com.google.android.material.chip.Chip-->
+<!--                            android:id="@+id/chipFemaleSetupInfo"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="@string/female"-->
+<!--                            android:checkable="true"-->
+<!--                            app:checkedIconVisible="false" />-->
+<!--                    </com.google.android.material.chip.ChipGroup>-->
 
-                        <com.google.android.material.chip.Chip
-                            app:checkedIconVisible="false"
-                            android:checkable="true"
-                            android:id="@+id/chipIdOtherSetupInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/other" />
-                    </com.google.android.material.chip.ChipGroup>
+<!--                    <TextView-->
+<!--                        android:id="@+id/textUserTypeSetupInfo"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center_vertical"-->
+<!--                        android:text="@string/identity"-->
+<!--                        android:textSize="16sp"-->
+<!--                        app:layout_constraintStart_toStartOf="@+id/textGenderSetupInfo"-->
+<!--                        app:layout_constraintTop_toBottomOf="@+id/chipGroupGenderTypeSetupInfo" />-->
+
+<!--                    <com.google.android.material.chip.ChipGroup-->
+<!--                        android:id="@+id/chipGroupUserTypeSetupInfo"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        app:checkedChip="@id/chipIdStudentSetupInfo"-->
+<!--                        app:singleSelection="true"-->
+<!--                        app:layout_constraintStart_toStartOf="@+id/textUserTypeSetupInfo"-->
+<!--                        app:layout_constraintTop_toBottomOf="@+id/textUserTypeSetupInfo">-->
+
+<!--                        <com.google.android.material.chip.Chip-->
+<!--                            app:checkedIconVisible="false"-->
+<!--                            android:checkable="true"-->
+<!--                            android:id="@+id/chipIdStudentSetupInfo"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="@string/student" />-->
+
+<!--                        <com.google.android.material.chip.Chip-->
+<!--                            app:checkedIconVisible="false"-->
+<!--                            android:checkable="true"-->
+<!--                            android:id="@+id/chipIdTeacherSetupInfo"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="@string/teacher" />-->
+
+<!--                        <com.google.android.material.chip.Chip-->
+<!--                            app:checkedIconVisible="false"-->
+<!--                            android:checkable="true"-->
+<!--                            android:id="@+id/chipIdOtherSetupInfo"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="@string/other" />-->
+<!--                    </com.google.android.material.chip.ChipGroup>-->
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/layoutAddressSetupInfo"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/chipGroupUserTypeSetupInfo">
+                        app:layout_constraintTop_toBottomOf="@+id/layoutDropdownIdentify">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:autofillHints="@string/address"
                             android:ems="10"
                             android:gravity="top"
                             android:hint="@string/address"

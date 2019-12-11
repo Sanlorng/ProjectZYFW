@@ -28,6 +28,7 @@ import com.bilibili.boxing.loader.IBoxingMediaLoader
 import com.bilibili.boxing.model.config.BoxingConfig
 import com.bilibili.boxing_impl.ui.BoxingActivity
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
@@ -46,13 +47,13 @@ class SelectImageAndVideoActivity : AuthLoginActivity(), UploadProjectMediaImpl.
     lateinit var videoConfig: BoxingConfig
     private val boxImpl = object : IBoxingMediaLoader {
         override fun displayRaw(img: ImageView, absPath: String, width: Int, height: Int, callback: IBoxingCallback?) {
-            Glide.with(this@SelectImageAndVideoActivity)
+            Glide.with(img.context)
                     .load(absPath)
                     .into(img)
         }
 
         override fun displayThumbnail(img: ImageView, absPath: String, width: Int, height: Int) {
-            Glide.with(this@SelectImageAndVideoActivity)
+            Glide.with(img.context)
                     .load(absPath)
                     .into(img)
         }
@@ -63,7 +64,7 @@ class SelectImageAndVideoActivity : AuthLoginActivity(), UploadProjectMediaImpl.
     }
 
     override fun afterCheckLoginSuccess() {
-        dialog = androidx.appcompat.app.AlertDialog.Builder(this@SelectImageAndVideoActivity)
+        dialog = MaterialAlertDialogBuilder(this@SelectImageAndVideoActivity)
                 .setView(R.layout.layout_process_upload)
                 .setCancelable(false)
                 .create()
@@ -81,15 +82,15 @@ class SelectImageAndVideoActivity : AuthLoginActivity(), UploadProjectMediaImpl.
         videoConfig = BoxingConfig(BoxingConfig.Mode.VIDEO)
         listSelectItem.adapter = SelectListAdapter(list) {
             if (intent.type == "image") {
-                startActivity<MediaPickerActivity>()
+//                startActivity<MediaPickerActivity>()
 //                Matisse.from(this)
 //                        .choose(MimeType.ofImage())
 //                        .countable(true)
 //                        .maxSelectable(9)
 //                        .imageEngine(Glide4Engine())
 //                        .forResult(RequestCode.SELECT_IMAGE)
-//                Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity, BoxingActivity::class.java)
-//                        .start(this@SelectImageAndVideoActivity, RequestCode.SELECT_IMAGE)
+                Boxing.of(imageConfig).withIntent(this@SelectImageAndVideoActivity, BoxingActivity::class.java)
+                        .start(this@SelectImageAndVideoActivity, RequestCode.SELECT_IMAGE)
             }
 
             else {

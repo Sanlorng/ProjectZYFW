@@ -93,15 +93,14 @@ class CitySelectFragment : DialogFragment() {
                 provinceListCitySelected.layoutManager = LinearLayoutManager(context)
                 provinceListCitySelected.adapter = ProvinceAdapter(cityList)
                 var hasFind = false
-                for (i in 0 until cityList.size) {
+                for (i in cityList.indices) {
                     val province = cityList[i]
-                    for (j in 0 until province.city.size) {
-                        val city = province.city[j]
-                        if (city.name == Attributes.AppCity) {
+                    for (element in province.city) {
+                        if (element.name == Attributes.AppCity) {
                             (provinceListCitySelected.adapter as ProvinceAdapter).selectedPosition = i
                             provinceListCitySelected.scrollToPosition(i)
-                            toolbarSelectCity.title = String.format("当前：%s -> %s", province.name, city.name)
-                            this@CitySelectFragment.city = city.name
+                            toolbarSelectCity.title = String.format("当前：%s -> %s", province.name, element.name)
+                            this@CitySelectFragment.city = element.name
                             this@CitySelectFragment.province = province.name
                             hasFind = true
                             break

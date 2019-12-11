@@ -4,6 +4,9 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 data class CrashLog(
         val versionName: String,
@@ -25,11 +28,11 @@ data class SimpleRequest(var token: String, var userId: Int)
 data class SimplePageRequest(var token: String, var userId: Int, var pageNum: Int)
 data class LoginRequest(var username: String, var password: String)
 data class IsSetupInfoRequest(var token: String, var username: String)
-data class RegisterRequest(var username: String, var password: String, var idNumber: String,var realName:String, var code: String)
+data class RegisterRequest(var username: String, var password: String, var idNumber: String,var realName:String, var code: String, var schoolName: String)
 data class InitPersonInfoRequest(var username: String, var userNick: String, var userSexCode: Int,
-                                 var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String, var userId: Int)
+                                 var userIdentifyCode: Int, var userAddress: String, var userPhone: String, var token: String, var userId: Int, var userEmail: String, var schoolName: String)
 
-data class UpdateInfoRequest(var userAddress: String, var userPhone: String,val userId: Int,val token: String)
+data class UpdateInfoRequest(var userAddress: String, var userPhone: String,val userId: Int,val token: String, val userEmail: String)
 data class SearchRequest(var token: String, var projectRegion: String?, var projectTopic: String?, var projectContent: String?, var pageNum: Int)
 data class CreateProjectRequest(var projectTopic: String, var projectContent: String, var projectRegion: String,
                                 var projectAddress: String, var latitude: Double, var longitude: Double, var projectPrincipalName: String, var projectPrincipalPhone: String, var projectPeopleNumbers: String,
@@ -77,10 +80,10 @@ class FileUploadRequest(file: File, token: String, userId: Int) {
     var username: RequestBody
 
     init {
-        val type = MediaType.parse("multipart/form-data")
+        val type = "multipart/form-data".toMediaType()
         part = MultipartBody.Part.createFormData("file", file.name, RequestBody.create(type, file))
-        this.token = RequestBody.create(type, token)
-        this.username = RequestBody.create(type, userId.toString())
+        this.token = token.toRequestBody(type)
+        this.username = userId.toString().toRequestBody(type)
     }
 }
 
@@ -92,16 +95,16 @@ class PublishExploreRequest(files: List<File>, token: String, dyContent: String)
 
     init {
 
-        val type = MediaType.parse("multipart/form-data")
+        val type = "multipart/form-data".toMediaType()
 //        val builder = MultipartBody.Builder()
         files.forEach {
-            parts.add(MultipartBody.Part.createFormData("file", it.name, RequestBody.create(type, it)))
+            parts.add(MultipartBody.Part.createFormData("file", it.name, it.asRequestBody(type)))
 //            builder.addFormDataPart("file",it.name, RequestBody.create(type,it))
         }
 //        part = builder.build()
 //        part = MultipartBody.Part.createFormData("file",file.name, RequestBody.create(type, file))
-        this.token = RequestBody.create(type, token)
-        this.dyContent = RequestBody.create(type, dyContent)
+        this.token = token.toRequestBody(type)
+        this.dyContent = dyContent.toRequestBody(type)
     }
 }
 
@@ -114,7 +117,7 @@ class FilesUploadRequest(files: List<File>, token: String, username: String, pro
 
     init {
 
-        val type = MediaType.parse("multipart/form-data")
+        val type = "multipart/form-data".toMediaType()
 //        val builder = MultipartBody.Builder()
         files.forEach {
             parts.add(MultipartBody.Part.createFormData("file", it.name, RequestBody.create(type, it)))
@@ -122,8 +125,8 @@ class FilesUploadRequest(files: List<File>, token: String, username: String, pro
         }
 //        part = builder.build()
 //        part = MultipartBody.Part.createFormData("file",file.name, RequestBody.create(type, file))
-        this.token = RequestBody.create(type, token)
-        this.username = RequestBody.create(type, username)
-        this.projectId = RequestBody.create(type, projectId)
+        this.token = token.toRequestBody(type)
+        this.username = username.toRequestBody(type)
+        this.projectId = projectId.toRequestBody(type)
     }
 }

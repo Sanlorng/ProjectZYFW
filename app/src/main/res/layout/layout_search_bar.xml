@@ -9,9 +9,8 @@
     android:clickable="true"
     android:focusable="true"
     style="@style/Widget.MaterialComponents.CardView"
-    app:strokeColor="#1A000000"
+    app:strokeColor="@color/color_on_surface_40"
     app:strokeWidth="1dp"
-    app:cardElevation="1dp"
     app:cardCornerRadius="8dp">
 
     <com.google.android.material.appbar.MaterialToolbar

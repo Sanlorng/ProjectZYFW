@@ -16,10 +16,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.bigcreate.library.startActivity
-import com.bigcreate.library.statusBarHeight
-import com.bigcreate.library.toJson
-import com.bigcreate.library.toast
+import com.bigcreate.library.*
 import com.bigcreate.zyfw.BuildConfig
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.FragmentAdapter
@@ -254,14 +251,11 @@ class ProjectDetailsActivity :
                     findItem(R.id.projectDetailsFavorite).apply {
                         isChecked = favorite
                         icon = if (favorite){
-                            getDrawable(R.drawable.ic_star_black_24dp)?.apply {
-                                setTint(getColor(R.color.colorAccent))
-                            }
+                            iconTintListCompact = ColorStateList.valueOf(getColor(R.color.favorite))
+                            getDrawable(R.drawable.ic_star_black_24dp)
                         }else {
+                            iconTintListCompact = ColorStateList.valueOf(getColor(typeValue.resourceId))
                             getDrawable(R.drawable.ic_star_border_black_24dp)
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && favorite) {
-                            iconTintList = ColorStateList.valueOf(getColor(R.color.favorite))
                         }
 
                     }
@@ -330,12 +324,8 @@ class ProjectDetailsActivity :
         GlobalScope.launch(Dispatchers.Main) {
             bottomAppBarDetails.menu.findItem(R.id.projectDetailsFavorite).apply {
                 isChecked = true
-                icon = getDrawable(R.drawable.ic_star_black_24dp)?.apply {
-                    DrawableCompat.setTint(this, getColor(R.color.colorAccent))
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    iconTintList = ColorStateList.valueOf(getColor(R.color.favorite))
-                }
+                icon = getDrawable(R.drawable.ic_star_black_24dp)
+                iconTintListCompact = ColorStateList.valueOf(getColor(R.color.favorite))
             }
         }
     }
@@ -349,9 +339,7 @@ class ProjectDetailsActivity :
             bottomAppBarDetails.menu.findItem(R.id.projectDetailsFavorite).apply {
                 isChecked = false
                 icon = getDrawable(R.drawable.ic_star_border_black_24dp)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    iconTintList = null
-                }
+                iconTintListCompact = ColorStateList.valueOf(getColor(typeValue.resourceId))
             }
         }
     }

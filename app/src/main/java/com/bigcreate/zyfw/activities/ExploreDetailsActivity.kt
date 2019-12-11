@@ -12,10 +12,12 @@ import android.os.Looper
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
@@ -55,6 +57,7 @@ class ExploreDetailsActivity : AuthLoginActivity(),
     private val likeImpl = ExploreLikeImpl(this)
     private val commentImpl = ExploreCommentImpl(this)
     private val commentDialog = CommentDialogFragment()
+    private val typeValue = TypedValue()
     private val commentAdapter = ExploreDetailsCommentListAdapter { item, position, itemView ->
         if (Attributes.userId == item.dyCommentUserId || Attributes.userId == this.item?.dyReleaseUserId) {
                 dialog("删除评论","你确定要删除这条评论吗？","确定", DialogInterface.OnClickListener { dialog, which ->
@@ -77,6 +80,10 @@ class ExploreDetailsActivity : AuthLoginActivity(),
     }
 
     override fun afterCheckLoginSuccess() {
+        theme.resolveAttribute(R.attr.colorOnSurface,typeValue,true)
+        bottomExploreBar.menu.forEach {
+            it.iconTintListCompact = ColorStateList.valueOf(getColor(typeValue.resourceId))
+        }
         bottomExploreBar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.bottomExploreFavorite -> {
@@ -101,6 +108,9 @@ class ExploreDetailsActivity : AuthLoginActivity(),
                             (menu as MenuBuilder).setOptionalIconsVisible(true)
                         }
                         inflate(R.menu.explore_edit)
+                        menu.findItem(R.id.editExplore).apply {
+                            iconTintListCompact = ColorStateList.valueOf(getColor(typeValue.resourceId))
+                        }
                         menu.findItem(R.id.deleteExplore).apply {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 iconTintList = ColorStateList.valueOf(Color.RED)
@@ -269,9 +279,10 @@ class ExploreDetailsActivity : AuthLoginActivity(),
         bottomExploreBar.menu.findItem(R.id.bottomExploreFavorite).apply {
             isChecked = true
             setIcon(R.drawable.ic_star_black_24dp)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                iconTintList = ColorStateList.valueOf(getColor(R.color.favorite))
-            }
+            iconTintListCompact = ColorStateList.valueOf(getColor(R.color.favorite))
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                iconTintList = ColorStateList.valueOf(getColor(R.color.favorite))
+//            }
         }
         setResult(RequestCode.UPDATE_OK,Intent().apply {
             putExtra("position",intent.getIntExtra("position",0))
@@ -284,9 +295,9 @@ class ExploreDetailsActivity : AuthLoginActivity(),
         bottomExploreBar.menu.findItem(R.id.bottomExploreLike).apply {
             isChecked = true
             setIcon(R.drawable.ic_favorite_black_24dp)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                iconTintList = ColorStateList.valueOf(getColor(R.color.like))
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            iconTintListCompact = ColorStateList.valueOf(getColor(R.color.like))
+//            }
         }
         setResult(RequestCode.UPDATE_OK, Intent().apply {
             putExtra("position",intent.getIntExtra("position",0))
@@ -298,9 +309,10 @@ class ExploreDetailsActivity : AuthLoginActivity(),
         bottomExploreBar.menu.findItem(R.id.bottomExploreFavorite).apply {
             isChecked = false
             setIcon(R.drawable.ic_star_border_black_24dp)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                iconTintList = null
-            }
+            iconTintListCompact = ColorStateList.valueOf(getColor(typeValue.resourceId))
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                iconTintList = null
+//            }
         }
         setResult(RequestCode.UPDATE_OK,Intent().apply {
             putExtra("position",intent.getIntExtra("position",0))
@@ -312,9 +324,10 @@ class ExploreDetailsActivity : AuthLoginActivity(),
         bottomExploreBar.menu.findItem(R.id.bottomExploreLike).apply {
             isChecked = false
             setIcon(R.drawable.ic_favorite_border_black_24dp)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                iconTintList = null
-            }
+            iconTintListCompact = ColorStateList.valueOf(getColor(typeValue.resourceId))
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                iconTintList = null
+//            }
         }
         setResult(RequestCode.UPDATE_OK,Intent().apply {
             putExtra("position",intent.getIntExtra("position",0))

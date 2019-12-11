@@ -20,7 +20,8 @@ class GetUserInfoImpl(mView: View) : BasePresenterImpl<SimpleRequest, JsonObject
                     when (code) {
                         200 -> onGetUserInfoSuccess(jsonContentFromData.toJson().fromJson<UserInfo>().apply {
                             Attributes.token = jsonContentFromData.getAsString("token")
-                            Attributes.userInfo = this
+                            if (Attributes.userId.toString()== userId)
+                                Attributes.userInfo = this
                         })
                         404 -> onUserInfoIsEmpty()
                         else -> onGetUserInfoFailed()

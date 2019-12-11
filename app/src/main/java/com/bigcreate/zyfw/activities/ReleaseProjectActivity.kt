@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
@@ -37,6 +38,7 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
     private lateinit var amapLocationImpl: AMapLocationImpl
     var projectId = -1
     var file: File? = null
+    var projectTypeId = -1
     private val createImpl = CreateImpl(this)
 
     private lateinit var dialog: AlertDialog
@@ -57,7 +59,7 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
         if (editMode) {
             supportActionBar?.title = "编辑项目信息"
             projectId = intent.getIntExtra("projectId", -1)
-            textTypeRelease.isVisible = false
+            layoutDropdownProjectType.isVisible = false
             try {
                 intent.getStringExtra("projectInfo").fromJson<Project>().apply {
                     inputTopicRelease.append(projectTopic)
@@ -76,16 +78,20 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
                 inputContactRelease.append(userNick)
             }
             val string = resources.getStringArray(R.array.project_type_id)
-            for (i in 0 until string.size) {
-                chipGroupTypeRelease.addView(
-                        Chip(this).apply {
-                            text = string[i]
-                            id = i + 1
-                            isCheckable = true
-                            isCheckedIconVisible = false
-                        }
-                )
+            dropdownProjectType.setAdapter(ArrayAdapter(this,R.layout.dropdown_menu_popup_item,string))
+            dropdownProjectType.setOnItemClickListener { parent, view, position, id ->
+                projectTypeId = position + 1
             }
+//            for (i in 0 until string.size) {
+//                chipGroupTypeRelease.addView(
+//                        Chip(this).apply {
+//                            text = string[i]
+//                            id = i + 1
+//                            isCheckable = true
+//                            isCheckedIconVisible = false
+//                        }
+//                )
+//            }
         }
         dialog = AlertDialog.Builder(this@ReleaseProjectActivity)
                 .setView(R.layout.layout_process_upload)
@@ -154,7 +160,7 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
                                 projectAddress = chipLocationRelease.text.toString(),
                                 projectPeopleNumbers = inputNumbersRelease.text.toString(),
                                 projectRegion = amapLocation!!.city,
-                                projectTypeId = chipGroupTypeRelease.checkedChipId,
+                                projectTypeId = projectTypeId,
                                 token = Attributes.token,
                                 username = Attributes.username
                         ))
@@ -201,7 +207,7 @@ class ReleaseProjectActivity : AuthLoginActivity(), CreateImpl.View {
             inputNumbersRelease.text.toString().isEmpty() -> {
                 toast("未填写人数")
             }
-            chipGroupTypeRelease.checkedChipId == -1 && editMode.not() -> {
+            dropdownProjectType.text.toString().isBlank() && editMode.not() -> {
                 toast("您未选择分类")
             }
             amapLocation == null -> {

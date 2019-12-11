@@ -13,28 +13,33 @@ import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.MediaFolderAdapter
 import com.bigcreate.zyfw.adapter.PickerAdapter
 import com.bigcreate.zyfw.viewmodel.MediaViewModel
+import com.bilibili.boxing.AbsBoxingViewActivity
 import kotlinx.android.synthetic.main.activity_media_picker.*
 
-class MediaPickerActivity : AppCompatActivity() {
+class MediaPickerActivity : AbsBoxingViewActivity() {
     private lateinit var viewModel : MediaViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_media_picker)
-        viewModel = ViewModelProvider(this)[MediaViewModel::class.java]
-        viewModel.listFolder.observe(this, Observer {
-            folderList.adapter = MediaFolderAdapter(this,it)
-            folderList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    listMedia.adapter = PickerAdapter(it[id.toInt()].list) { uri: String, view: View, position: Int, isChecked: Boolean ->
-                        toolbarMediaPicker.menu.findItem(R.id.selectDoneCity).title = SpannableString("确定(${listChecked.size()})")
-                    }
-                }
+//        viewModel = ViewModelProvider(this)[MediaViewModel::class.java]
+//        viewModel.listFolder.observe(this, Observer {
+//            folderList.adapter = MediaFolderAdapter(this,it)
+//            folderList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+//                    listMedia.adapter = PickerAdapter(it[id.toInt()].list) { uri: String, view: View, position: Int, isChecked: Boolean ->
+//                        toolbarMediaPicker.menu.findItem(R.id.selectDoneCity).title = SpannableString("确定(${listChecked.size()})")
+//                    }
+//                }
+//
+//                override fun onNothingSelected(parent: AdapterView<*>?) {
+//                    listMedia.adapter = null
+//                }
+//            }
+//        })
+//        viewModel.getImages()
+    }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    listMedia.adapter = null
-                }
-            }
-        })
-        viewModel.getImages()
+    override fun startLoading() {
+
     }
 }

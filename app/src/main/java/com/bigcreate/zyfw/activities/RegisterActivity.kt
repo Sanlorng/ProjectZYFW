@@ -19,7 +19,7 @@ class RegisterActivity : AppCompatActivity() {
         val type = intent.type
         supportFragmentManager.commit {
             if (type != null && (type.startsWith("setupInfo") || type.startsWith("updateInfo") || type.startsWith("showInfo"))) {
-                replace(R.id.containerRegister, SetupInfoFragment(type))
+                replace(R.id.containerRegister, SetupInfoFragment(type,"桂林电子科技大学"))
             }
             else {
                 replace(R.id.containerRegister, SignUpFragment())

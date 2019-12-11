@@ -19,6 +19,9 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class TestInterfaceActivity : AppCompatActivity() {
 
@@ -112,14 +115,14 @@ class TestInterfaceActivity : AppCompatActivity() {
             RequestCode.AVATAR -> if (resultCode == Activity.RESULT_OK) GlobalScope.launch {
                 data?.data?.apply {
                     val file = File(getPath(this))
-                    val type = MediaType.parse("multipart/form-data")
+                    val type = "multipart/form-data".toMediaType()
                     val loginUser = Attributes.loginUserInfo!!
                     val part = MultipartBody.Part.createFormData("file", file.name,
-                            RequestBody.create(type, file))
+                            file.asRequestBody(type))
                     RemoteService.setupUserAvatar(
                             part,
-                            RequestBody.create(type, loginUser.token),
-                            RequestBody.create(type, loginUser.username)).execute()
+                            loginUser.token.toRequestBody(type),
+                            loginUser.username.toRequestBody(type)).execute()
                 }
             }
         }

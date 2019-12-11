@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -215,6 +216,24 @@ get() {
 fun MenuItem.setIconTint(@ColorLong id: Int){
     icon = icon.apply {
         DrawableCompat.setTint(this, id)
+    }
+}
+
+var MenuItem.iconTintListCompact: ColorStateList?
+set(value) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        iconTintList = value
+    }else {
+        icon?.apply {
+            DrawableCompat.setTintList(this,value)
+        }
+    }
+}
+get() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        return iconTintList
+    }else {
+        return null
     }
 }
 

@@ -85,7 +85,9 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
 
         super.onActivityCreated(savedInstanceState)
-
+        Attributes.addUserInfoListener("accountFragment") {
+            it?.onUserInfoLoad()
+        }
         Attributes.loginUserInfo?.apply {
             onLoginSuccess()
         }
@@ -116,6 +118,8 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
             locationNavigationHeader.text = userAddress
             sexNavigationHeader.text = userSex + "性"
             identifyNavigationHeader.text = userIdentify
+        emailNavigationHeader.text = userEmail
+        userSchoolNavigationHeader.text = schoolName
             listAccountMenu.layoutManager = GridLayoutManager(context, 4)
             listAccountMenu.adapter = MenuListAdapter(menuList) {
                 when (it.id) {
@@ -192,5 +196,10 @@ class AccountFragment : LoginFragment(), MainActivity.ChildFragment {
 
     override fun onResume() {
         super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Attributes.removeUserInfoListener("accountFragment")
     }
 }

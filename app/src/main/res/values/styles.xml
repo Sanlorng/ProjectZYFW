@@ -44,6 +44,7 @@
         <item name="subtitleTextColor">?attr/colorPrimary</item>
         <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="elevation">4dp</item>
+        <item name="android:actionMenuTextColor">?attr/colorAccent</item>
         <item name="android:fitsSystemWindows">true</item>
     </style>
     <style name="appBar" parent="Widget.MaterialComponents.AppBarLayout.Primary" >

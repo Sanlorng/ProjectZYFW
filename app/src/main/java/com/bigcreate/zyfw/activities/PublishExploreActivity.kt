@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bigcreate.library.setIconTint
 import com.bigcreate.library.toast
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.adapter.SelectListAdapter
@@ -49,13 +50,13 @@ class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View,Upda
     private var editExploreImpl = UpdateExploreImpl(this)
     private val boxImpl = object : IBoxingMediaLoader {
         override fun displayRaw(img: ImageView, absPath: String, width: Int, height: Int, callback: IBoxingCallback?) {
-            Glide.with(this@PublishExploreActivity)
+            Glide.with(img)
                     .load(absPath)
                     .into(img)
         }
 
         override fun displayThumbnail(img: ImageView, absPath: String, width: Int, height: Int) {
-            Glide.with(this@PublishExploreActivity)
+            Glide.with(img)
                     .load(absPath)
                     .into(img)
         }
@@ -162,7 +163,7 @@ class PublishExploreActivity : AuthLoginActivity(), PublishExploreImpl.View,Upda
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_release_project, menu)
         menu?.findItem(R.id.releaseEditProjectDone)?.isVisible = false
-//        menu?.findItem(R.id.releaseCreateProject)?.setIconTint(getColor(R.color.colorAccent))
+        menu?.findItem(R.id.releaseCreateProject)?.setIconTint(getColor(R.color.colorAccent))
         return true
     }
 

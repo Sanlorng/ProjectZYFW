@@ -23,11 +23,11 @@
         app:layout_anchor="@id/appbarPublishExplore"
         app:layout_anchorGravity="bottom"
         android:id="@+id/inputExplorePublish"
-        android:background="?attr/colorBackgroundFloating"
+        android:background="?attr/colorSurface"
         android:hint="@string/write_something"
         android:gravity="start"
         android:padding="8dp"
-        android:minLines="6"
+        android:minLines="10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

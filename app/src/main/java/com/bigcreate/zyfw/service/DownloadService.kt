@@ -41,8 +41,10 @@ class DownloadService : Service() {
         }
 
         override fun onDownloading(totalLen: Long, currentLen: Long) {
-            notificationBuilder.setProgress(totalLen.toInt(),currentLen.toInt(),false)
+            notificationBuilder.setProgress(10000,((currentLen /totalLen.toFloat())*10000).toInt(),false)
                     .setContentTitle("正在下载")
+//            toast("正在下载$currentLen, 总计 $totalLen")
+//            Log.e("download","正在下载$currentLen, 总计 $totalLen")
             manageService.notify(3,notificationBuilder.build())
         }
 
@@ -61,7 +63,7 @@ class DownloadService : Service() {
         intent?.apply {
             val savePath = getStringExtra("savePath")
             val downloadUrl = getStringExtra("downloadUrl")
-            val downloadTitle = getStringExtra("downloadTitle")?:downloadUrl
+            val downloadTitle = getStringExtra("downloadTitle")?:downloadUrl.split("/").last()
             this@DownloadService.type = getStringExtra("downloadType")
             if (Build.VERSION_CODES.O <= Build.VERSION.SDK_INT)
                 createNotificationChannel()

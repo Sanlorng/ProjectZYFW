@@ -111,42 +111,40 @@
                     android:inputType="numberDecimal"
                     android:imeOptions="actionNext" />
             </com.google.android.material.textfield.TextInputLayout>
-
-
-            <TextView
-                android:id="@+id/textTypeRelease"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:hint="@string/type"
+                android:id="@+id/layoutDropdownProjectType"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/type"
-                app:layout_constraintStart_toStartOf="@+id/layoutNumbersRelease"
-                app:layout_constraintTop_toBottomOf="@+id/layoutNumbersRelease" />
-
-            <com.google.android.material.chip.ChipGroup
-                app:singleSelection="true"
-                app:chipSpacingVertical="4dp"
-                android:id="@+id/chipGroupTypeRelease"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <AutoCompleteTextView
+                    android:id="@+id/dropdownProjectType"
+                    android:paddingStart="12dp"
+                    android:editable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            </com.google.android.material.chip.ChipGroup>
+<!--            <TextView-->
+<!--                android:id="@+id/textTypeRelease"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:layout_marginBottom="8dp"-->
+<!--                android:text="@string/type"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/layoutNumbersRelease"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/layoutNumbersRelease" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="@string/location" />
+<!--            <com.google.android.material.chip.ChipGroup-->
+<!--                app:singleSelection="true"-->
+<!--                app:chipSpacingVertical="4dp"-->
+<!--                android:id="@+id/chipGroupTypeRelease"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipLocationRelease"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:gravity="start"
-                android:text=""
-                app:chipIcon="@drawable/ic_outline_place_24px" />
+<!--            </com.google.android.material.chip.ChipGroup>-->
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layoutContentRelease"
@@ -166,6 +164,23 @@
                     android:minLines="3"
                     android:hint="@string/content" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/location" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipLocationRelease"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:gravity="start"
+                android:text=""
+                app:chipIcon="@drawable/ic_outline_place_24px" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,25 +5,37 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
+import com.bigcreate.library.fromJson
 import com.bigcreate.library.toast
 import com.bigcreate.library.valueOrNotNull
 import com.bigcreate.zyfw.R
 import com.bigcreate.zyfw.base.Attributes
+import com.bigcreate.zyfw.base.RemoteService
 import com.bigcreate.zyfw.base.appCompactActivity
+import com.bigcreate.zyfw.callback.enqueue
 import com.bigcreate.zyfw.models.LoginModel
 import com.bigcreate.zyfw.models.RegisterRequest
 import com.bigcreate.zyfw.mvp.user.RegisterImpl
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_register.*
+import kotlinx.android.synthetic.main.layout_org_select.*
+import kotlinx.android.synthetic.main.layout_org_select.view.*
 import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -43,6 +55,7 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
     private var param2: String? = null
     private var isSendCode = false
     private val presenter = RegisterImpl(this)
+    private lateinit var provinceView:View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -57,12 +70,79 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
 
         appCompactActivity?.setSupportActionBar(toolbarRegister)
         appCompactActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        provinceView = layoutInflater.inflate(R.layout.layout_org_select,null,false)
+        provinceView.dropdownOrgProvince.setOnItemClickListener { parent, view, position, id ->
+            val text = (view as TextView).text
+            Log.e("select Province",text.toString())
+            RemoteService.getOrgCity(text.toString()).enqueue {
+                response {
+                    body()?.apply {
+                        provinceView.dropdownOrgCity.text.clear()
+                        provinceView.dropdownOrgCity.setAdapter(ArrayAdapter(provinceView.context,R.layout.dropdown_menu_popup_item, get("cities").toString().fromJson<List<String>>()))
+                    }
+                }
+            }
+        }
+        provinceView.dropdownOrgCity.setOnItemClickListener { parent, view, position, id ->
+            val text = (view as TextView).text
+            Log.e("select City",text.toString())
+            RemoteService.getOrg(text.toString()).enqueue {
+                response {
+                    body()?.apply {
+                        provinceView.dropdownOrg.text.clear()
+                        provinceView.dropdownOrg.setAdapter(ArrayAdapter(provinceView.context,R.layout.dropdown_menu_popup_item, get("schools").toString().fromJson<List<String>>()))
+                    }
+                }
+            }
+        }
+        val dialog = MaterialAlertDialogBuilder(view!!.context)
+                .setTitle("选择机构")
+                .setView(provinceView)
+                .setPositiveButton("确定") { dialog, which ->
+                    dropdownSchoolRegister.text.clear()
+                    dropdownSchoolRegister.text.append(provinceView.dropdownOrg.text.toString())
+                }
+                .setNegativeButton("取消") { dialog, which ->
+                    dialog.dismiss()
+                }.create()
+
         if (isForgetPass) {
             appCompactActivity?.supportActionBar?.title = "忘记密码"
             layoutPassRegister.hint = "新密码"
             buttonSubmitRegister.text = "立即更改"
             layoutIdentifyRegister.isVisible = false
             layoutRealNameRegister.isVisible = false
+            layoutSchoolNameRegister.isVisible = false
+        }else {
+//            dropdownSchoolRegister.setAdapter(ArrayAdapter(dropdownSchoolRegister.context,R.layout.dropdown_menu_popup_item, arrayOf(
+//                    "桂林电子科技大学"
+//            )))
+            dropdownSchoolRegister.setOnClickListener {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    provinceView.dropdownOrgProvince.text.clear()
+                    RemoteService.getOrgProvince().enqueue {
+                        response {
+                            body()?.apply {
+                                provinceView.dropdownOrgProvince.setAdapter(ArrayAdapter(provinceView.context,R.layout.dropdown_menu_popup_item, get("provinces").toString().fromJson<List<String>>()))
+                            }
+                        }
+                    }
+                }
+                dialog.show()
+            }
+            layoutSchoolNameRegister.setEndIconOnClickListener {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    provinceView.dropdownOrgProvince.text.clear()
+                    RemoteService.getOrgProvince().enqueue {
+                        response {
+                            body()?.apply {
+                                provinceView.dropdownOrgProvince.setAdapter(ArrayAdapter(provinceView.context,R.layout.dropdown_menu_popup_item, get("provinces").toString().fromJson<List<String>>()))
+                            }
+                        }
+                    }
+                }
+                dialog.show()
+            }
         }
         toolbarRegister.setNavigationOnClickListener {
             activity?.finish()
@@ -87,6 +167,7 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
                 presenter.doSendValidCode(inputPhoneRegister.text.toString())
             }
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -125,6 +206,22 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
             inputPhoneRegister.error = getString(R.string.error_invalid_email)
             focusView = inputPhoneRegister
             cancel = true
+        } else if( inputIdentifyRegister.text.toString().isNullOrEmpty() && !isForgetPass) {
+            inputIdentifyRegister.error = getString(R.string.error_invalid_email)
+            focusView = inputIdentifyRegister
+            cancel = true
+        } else if (inputRealNameRegister.text.toString().isNullOrEmpty() && !isForgetPass) {
+            inputRealNameRegister.error = getString(R.string.error_invalid_email)
+            focusView = inputRealNameRegister
+            cancel = true
+        } else if (inputValidCodeRegister.text.toString().isNullOrEmpty() && !isForgetPass) {
+            inputValidCodeRegister.error = getString(R.string.error_invalid_email)
+            focusView = inputValidCodeRegister
+            cancel = true
+        } else if (dropdownSchoolRegister.text.toString().isNullOrEmpty() && !isForgetPass) {
+            dropdownSchoolRegister.error = getString(R.string.error_invalid_email)
+            focusView = dropdownSchoolRegister
+            cancel = true
         }
 
         if (cancel) {
@@ -136,9 +233,9 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
             // perform the user login attempt.
             showProgress(true)
             if (isForgetPass)
-                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr, "","", inputValidCodeRegister.text.toString()))
+                presenter.doResetPassword(RegisterRequest(emailStr, passwordStr, "","", inputValidCodeRegister.text.toString(),""))
             else
-                presenter.doRegister(RegisterRequest(emailStr, passwordStr, inputIdentifyRegister.text.toString(),inputRealNameRegister.text.toString(), inputValidCodeRegister.text.toString()))
+                presenter.doRegister(RegisterRequest(emailStr, passwordStr, inputIdentifyRegister.text.toString(),inputRealNameRegister.text.toString(), inputValidCodeRegister.text.toString(),dropdownSchoolRegister.text.toString()))
         }
         buttonSubmitRegister.isEnabled = true
     }
@@ -196,7 +293,7 @@ class SignUpFragment : Fragment(), RegisterImpl.View {
         }
         val transaction = activity?.supportFragmentManager?.beginTransaction()
         transaction?.run {
-            replace(R.id.containerRegister, SetupInfoFragment("setupInfo"))
+            replace(R.id.containerRegister, SetupInfoFragment("setupInfo",dropdownSchoolRegister.text.toString()))
             setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             addToBackStack(null)
             commit()

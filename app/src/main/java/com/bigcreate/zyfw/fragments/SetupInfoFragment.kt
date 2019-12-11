@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -47,22 +48,24 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocationListener, UserInfoImpl.View{
+class SetupInfoFragment(private val infoType:String,private val schoolName: String) : Fragment(), TencentLocationListener, UserInfoImpl.View{
     private var param1: String? = null
     private var param2: String? = null
     private var tencentLocation: TencentLocation? = null
     private var listAddress = ArrayList<String>()
     private val userInfoImpl = UserInfoImpl(this)
     private var avatarFile: File? = null
+    private var sexId = -1
+    private var identifyId = -1
     private val boxImpl = object : IBoxingMediaLoader {
         override fun displayRaw(img: ImageView, absPath: String, width: Int, height: Int, callback: IBoxingCallback?) {
-            Glide.with(this@SetupInfoFragment)
+            Glide.with(img.context)
                     .load(absPath)
                     .into(img)
         }
 
         override fun displayThumbnail(img: ImageView, absPath: String, width: Int, height: Int) {
-            Glide.with(this@SetupInfoFragment)
+            Glide.with(img.context)
                     .load(absPath)
                     .into(img)
         }
@@ -83,7 +86,7 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        dealInfoType()
+
         val isSetup = activity?.intent?.type
 //        val isEditMode = activity?.intent?.getBooleanExtra("isEditMode",false).valueOrNotNull
         if (isSetup == null || isSetup != "setupInfo") {
@@ -98,6 +101,7 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
                     activity?.finish()
             }
         }else if (isSetup == "setupInfo") {
+
             activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
 
@@ -115,15 +119,28 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
                     .withIntent(context!!, BoxingActivity::class.java)
                     .start(this, RequestCode.SELECT_IMAGE)
         }
-        chipGroupGenderTypeSetupInfo.setOnCheckedChangeListener { _, i ->
-            Log.e("check", chipGroupGenderTypeSetupInfo.checkedChipId.toString())
-            Log.e("i", i.toString())
+//        chipGroupGenderTypeSetupInfo.setOnCheckedChangeListener { _, i ->
+//            Log.e("check", chipGroupGenderTypeSetupInfo.checkedChipId.toString())
+//            Log.e("i", i.toString())
+//        }
+        dropdownSex.setAdapter(ArrayAdapter(context!!,R.layout.dropdown_menu_popup_item, arrayOf("男性","女性")))
+//        dropdownSex.text.append("男性")
+        dropdownSex.setOnItemClickListener { parent, view, position, id ->
+            sexId = position + 1
         }
+//        dropdownSex.setSelection(0)
+        dropdownIdentify.setAdapter(ArrayAdapter(context!!,R.layout.dropdown_menu_popup_item, arrayOf("学生","老师","其他")))
+//        dropdownIdentify.text.append("学生")
+
+        dropdownIdentify.setOnItemClickListener { parent, view, position, id ->
+            identifyId = position + 1
+        }
+//        dropdownIdentify.setSelection(0)
         layoutPhoneSetupInfo.editText?.append(Attributes.username)
         buttonSubmitSetupInfo.setOnClickListener {
             Log.d("click", "click ok")
-            if (layoutNickSetupInfo.editText!!.isEmpty() || layoutAddressSetupInfo.editText!!.isEmpty() ||
-                    layoutPhoneSetupInfo.editText!!.isEmpty() || (avatarFile == null && infoType.startsWith("setupInfo")) || chipGroupGenderTypeSetupInfo.checkedChipId == -1 || chipGroupUserTypeSetupInfo.checkedChipId == -1)
+            if (layoutNickSetupInfo.editText!!.isEmpty() || layoutAddressSetupInfo.editText!!.isEmpty() || layoutUserEmailSetupInfo.editText!!.isEmpty()||
+                    layoutPhoneSetupInfo.editText!!.isEmpty() || (avatarFile == null && infoType.startsWith("setupInfo")) || identifyId == -1 || sexId == -1)
                 Toast.makeText(context!!, "你还有尚未填写的资料，请填好后重试", Toast.LENGTH_SHORT).show()
             else {
                 showProgress(true)
@@ -131,14 +148,14 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
                 if (infoType.startsWith("updateInfo")) {
                     userInfoImpl.doUpdateUserInfo(UpdateInfoRequest(
                             layoutAddressSetupInfo.editText!!.string().trim(),
-                            layoutPhoneSetupInfo.editText!!.string().trim(), Attributes.userId, userInfo.token))
+                            layoutPhoneSetupInfo.editText!!.string().trim(), Attributes.userId, userInfo.token, layoutUserEmailSetupInfo.editText!!.string().trim()))
                 }else {
                     userInfoImpl.doInitUserInfo(InitPersonInfoRequest(userInfo.username,
                             layoutNickSetupInfo.editText!!.string().trim(),
-                            getIndexForChip(chipGroupGenderTypeSetupInfo.checkedChipId),
-                            getIndexForChip(chipGroupUserTypeSetupInfo.checkedChipId),
+                            sexId,
+                            identifyId,
                             layoutAddressSetupInfo.editText!!.string().trim(),
-                            layoutPhoneSetupInfo.editText!!.string().trim(), userInfo.token, Attributes.userId))
+                            layoutPhoneSetupInfo.editText!!.string().trim(), userInfo.token, Attributes.userId, layoutUserEmailSetupInfo.editText!!.string().trim(),schoolName))
                 }
             }
         }
@@ -196,21 +213,24 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
             isAllowDirection = true
         }
         tencentLocation.requestLocationUpdates(request, this)
-
+        dealInfoType()
         super.onActivityCreated(savedInstanceState)
     }
 
     private fun showProgress(boolean: Boolean) {
         progressSetupInfo.isVisible = boolean
-        textUserTypeSetupInfo.isEnabled = boolean.not()
-        textGenderSetupInfo.isEnabled = boolean.not()
+//        textUserTypeSetupInfo.isEnabled = boolean.not()
+//        textGenderSetupInfo.isEnabled = boolean.not()
+        layoutDropdownIdentify.isEnabled = boolean.not()
+        layoutDropdownSex.isEnabled = boolean.not()
         layoutNickSetupInfo.isEnabled = boolean.not()
         layoutPhoneSetupInfo.isEnabled = boolean.not()
         layoutAddressSetupInfo.isEnabled = boolean.not()
+        layoutUserEmailSetupInfo.isEnabled = boolean.not()
         buttonSubmitSetupInfo.isEnabled = boolean.not()
         chipQuickLocaleSetupInfo.isEnabled = boolean.not()
-        chipGroupUserTypeSetupInfo.isActivated = boolean.not()
-        chipGroupGenderTypeSetupInfo.isActivated = boolean.not()
+//        chipGroupUserTypeSetupInfo.isActivated = boolean.not()
+//        chipGroupGenderTypeSetupInfo.isActivated = boolean.not()
     }
 
 
@@ -238,7 +258,7 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
          */
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-                SetupInfoFragment("").apply {
+                SetupInfoFragment("","").apply {
                     arguments = Bundle().apply {
                         putString(ARG_PARAM1, param1)
                         putString(ARG_PARAM2, param2)
@@ -333,14 +353,14 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
         context?.toast("头像上传失败")
     }
 
-    private fun getIndexForChip(@IntegerRes id: Int): Int {
-        return when (id) {
-            R.id.chipIdStudentSetupInfo, R.id.chipMaleSetupInfo -> 1
-            R.id.chipIdTeacherSetupInfo, R.id.chipFemaleSetupInfo -> 2
-            R.id.chipIdOtherSetupInfo -> 3
-            else -> 0
-        }
-    }
+//    private fun getIndexForChip(@IntegerRes id: Int): Int {
+//        return when (id) {
+//            R.id.chipIdStudentSetupInfo, R.id.chipMaleSetupInfo -> 1
+//            R.id.chipIdTeacherSetupInfo, R.id.chipFemaleSetupInfo -> 2
+//            R.id.chipIdOtherSetupInfo -> 3
+//            else -> 0
+//        }
+//    }
 
     private fun dealInfoType() {
         when {
@@ -349,8 +369,8 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
             }
             infoType.startsWith("updateInfo") -> {
                 showInfo()
-                chipGroupGenderTypeSetupInfo.isEnabled = false
-                chipGroupUserTypeSetupInfo.isEnabled = false
+                layoutDropdownSex.isEnabled = false
+                layoutDropdownIdentify.isEnabled = false
             }
             infoType.startsWith("showInfo") -> {
                 showInfo()
@@ -365,20 +385,40 @@ class SetupInfoFragment(private val infoType:String) : Fragment(), TencentLocati
                     .circleCrop()
                     .into(imageAvatarSetupInfo)
             textAvatarSetupInfo.text = "更换个人头像"
+            layoutUserEmailSetupInfo.editText?.text?.clear()
+            layoutUserEmailSetupInfo.editText?.text?.append(userEmail)
             layoutNickSetupInfo.editText?.text?.clear()
             layoutNickSetupInfo.editText?.text?.append(userNick)
             layoutAddressSetupInfo.editText?.text?.clear()
             layoutAddressSetupInfo.editText?.text?.append(userAddress)
             if (userSex == "男") {
-                chipGroupGenderTypeSetupInfo.check(R.id.chipMaleSetupInfo)
+//                chipGroupGenderTypeSetupInfo.check(R.id.chipMaleSetupInfo)
+                dropdownSex.text.clear()
+                dropdownSex.text.append("男性")
+                sexId = 1
+//                dropdownSex.setSelection(0)
             }else {
-                chipGroupGenderTypeSetupInfo.check(R.id.chipFemaleSetupInfo)
+                dropdownSex.text.clear()
+                dropdownSex.text.append("女性")
+//                dropdownSex.setSelection(1)
             }
 
             when (userIdentify) {
-                "老师" -> chipGroupUserTypeSetupInfo.check(R.id.chipIdTeacherSetupInfo)
-                "学生" -> chipGroupUserTypeSetupInfo.check(R.id.chipIdStudentSetupInfo)
-                else -> chipGroupUserTypeSetupInfo.check(R.id.chipIdOtherSetupInfo)
+                "学生" -> {
+                    dropdownIdentify.text.clear()
+                    dropdownIdentify.text.append("学生")
+//                    dropdownIdentify.setSelection(0)
+                }
+                "老师" -> {
+                    dropdownIdentify.text.clear()
+                    dropdownIdentify.text.append("老师")
+//                    dropdownIdentify.setSelection(1)
+                }
+                else -> {
+                    dropdownIdentify.text.clear()
+                    dropdownIdentify.text.append("其他")
+//                    dropdownIdentify.setSelection(2)
+                }
             }
 
 //            if (i)
