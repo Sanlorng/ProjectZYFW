@@ -44,7 +44,10 @@ android {
         versionName getVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk { abiFilters "armeabi-v7a" }
-
+        manifestPlaceholders = [
+                "TENCENT_KEY" : TENCENT_KEY,
+                "AMAP_KEY" : AMAP_KEY
+        ]
         packagingOptions {
             exclude 'assets/infowindow_bg.9.png'
         }
