@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/navigation_background"
+    android:minHeight="120dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/avatarNavigationHeader"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/userAvatar"
+        android:src="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nickNavigationHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/avatarNavigationHeader"
+        app:layout_constraintTop_toTopOf="@+id/avatarNavigationHeader"
+        tools:text="Sanlorng" />
+
+    <TextView
+        android:id="@+id/phoneNavigationHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintStart_toStartOf="@+id/nickNavigationHeader"
+        app:layout_constraintTop_toBottomOf="@+id/nickNavigationHeader"
+        />
+    <TextView
+        android:id="@+id/emailNavigationHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintStart_toStartOf="@+id/phoneNavigationHeader"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNavigationHeader"
+        />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupNavigationHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="@id/phoneNavigationHeader"
+        app:layout_constraintTop_toBottomOf="@id/emailNavigationHeader">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/sexNavigationHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/color_surface_40"
+            android:gravity="center"
+            android:text="男"
+            android:textColor="#ffffff"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarNavigationHeader" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/identifyNavigationHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/color_surface_40"
+            android:text="老师"
+            android:textColor="#ffffff"
+            app:layout_constraintStart_toEndOf="@id/sexNavigationHeader"
+            app:layout_constraintTop_toBottomOf="@id/avatarNavigationHeader" />
+        <com.google.android.material.chip.Chip
+            tools:text="桂林电子科技大学"
+            android:id="@+id/userSchoolNavigationHeader"
+            android:textColor="#ffffff"
+            android:backgroundTint="@color/color_surface_40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/locationNavigationHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/color_surface_40"
+            android:text="广西桂林市七星区桂林电子科技大学"
+            android:textColor="#ffffff"
+            app:layout_constraintStart_toStartOf="@id/sexNavigationHeader"
+            app:layout_constraintTop_toBottomOf="@id/sexNavigationHeader" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <ImageView
+        android:id="@+id/buttonEditInfoAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/editInfo"
+        android:padding="8dp"
+        android:src="@drawable/ic_outline_edit_24px"
+        android:tint="@color/boxing_white"
+        app:layout_constraintBottom_toBottomOf="@+id/avatarNavigationHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/avatarNavigationHeader" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listAccountMenu"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:alignmentMode="alignBounds"
+        android:background="?attr/colorSurface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupNavigationHeader">
+
+    </androidx.recyclerview.widget.RecyclerView>
+</androidx.constraintlayout.widget.ConstraintLayout>

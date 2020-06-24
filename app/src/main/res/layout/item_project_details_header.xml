@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp">
+
+    <com.bigcreate.zyfw.view.ListItemView
+        app:title="测试"
+        app:showAction="true"
+        app:actionIcon="@drawable/ic_outline_comment_24px"
+        app:actionText="聊天"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="32dp"
+        android:id="@+id/contactProjectDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.bigcreate.zyfw.view.ListItemView
+        app:actionText="去这里"
+        app:logoIcon="@drawable/ic_outline_place_24px"
+        app:actionIcon="@drawable/ic_outline_navigation_24px"
+        android:id="@+id/navigationProjectDetails"
+        android:layout_margin="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.bigcreate.zyfw.view.ListItemView
+        app:logoIcon="@drawable/ic_outline_flag_24px"
+        app:actionIcon="@drawable/ic_favorite_border_black_24dp"
+        app:actionText="加入"
+        android:id="@+id/otherProjectDetails"
+        android:layout_margin="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <com.google.android.material.card.MaterialCardView
+        android:layout_margin="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                tools:text="桂林电子科技大学"
+                android:id="@+id/testShowInfo"
+                android:textSize="24sp"
+                android:textColor="?attr/colorOnSurface"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:alpha="0.1"
+                android:layout_marginBottom="8dp"
+                android:background="?attr/colorOnSurface" />
+
+            <TextView
+                tools:text="桂林电子科技大学（Guilin University Of Electronic Technology），简称“桂电”，坐落在世界著名的风景游览城市——桂林市，由国家国防科技工业局、工业和信息化部与广西壮族自治区人民政府“部局省”共建，是中西部高校基础能力建设工程、广西一流学科建设高校、 [1-2]  ，入选教育部卓越工程师教育培养计划、新工科研究与实践项目、 [3]  海外高层次人才引进计划、深化创新创业教育改革示范高校、是国家“863计划”、“973计划” 承担高校之一，有国家大学科技园，具有自主招生资格，是总装备部通信装备预研项目定向发布的30所高校之一和北斗ICD授权的高校之
+"
+                android:textSize="16sp"
+                android:id="@+id/textDescriptionDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+<!--    <com.google.android.material.chip.ChipGroup-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content">-->
+
+<!--        <com.google.android.material.chip.Chip-->
+<!--            tools:text="类型：绿化种植"-->
+<!--            android:id="@+id/typeDetails"-->
+<!--            android:checkable="false"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+<!--        <com.google.android.material.chip.Chip-->
+<!--            tools:text="位置：桂林·灵川县"-->
+<!--            app:chipIcon="@drawable/ic_outline_place_24px"-->
+<!--            android:id="@+id/locationDetails"-->
+<!--            android:checkable="false"-->
+<!--            android:layout_marginBottom="8dp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+<!--    </com.google.android.material.chip.ChipGroup>-->
+
+<!--    <TextView-->
+<!--        tools:text="Sanlorng"-->
+<!--        android:id="@+id/textNameDetails"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="8dp" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/textPhoneDetails"-->
+<!--        android:linksClickable="true"-->
+<!--        android:autoLink="phone"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="8dp" />-->
+
+<!--    <TextView-->
+<!--        tools:text="100人"-->
+<!--        android:id="@+id/textNumberDetails"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="8dp" />-->
+
+<!--    <TextView-->
+<!--        tools:text="2019.3.3 16:00:00"-->
+<!--        android:id="@+id/textTimeDetails"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="8dp" />-->
+
+<!--    <TextView-->
+<!--        android:text="@string/content"-->
+<!--        android:textColor="?attr/colorOnSurface"-->
+<!--        android:textSize="16sp"-->
+<!--        android:layout_marginBottom="2dp"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content" />-->
+</LinearLayout>
