@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bigcreate.zyfw">
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- 定位权限相关 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <application
+        android:name=".base.MyApplication"
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:targetApi="n">
+        <activity android:name=".activities.CitySelectActivity"></activity>
+        <activity android:name=".activities.MediaPickerActivity" />
+        <activity android:name=".activities.ProjectJoinedMemberActivity" />
+        <activity android:name=".activities.ExploreDetailsActivity" />
+        <activity android:name=".activities.SearchActivity" />
+        <activity android:name=".activities.PopularProjectActivity" />
+        <activity android:name=".activities.ProvinceProjectActivity" />
+        <activity android:name=".activities.CrashActivity" />
+        <activity android:name=".activities.ImageViewActivity" />
+        <activity android:name=".activities.PublishExploreActivity" />
+        <activity android:name=".activities.FavAndJoinActivity" />
+        <activity
+            android:name=".activities.ChatActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activities.AboutActivity" />
+        <activity android:name=".activities.SelectImageAndVideoActivity" />
+        <activity android:name=".activities.MessageActivity" />
+        <activity android:name=".activities.AppUpdateHistoryActivity" />
+        <activity android:name=".activities.TestInterfaceActivity" />
+        <activity
+            android:name=".activities.UpdateManagerActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".activities.LaunchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activities.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activities.ReleaseProjectActivity" />
+        <activity
+            android:name=".activities.ProjectDetailsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="com.bigcreate.zyfw.OPEN_PROJECT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.MyDetailsActivity" />
+        <activity android:name=".activities.SettingsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+
+                <category android:name="android.intent.category.PREFERENCE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.amap.api.navi.AmapRouteActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
+        <meta-data
+            android:name="TencentMapSDK"
+            android:value="${TENCENT_KEY}" />
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="${AMAP_KEY}" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.file.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <service
+            android:name=".service.CheckUpdateService"
+            android:enabled="true"
+            android:exported="true" />
+        <service android:name="com.amap.api.location.APSService" />
+        <service
+            android:name=".service.DownloadService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".service.MessageService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="" />
+        <service
+            android:name=".service.RecommendService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service android:name="com.amap.api.location.APSService" />
+    </application>
+
+</manifest>
